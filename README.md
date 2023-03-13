@@ -27,7 +27,9 @@
 ## 🛠 Tech Stack
 
 - React / TS
-- 추후 수정 요망
+- styled-components
+- recoil
+- axios
 
 ## 📠 Convention
 
