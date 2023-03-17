@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import LionMarket from '../../assets/LionMarket.svg';
+
 const MainPage = () => (
   <>
     <div>저는 메인페이지에용</div>
@@ -10,6 +12,9 @@ const MainPage = () => (
     <TextTest2>글씨 스타일 테스트(Regular)</TextTest2>
     <TextTest3>글씨 스타일 테스트(SemiBold)</TextTest3>
     <TextTest4>글씨 스타일 테스트(Bold)</TextTest4>
+    <hr />
+    <h4>아이콘 테스트</h4>
+    <img src={LionMarket} />
   </>
 );
 
