@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import { css } from 'styled-components';
 
 import type { DefaultTheme } from 'styled-components';
 
@@ -21,7 +21,7 @@ const fontWeight = (weight: Font['weight']) => {
   }
 };
 
-const FONT = ({ size, weight, family }: Font) => styled.p`
+const FONT = ({ size, weight, family }: Font) => css`
   font-size: ${size}px;
   font-weight: ${fontWeight(weight)};
   font-family: ${family};
@@ -31,14 +31,15 @@ const colors = {
   NAVY: '#222832',
   WTHIE: '#FFFFFF',
   BLACK: '#000000',
-  GRAY: '1B1B1B',
-  PURPLE: '6462B9',
-  PINK: 'E8AAAA',
-  LIGTH_GRAY: '8D8D8D',
+  GRAY: '#1B1B1B',
+  PURPLE: '#6462B9',
+  PINK: '#E8AAAA',
+  LIGHT_GRAY: '#8D8D8D',
 };
 
 const fonts = {
   // extraLight, Regular => BASIC
+  L_BASIC_15: FONT({ size: 15, family: 'MaruBuri-Regular', weight: 'L' }),
   L_BASIC_30: FONT({ size: 30, family: 'MaruBuri-Regular', weight: 'L' }),
 
   R_BASIC_10: FONT({ size: 10, family: 'MaruBuri-Regular', weight: 'R' }),
