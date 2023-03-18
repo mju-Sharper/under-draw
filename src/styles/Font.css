@@ -1,0 +1,23 @@
+@font-face {
+  font-family: 'MaruBuri-ExtraLight';
+  font-weight: 300;
+  src: url('./fonts/MaruBuri-ExtraLight.otf');
+}
+
+@font-face {
+  font-family: 'MaruBuri-Regular';
+  font-weight: 400;
+  src: url('./fonts/MaruBuri-Regular.otf');
+}
+
+@font-face {
+  font-family: 'MaruBuri-SemiBold';
+  font-weight: 600;
+  src: url('./fonts/MaruBuri-SemiBold.otf');
+}
+
+@font-face {
+  font-family: 'MaruBuri-Bold';
+  font-weight: 700;
+  src: url('./fonts/MaruBuri-Bold.otf');
+}
