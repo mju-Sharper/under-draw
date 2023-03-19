@@ -60,6 +60,7 @@ const fonts = {
   B_POINT_18: FONT({ size: 18, family: 'MaruBuri-Regular', weight: 'B' }),
   B_POINT_20: FONT({ size: 20, family: 'MaruBuri-Regular', weight: 'B' }),
   B_POINT_22: FONT({ size: 22, family: 'MaruBuri-Regular', weight: 'B' }),
+  B_POINT_30: FONT({ size: 30, family: 'MaruBuri-Regular', weight: 'B' }),
 };
 
 export type ColorTypes = typeof colors;

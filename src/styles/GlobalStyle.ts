@@ -10,6 +10,7 @@ const GlobalStyle = createGlobalStyle`
     width: 100%;
     height: 100%;
     margin: 0 auto;
+    background-color:#1B1B1B
   }
 
   button {
