@@ -47,7 +47,6 @@ const NaviBarWrap = styled.div`
   background-color: ${({ theme }) => theme.colors.NAVY};
 `;
 
-// 사자아이콘, 사자마켓 명 들어갈 div
 const LogoWrap = styled.div`
   display: flex;
   align-items: center;
@@ -64,7 +63,6 @@ const LogoWrap = styled.div`
   }
 `;
 
-// 로그인 전, 후 메뉴들 들어갈 div
 const MenuWrap = styled.div`
   color: ${({ theme }) => theme.colors.WHITE};
   ${({ theme }) => theme.fonts.B_POINT_22}
