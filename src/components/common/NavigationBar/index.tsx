@@ -13,7 +13,9 @@ const NavigationBar = () => (
       </span>
       <p>사자마켓</p>
     </LogoWrap>
-    <SearchInput />
+    <span style={{ position: 'absolute', left: '33.4%' }}>
+      <SearchInput />
+    </span>
     <MenuWrap>
       {demoToken ? (
         <ul>
