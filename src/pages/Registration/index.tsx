@@ -23,12 +23,15 @@ const Registration = () => (
 );
 
 //폰트다름
+//일단 피그마 기준대로 작업
 
 const Container = styled.div`
   display: flex;
-  width: 58vw;
-  height: 88vh;
-  margin: 123px auto 0; //100px은 헤더 높이 미리 뺐습니다.
+  /* width: 58vw;
+  height: 88vh; */
+  width: 840px;
+  height: 900px;
+  margin: 23px auto 0; //100px은 헤더 높이 미리 뺐습니다.
   background-color: ${({ theme }) => theme.colors.NAVY};
 `;
 
@@ -37,7 +40,8 @@ const ContentContainer = styled.div`
   flex-direction: column;
   width: 83%;
   height: 60%; //이거 계산불가
-  margin: 6.7% auto 0;
+  /* margin: 6.7% auto 0; */
+  margin: 61px auto 0;
 `;
 
 const TitleBox = styled.div`
@@ -49,14 +53,14 @@ const TitleBox = styled.div`
 
 const Title = styled.p`
   ${({ theme }) => theme.fonts.B_POINT_30}
-  color: ${({ theme }) => theme.colors.WTHIE};
+  color: ${({ theme }) => theme.colors.WHITE};
   margin-left: 20px; //이거 계산불가
 `;
 
 const BreakLine = styled.div`
   height: 3px;
-  margin-top: 3.5%;
-  background-color: ${({ theme }) => theme.colors.WTHIE};
+  margin-top: 32px;
+  background-color: ${({ theme }) => theme.colors.WHITE};
 `;
 
 const ItemBox = styled.div`
@@ -67,23 +71,25 @@ const ItemBox = styled.div`
 `;
 
 const PlusButton = styled.button`
-  margin: 3.5% auto;
+  margin: 32px auto;
 `;
 
 const ReigstButton = styled.button`
-  width: 30%;
-  height: 10%;
-  margin: auto;
-  background-color: ${({ theme }) => theme.colors.PURPLE};
+  /* width: 30%;
+  height: 10%; */
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 200px;
+  height: 50px;
   border-radius: 10px;
+  margin: auto;
+  background-color: ${({ theme }) => theme.colors.PURPLE};
 `;
 
 const RegistText = styled.p`
   ${({ theme }) => theme.fonts.SB_POINT_20}
-  color: ${({ theme }) => theme.colors.WTHIE};
+  color: ${({ theme }) => theme.colors.WHITE};
 `;
 
 export default Registration;
