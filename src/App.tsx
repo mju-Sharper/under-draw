@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import './App.css';
 
+import Layout from './components/layout';
 import MainPage from './pages/MainPage';
 import Registration from './pages/Registration';
 import GlobalStyle from './styles/GlobalStyle';
@@ -12,10 +13,12 @@ function App() {
     <div className="App">
       <ThemeProvider theme={Theme}>
         <GlobalStyle />
-        <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/Registration" element={<Registration />} />
-        </Routes>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<MainPage />} />
+            <Route path="/Registration" element={<Registration />} />
+          </Routes>
+        </Layout>
       </ThemeProvider>
     </div>
   );

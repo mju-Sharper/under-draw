@@ -29,7 +29,7 @@ const FONT = ({ size, weight, family }: Font) => css`
 
 const colors = {
   NAVY: '#222832',
-  WTHIE: '#FFFFFF',
+  WHITE: '#FFFFFF',
   BLACK: '#000000',
   GRAY: '#1B1B1B',
   PURPLE: '#6462B9',

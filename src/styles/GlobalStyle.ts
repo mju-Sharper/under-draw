@@ -7,10 +7,13 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
     height: 100%;
     margin: 0 auto;
-    background-color:#1B1B1B
+    background-color: ${({ theme }) => theme.colors.GRAY}
   }
 
   button {
@@ -18,6 +21,10 @@ const GlobalStyle = createGlobalStyle`
     border: none;
     cursor: pointer;
     padding: 0;
+  }
+
+  ul {
+    list-style: none;
   }
 `;
 
