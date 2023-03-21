@@ -20,6 +20,8 @@ const LayoutContainer = styled.div`
 
 const LayoutContents = styled.div`
   width: 1440px;
+  max-width: 1440px;
+  height: 100vh; // 이 요소가 좀 헷갈리는데.. 100vh로 주는 게 맞을까 ..
   padding-top: 100px;
 `;
 
