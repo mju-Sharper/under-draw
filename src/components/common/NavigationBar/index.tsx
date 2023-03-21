@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import LionMarket from '../../../assets/LionMarket.svg';
-import InputArea from '../InputArea';
+import SearchInput from '../Search';
 
 const demoToken = false;
 
@@ -13,9 +13,7 @@ const NavigationBar = () => (
       </span>
       <p>사자마켓</p>
     </LogoWrap>
-    <span style={{ position: 'fixed', left: '34.6%' }}>
-      <InputArea />
-    </span>
+    <SearchInput />
     <MenuWrap>
       {demoToken ? (
         <ul>
@@ -34,15 +32,16 @@ const NavigationBar = () => (
 );
 
 const NaviBarWrap = styled.div`
-  position: fixed;
   display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   justify-content: space-between;
   align-items: center;
-  top: 0;
-  right: 0;
-  left: 0;
-  width: 100%;
+  width: 1440px;
   height: 100px;
+  margin: 0 auto;
   padding: 0 50px;
   background-color: ${({ theme }) => theme.colors.NAVY};
 `;
