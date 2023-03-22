@@ -21,3 +21,5 @@ export const categoryItemList = [
   { name: '집', icon: HouseIcon },
   { name: '기타', icon: OtherIcon },
 ];
+
+export const testArray = [0, 0, 0, 0, 0, 0];
