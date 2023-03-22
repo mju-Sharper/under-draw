@@ -2,6 +2,9 @@ import styled from 'styled-components';
 
 import Arrow from '../../assets/Arrow.svg';
 import Plus from '../../assets/PlusButton.svg';
+import { BasicButton } from '../../components/common/BasicButton';
+
+import DataInputBox from './DataInputBox';
 
 const Registration = () => (
   <Container>
@@ -11,7 +14,20 @@ const Registration = () => (
         <Title>제목</Title>
       </TitleBox>
       <BreakLine />
-      <ItemBox>저는 아이템 박스에염</ItemBox>
+      <ItemBox>
+        <SelectBox>
+          <InputBox>
+            <DataInputBox title="제목" show={true} />
+            <DataInputBox title="품명" />
+            <DataInputBox title="시작가" />
+            {/* 이거 나중에 리팩터링 하겠습니다 */}
+          </InputBox>
+          <ImgUploadButton onClick={() => window.alert('버튼이 눌렸어염')}>
+            <ImgUploadText>이미지 업로드</ImgUploadText>
+          </ImgUploadButton>
+        </SelectBox>
+        <ImgBox />
+      </ItemBox>
       <PlusButton onClick={() => window.alert('버튼이 눌렸어염')}>
         <img src={Plus} />
       </PlusButton>
@@ -64,27 +80,56 @@ const BreakLine = styled.div`
 `;
 
 const ItemBox = styled.div`
-  height: 50%;
-  margin-top: 5.9%;
+  display: flex;
+  /* height: 50%; */
+  height: 265px;
+  /* margin-top: 5.9%; */
+  margin-top: 53px;
   border-radius: 15px;
   background-color: #1e1e1e; //얜 또 따로놈
+`;
+
+const SelectBox = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const InputBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 285px;
+  height: 134px;
+  margin: 29px 104px 48px 30px;
+`;
+
+const ImgBox = styled.div`
+  width: 230px;
+  height: 163px;
+  border-radius: 15px;
+  margin: 51px 51px 51px 0;
+  background-color: ${({ theme }) => theme.colors.WHITE};
 `;
 
 const PlusButton = styled.button`
   margin: 32px auto;
 `;
 
-const ReigstButton = styled.button`
+const ImgUploadButton = styled(BasicButton)`
+  margin-left: 30px;
+  margin-bottom: 24px;
+`;
+
+const ReigstButton = styled(BasicButton)`
   /* width: 30%;
   height: 10%; */
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: 200px;
   height: 50px;
-  border-radius: 10px;
   margin: auto;
-  background-color: ${({ theme }) => theme.colors.PURPLE};
+`;
+
+const ImgUploadText = styled.p`
+  ${({ theme }) => theme.fonts.SB_POINT_10}
+  color: ${({ theme }) => theme.colors.WHITE};
 `;
 
 const RegistText = styled.p`
