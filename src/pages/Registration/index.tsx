@@ -4,7 +4,7 @@ import Arrow from '../../assets/Arrow.svg';
 import Plus from '../../assets/PlusButton.svg';
 import { BasicButton } from '../../components/common/BasicButton';
 
-import DataInputBox from './DataInputBox';
+import DropDownBox from './DropDownBox';
 
 const Registration = () => (
   <Container>
@@ -17,10 +17,7 @@ const Registration = () => (
       <ItemBox>
         <SelectBox>
           <InputBox>
-            <DataInputBox title="제목" show={true} />
-            <DataInputBox title="품명" />
-            <DataInputBox title="시작가" />
-            {/* 이거 나중에 리팩터링 하겠습니다 */}
+            <DropDownBox title="품목" />
           </InputBox>
           <ImgUploadButton onClick={() => window.alert('버튼이 눌렸어염')}>
             <ImgUploadText>이미지 업로드</ImgUploadText>
@@ -100,6 +97,7 @@ const InputBox = styled.div`
   width: 285px;
   height: 134px;
   margin: 29px 104px 48px 30px;
+  // background-color: orange;
 `;
 
 const ImgBox = styled.div`
