@@ -1,38 +1,45 @@
 import { useState } from 'react';
 
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import DropDown from '../../assets/DropDown.svg';
 import DropUp from '../../assets/DropUp.svg';
+import { registInfo } from '../../atoms/registAtom';
 
 import { TEMP_DATA } from './MENU';
 
 const DropDownBox = ({ title }: { title: string }) => {
   const [isShowContent, setIsShowContent] = useState(false);
+  const [content, setContent] = useRecoilState(registInfo);
 
   return (
-    <>
-      <ItemBox>
-        <ItemName>{title}</ItemName>
-        <SelectBox>
-          <Selector>
-            {title}을 입력해주세요.
-            <DropDownButton onClick={() => setIsShowContent(!isShowContent)}>
-              {isShowContent ? <img src={DropDown} /> : <img src={DropUp} />}
-            </DropDownButton>
-          </Selector>
-          {isShowContent && (
-            <SelectMenuBox>
-              {TEMP_DATA.map((item, index) => (
-                <SelectMenu key={index} onClick={() => window.alert(item)}>
-                  {item}
-                </SelectMenu>
-              ))}
-            </SelectMenuBox>
-          )}
-        </SelectBox>
-      </ItemBox>
-    </>
+    <ItemBox>
+      <ItemName>{title}</ItemName>
+      <SelectBox>
+        <Selector>
+          {content.one}
+          <DropDownButton onClick={() => setIsShowContent(!isShowContent)}>
+            {isShowContent ? <img src={DropUp} /> : <img src={DropDown} />}
+          </DropDownButton>
+        </Selector>
+        {isShowContent && (
+          <SelectMenuBox>
+            {TEMP_DATA.map((item, index) => (
+              <SelectMenu
+                key={index}
+                onClick={() => {
+                  setContent({ ...content, one: item });
+                  setIsShowContent(false);
+                }}
+              >
+                {item}
+              </SelectMenu>
+            ))}
+          </SelectMenuBox>
+        )}
+      </SelectBox>
+    </ItemBox>
   );
 };
 

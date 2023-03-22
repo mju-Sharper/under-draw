@@ -5,6 +5,7 @@ import Plus from '../../assets/PlusButton.svg';
 import { BasicButton } from '../../components/common/BasicButton';
 
 import DropDownBox from './DropDownBox';
+import MenuInput from './MenuInput';
 
 const Registration = () => (
   <Container>
@@ -18,6 +19,8 @@ const Registration = () => (
         <SelectBox>
           <InputBox>
             <DropDownBox title="품목" />
+            <MenuInput title="품명" keyName="two" />
+            <MenuInput title="시작가" keyName="third" />
           </InputBox>
           <ImgUploadButton onClick={() => window.alert('버튼이 눌렸어염')}>
             <ImgUploadText>이미지 업로드</ImgUploadText>
