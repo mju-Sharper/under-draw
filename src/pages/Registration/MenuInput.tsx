@@ -45,6 +45,12 @@ const InputBox = styled.input`
   background-color: ${({ theme }) => theme.colors.WHITE};
   ${({ theme }) => theme.fonts.R_BASIC_10};
   color: #999999;
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
 `;
 
 export default MenuInput;
