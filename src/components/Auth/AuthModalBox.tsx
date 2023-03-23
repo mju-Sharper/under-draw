@@ -23,6 +23,7 @@ const FormBoxWrap = styled.div<AuthFormBoxProps>`
   width: 600px;
   height: ${({ height }) => (height ? `${height}` : '580')}px;
   border-radius: 10px;
+  padding: 0 50px;
   background-color: ${({ theme }) => theme.colors.NAVY};
 `;
 
@@ -35,6 +36,6 @@ const TitleHrBox = styled.div`
 const AuthTitle = styled.p`
   ${({ theme }) => theme.fonts.SB_POINT_30};
   color: ${({ theme }) => theme.colors.WHITE};
-  margin: 36px 0 0 50px;
+  margin: 36px 0 0 0;
 `;
 export default AuthFormBox;
