@@ -19,7 +19,10 @@ const DropDownBox = ({ title }: { title: string }) => {
       <SelectBox>
         <Selector>
           {content.one}
-          <DropDownButton onClick={() => setIsShowContent(!isShowContent)}>
+          <DropDownButton
+            type="button"
+            onClick={() => setIsShowContent(!isShowContent)}
+          >
             {isShowContent ? <img src={DropUp} /> : <img src={DropDown} />}
           </DropDownButton>
         </Selector>

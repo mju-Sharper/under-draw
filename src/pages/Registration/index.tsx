@@ -1,44 +1,58 @@
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Arrow from '../../assets/Arrow.svg';
 import Plus from '../../assets/PlusButton.svg';
+import { registInfo } from '../../atoms/registAtom';
 import { BasicButton } from '../../components/common/BasicButton';
 
 import DateInput from './DateInput';
 import DropDownBox from './DropDownBox';
 import MenuInput from './MenuInput';
 
-const Registration = () => (
-  <Container>
-    <ContentContainer>
-      <TitleBox>
-        <img src={Arrow} />
-        <Title>제목</Title>
-      </TitleBox>
-      <BreakLine />
-      <ItemBox>
-        <SelectBox>
-          <InputBox>
-            <DropDownBox title="품목" />
-            <MenuInput title="품명" keyName="two" />
-            <MenuInput title="시작가" keyName="third" />
-            <DateInput />
-          </InputBox>
-          <ImgUploadButton onClick={() => window.alert('버튼이 눌렸어염')}>
-            <ImgUploadText>이미지 업로드</ImgUploadText>
-          </ImgUploadButton>
-        </SelectBox>
-        <ImgBox />
-      </ItemBox>
-      <PlusButton onClick={() => window.alert('버튼이 눌렸어염')}>
-        <img src={Plus} />
-      </PlusButton>
-      <ReigstButton>
-        <RegistText>등록하기</RegistText>
-      </ReigstButton>
-    </ContentContainer>
-  </Container>
-);
+const Registration = () => {
+  const registItemInfo = useRecoilValue(registInfo);
+  return (
+    <Container>
+      <ContentContainer
+        onSubmit={() => window.alert(JSON.stringify(registItemInfo))}
+      >
+        <TitleBox>
+          <img src={Arrow} />
+          <Title>제목</Title>
+        </TitleBox>
+        <BreakLine />
+        <ItemBox>
+          <SelectBox>
+            <InputBox>
+              <DropDownBox title="품목" />
+              <MenuInput title="품명" keyName="two" />
+              <MenuInput title="시작가" keyName="third" />
+              <DateInput />
+            </InputBox>
+            <ImgUploadButton
+              type="button"
+              onClick={() => window.alert('버튼이 눌렸어염')}
+            >
+              <ImgUploadText>이미지 업로드</ImgUploadText>
+            </ImgUploadButton>
+          </SelectBox>
+          <ImgBox />
+        </ItemBox>
+        <PlusButton
+          type="button"
+          onClick={() => window.alert('버튼이 눌렸어염')}
+        >
+          <img src={Plus} />
+        </PlusButton>
+        <ReigstButton type="submit">
+          {/* 섭미싱 안됨 당연함 폼 밖에 있음  */}
+          <RegistText>등록하기</RegistText>
+        </ReigstButton>
+      </ContentContainer>
+    </Container>
+  );
+};
 
 //폰트다름
 //일단 피그마 기준대로 작업
@@ -53,7 +67,7 @@ const Container = styled.div`
   background-color: ${({ theme }) => theme.colors.NAVY};
 `;
 
-const ContentContainer = styled.div`
+const ContentContainer = styled.form`
   display: flex;
   flex-direction: column;
   width: 83%;
@@ -114,7 +128,7 @@ const ImgBox = styled.div`
 `;
 
 const PlusButton = styled.button`
-  margin: 32px auto;
+  margin: 32px auto 27px; //이미지 위아래 여백이 달라서 임의 수정
 `;
 
 const ImgUploadButton = styled(BasicButton)`

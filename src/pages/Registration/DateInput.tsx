@@ -1,17 +1,25 @@
 import styled from 'styled-components';
 
-const DATE_ARRAY = ['년', '월', '일'];
+const date = new Date();
+const year = date.getFullYear();
+const month = date.getMonth() + 1;
+const day = date.getDate();
+
+interface dateInterface {
+  [key: string]: number;
+}
+
+const todayObject: dateInterface = { 년: year, 월: month, 일: day };
 
 const DateInput = () => (
   <ItemBox>
     <ItemName>경매날짜</ItemName>
     <Selector>
       <>
-        {DATE_ARRAY.map((item, index) => (
+        {Object.keys(todayObject).map((item, index) => (
           <>
-            <InputBox type="number" key={index} />
+            <DateBox>{todayObject[item]}</DateBox>
             <ItemName key={index}>{item}</ItemName>
-            {/* 년은 4자리, 월,일은 2자리로 입력자리수 제한해야됨 */}
           </>
         ))}
       </>
@@ -43,7 +51,7 @@ const Selector = styled.div`
   margin-left: 8px;
 `;
 
-const InputBox = styled.input`
+const DateBox = styled.div`
   display: flex;
   align-items: center;
   width: 60px;
