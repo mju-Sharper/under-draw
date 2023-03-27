@@ -4,6 +4,7 @@ import './App.css';
 
 import Layout from './components/layout';
 import MainPage from './pages/MainPage';
+import RoomPage from './pages/RoomPage';
 import GlobalStyle from './styles/GlobalStyle';
 import Theme from './styles/Theme';
 
@@ -15,6 +16,7 @@ function App() {
         <Layout>
           <Routes>
             <Route path="/" element={<MainPage />} />
+            <Route path="/room" element={<RoomPage />} />
           </Routes>
         </Layout>
       </ThemeProvider>
