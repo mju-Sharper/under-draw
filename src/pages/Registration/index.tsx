@@ -1,3 +1,5 @@
+import { useRef, useState } from 'react';
+
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
@@ -12,6 +14,20 @@ import MenuInput from './MenuInput';
 
 const Registration = () => {
   const registItemInfo = useRecoilValue(registInfo);
+  const [imgFile, setImgFile] = useState('');
+  const imgRef = useRef<HTMLInputElement>(null);
+
+  const saveImgFile = () => {
+    if (imgRef.current && imgRef.current.files) {
+      const file = imgRef.current.files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = (e) => {
+        const result = e?.target?.result as string;
+        setImgFile(result);
+      };
+    }
+  };
   return (
     <Container>
       <ContentContainer
@@ -30,14 +46,24 @@ const Registration = () => {
               <MenuInput title="시작가" keyName="third" />
               <DateInput />
             </InputBox>
-            <ImgUploadButton
+            <input
+              type="file"
+              accept="image/*"
+              id="profileImg"
+              onChange={saveImgFile}
+              ref={imgRef}
+            />
+            {/* <ImgUploadButton
               type="button"
               onClick={() => window.alert('버튼이 눌렸어염')}
             >
               <ImgUploadText>이미지 업로드</ImgUploadText>
-            </ImgUploadButton>
+            </ImgUploadButton> */}
           </SelectBox>
-          <ImgBox />
+          <ImgBox>
+            <ImgPreView src={imgFile} />
+            {/* 여기 이미지 없으면 뭐 들어갈지 고민 필요 */}
+          </ImgBox>
         </ItemBox>
         <PlusButton
           type="button"
@@ -46,7 +72,6 @@ const Registration = () => {
           <img src={Plus} />
         </PlusButton>
         <ReigstButton type="submit">
-          {/* 섭미싱 안됨 당연함 폼 밖에 있음  */}
           <RegistText>등록하기</RegistText>
         </ReigstButton>
       </ContentContainer>
@@ -131,10 +156,16 @@ const PlusButton = styled.button`
   margin: 32px auto 27px; //이미지 위아래 여백이 달라서 임의 수정
 `;
 
-const ImgUploadButton = styled(BasicButton)`
-  margin-left: 30px;
-  margin-bottom: 24px;
+const ImgPreView = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
+
+// const ImgUploadButton = styled(BasicButton)`
+//   margin-left: 30px;
+//   margin-bottom: 24px;
+// `;
 
 const ReigstButton = styled(BasicButton)`
   /* width: 30%;
@@ -144,10 +175,10 @@ const ReigstButton = styled(BasicButton)`
   margin: auto;
 `;
 
-const ImgUploadText = styled.p`
-  ${({ theme }) => theme.fonts.SB_POINT_10}
-  color: ${({ theme }) => theme.colors.WHITE};
-`;
+// const ImgUploadText = styled.p`
+//   ${({ theme }) => theme.fonts.SB_POINT_10}
+//   color: ${({ theme }) => theme.colors.WHITE};
+// `;
 
 const RegistText = styled.p`
   ${({ theme }) => theme.fonts.SB_POINT_20}
