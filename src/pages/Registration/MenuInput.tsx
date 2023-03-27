@@ -2,7 +2,13 @@ import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { registInfo } from '../../atoms/registAtom';
-const MenuInput = ({ title, keyName }: { title: string; keyName: string }) => {
+
+interface MenuInputProps {
+  title: string;
+  keyName: string;
+}
+
+const MenuInput = ({ title, keyName }: MenuInputProps) => {
   const [content, setContent] = useRecoilState(registInfo);
   const inputType = keyName === 'third' ? 'number' : 'text';
   return (
@@ -18,9 +24,7 @@ const MenuInput = ({ title, keyName }: { title: string; keyName: string }) => {
 };
 const ItemBox = styled.div`
   display: flex;
-  //align-items: center;
   justify-content: flex-end;
-  //  background-color: pink;
   height: 20px;
   margin-bottom: 16px;
   margin-right: 17px;

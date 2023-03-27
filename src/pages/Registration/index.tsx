@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import Arrow from '../../assets/Arrow.svg';
@@ -13,7 +13,7 @@ import DropDownBox from './DropDownBox';
 import MenuInput from './MenuInput';
 
 const Registration = () => {
-  const registItemInfo = useRecoilValue(registInfo);
+  const [registItemInfo, setReigstItemInfo] = useRecoilState(registInfo);
   const [imgFile, setImgFile] = useState('');
   const imgRef = useRef<HTMLInputElement>(null);
 
@@ -25,6 +25,7 @@ const Registration = () => {
       reader.onloadend = (e) => {
         const result = e?.target?.result as string;
         setImgFile(result);
+        setReigstItemInfo({ ...registItemInfo, imgSrc: result });
       };
     }
   };
@@ -46,19 +47,16 @@ const Registration = () => {
               <MenuInput title="시작가" keyName="third" />
               <DateInput />
             </InputBox>
-            <input
-              type="file"
-              accept="image/*"
-              id="profileImg"
-              onChange={saveImgFile}
-              ref={imgRef}
-            />
-            {/* <ImgUploadButton
-              type="button"
-              onClick={() => window.alert('버튼이 눌렸어염')}
-            >
-              <ImgUploadText>이미지 업로드</ImgUploadText>
-            </ImgUploadButton> */}
+            <ImgUpload>
+              이미지업로드
+              <ImgInput
+                type="file"
+                accept="image/*"
+                id="profileImg"
+                onChange={saveImgFile}
+                ref={imgRef}
+              />
+            </ImgUpload>
           </SelectBox>
           <ImgBox>
             <ImgPreView src={imgFile} />
@@ -79,16 +77,15 @@ const Registration = () => {
   );
 };
 
-//폰트다름
-//일단 피그마 기준대로 작업
+const ImgInput = styled.input`
+  display: none;
+`;
 
 const Container = styled.div`
   display: flex;
-  /* width: 58vw;
-  height: 88vh; */
   width: 840px;
   height: 900px;
-  margin: 23px auto 0; //100px은 헤더 높이 미리 뺐습니다.
+  margin: 23px auto 0;
   background-color: ${({ theme }) => theme.colors.NAVY};
 `;
 
@@ -96,8 +93,7 @@ const ContentContainer = styled.form`
   display: flex;
   flex-direction: column;
   width: 83%;
-  height: 60%; //이거 계산불가
-  /* margin: 6.7% auto 0; */
+  height: 60%;
   margin: 61px auto 0;
 `;
 
@@ -111,7 +107,7 @@ const TitleBox = styled.div`
 const Title = styled.p`
   ${({ theme }) => theme.fonts.B_POINT_30}
   color: ${({ theme }) => theme.colors.WHITE};
-  margin-left: 20px; //이거 계산불가
+  margin-left: 20px;
 `;
 
 const BreakLine = styled.div`
@@ -122,9 +118,7 @@ const BreakLine = styled.div`
 
 const ItemBox = styled.div`
   display: flex;
-  /* height: 50%; */
   height: 265px;
-  /* margin-top: 5.9%; */
   margin-top: 53px;
   border-radius: 15px;
   background-color: #1e1e1e; //얜 또 따로놈
@@ -141,7 +135,6 @@ const InputBox = styled.div`
   width: 285px;
   height: 134px;
   margin: 29px 104px 48px 30px;
-  // background-color: orange;
 `;
 
 const ImgBox = styled.div`
@@ -153,7 +146,7 @@ const ImgBox = styled.div`
 `;
 
 const PlusButton = styled.button`
-  margin: 32px auto 27px; //이미지 위아래 여백이 달라서 임의 수정
+  margin: 32px auto 27px;
 `;
 
 const ImgPreView = styled.img`
@@ -162,23 +155,28 @@ const ImgPreView = styled.img`
   object-fit: cover;
 `;
 
-// const ImgUploadButton = styled(BasicButton)`
-//   margin-left: 30px;
-//   margin-bottom: 24px;
-// `;
+const ImgUpload = styled.label`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 30px;
+  border-radius: 10px;
+  background-color: ${({ theme }) => theme.colors.PURPLE};
+  margin-left: 30px;
+  margin-bottom: 24px;
+  &:hover {
+    cursor: pointer;
+  }
+  ${({ theme }) => theme.fonts.SB_POINT_10}
+  color: ${({ theme }) => theme.colors.WHITE};
+`;
 
 const ReigstButton = styled(BasicButton)`
-  /* width: 30%;
-  height: 10%; */
   width: 200px;
   height: 50px;
   margin: auto;
 `;
-
-// const ImgUploadText = styled.p`
-//   ${({ theme }) => theme.fonts.SB_POINT_10}
-//   color: ${({ theme }) => theme.colors.WHITE};
-// `;
 
 const RegistText = styled.p`
   ${({ theme }) => theme.fonts.SB_POINT_20}

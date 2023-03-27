@@ -9,7 +9,11 @@ import { registInfo } from '../../atoms/registAtom';
 
 import { TEMP_DATA } from './MENU';
 
-const DropDownBox = ({ title }: { title: string }) => {
+interface DropDownBoxProps {
+  title: string;
+}
+
+const DropDownBox = ({ title }: DropDownBoxProps) => {
   const [isShowContent, setIsShowContent] = useState(false);
   const [content, setContent] = useRecoilState(registInfo);
 
@@ -48,9 +52,7 @@ const DropDownBox = ({ title }: { title: string }) => {
 
 const ItemBox = styled.div`
   display: flex;
-  //align-items: center;
   justify-content: flex-end;
-  //  background-color: pink;
   height: 20px;
   margin-bottom: 16px;
   margin-right: 17px;
@@ -81,7 +83,6 @@ const SelectBox = styled.div`
   display: flex;
   flex-direction: column;
   height: 134px;
-  // background-color: red;
 `;
 
 const SelectMenuBox = styled.div`
@@ -97,7 +98,6 @@ const SelectMenuBox = styled.div`
 
 const SelectMenu = styled.span`
   ${({ theme }) => theme.fonts.R_BASIC_10}
-  // background-color:blue;
   display: flex;
   padding: 6px;
   box-sizing: border-box;

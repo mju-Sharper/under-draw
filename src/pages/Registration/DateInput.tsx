@@ -1,4 +1,9 @@
+import { useEffect } from 'react';
+
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
+
+import { registInfo } from '../../atoms/registAtom';
 
 const date = new Date();
 const year = date.getFullYear();
@@ -11,21 +16,28 @@ interface dateInterface {
 
 const todayObject: dateInterface = { 년: year, 월: month, 일: day };
 
-const DateInput = () => (
-  <ItemBox>
-    <ItemName>경매날짜</ItemName>
-    <Selector>
-      <>
-        {Object.keys(todayObject).map((item, index) => (
-          <>
-            <DateBox>{todayObject[item]}</DateBox>
-            <ItemName key={index}>{item}</ItemName>
-          </>
-        ))}
-      </>
-    </Selector>
-  </ItemBox>
-);
+const DateInput = () => {
+  const [content, setContent] = useRecoilState(registInfo);
+
+  useEffect(() => {
+    setContent({ ...content, date: { year, month, day } });
+  }, []);
+  return (
+    <ItemBox>
+      <ItemName>경매날짜</ItemName>
+      <Selector>
+        <>
+          {Object.keys(todayObject).map((item, index) => (
+            <>
+              <DateBox>{todayObject[item]}</DateBox>
+              <ItemName key={index}>{item}</ItemName>
+            </>
+          ))}
+        </>
+      </Selector>
+    </ItemBox>
+  );
+};
 
 const ItemBox = styled.div`
   display: flex;
