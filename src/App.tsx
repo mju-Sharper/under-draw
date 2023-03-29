@@ -19,7 +19,6 @@ function App() {
             <Route path="/" element={<MainPage />} />
             <Route path="/room" element={<RoomPage />} />
             <Route path="/Registration" element={<Registration />} />
-            <Route path="/room" element={<RoomPage />} />
           </Routes>
         </Layout>
       </ThemeProvider>
