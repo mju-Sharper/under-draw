@@ -43,8 +43,8 @@ const Registration = () => {
           <SelectBox>
             <InputBox>
               <DropDownBox title="품목" />
-              <MenuInput title="품명" keyName="two" />
-              <MenuInput title="시작가" keyName="third" />
+              <MenuInput title="품명" keyName="itemName" />
+              <MenuInput title="시작가" keyName="itemBetPrice" />
               <DateInput />
             </InputBox>
             <ImgUpload>
