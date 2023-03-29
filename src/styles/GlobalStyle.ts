@@ -16,6 +16,11 @@ const GlobalStyle = createGlobalStyle`
     background-color: ${({ theme }) => theme.colors.GRAY}
   }
 
+  p {
+    margin: 0;
+    padding: 0;
+  }
+
   button {
     background: transparent none;
     border: none;
