@@ -2,16 +2,19 @@ import styled from 'styled-components';
 
 import CategoryListBox from '../../components/Category';
 import ProductContainer from '../../components/ProductContainer';
+// 임시 목록 파일
+import { categoryTest } from '../../utils/mock';
+// import { categoryClickTest } from '../../utils/mock';
 
 // TODO ProductContainer/SearchContainer/MyRoomContainer 상황에 맞게 렌더링되도록 구현해보기
-// 우선 ProductContainer만 만들어둠
+// 넘어가는 products의 값이 다르도록?
 const MainPage = () => (
   <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
     <aside style={{ position: 'fixed', margin: '64px 36px 0 44px' }}>
       <CategoryListBox />
     </aside>
     <MainContentBox>
-      <ProductContainer />
+      <ProductContainer products={categoryTest} />
     </MainContentBox>
   </div>
 );

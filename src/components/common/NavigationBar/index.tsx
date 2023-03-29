@@ -1,37 +1,43 @@
+import { useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import LionMarket from '../../../assets/LionMarket.svg';
+import { categoryAtom } from '../../../atoms/categoryAtom';
 import SearchInput from '../Search';
 
 const demoToken = false;
 
-const NavigationBar = () => (
-  <NaviBarWrap>
-    <LogoWrap>
-      <span>
-        <img src={LionMarket} />
+const NavigationBar = () => {
+  const returnCategory = useResetRecoilState(categoryAtom);
+
+  return (
+    <NaviBarWrap>
+      <LogoWrap onClick={() => returnCategory()}>
+        <span>
+          <img src={LionMarket} />
+        </span>
+        <p>사자마켓</p>
+      </LogoWrap>
+      <span style={{ position: 'absolute', left: '33.4%' }}>
+        <SearchInput />
       </span>
-      <p>사자마켓</p>
-    </LogoWrap>
-    <span style={{ position: 'absolute', left: '33.4%' }}>
-      <SearchInput />
-    </span>
-    <MenuWrap>
-      {demoToken ? (
-        <ul>
-          <li>방 관리</li>
-          <li>방 생성</li>
-          <li>로그아웃</li>
-        </ul>
-      ) : (
-        <ul>
-          <li>회원가입</li>
-          <li>로그인</li>
-        </ul>
-      )}
-    </MenuWrap>
-  </NaviBarWrap>
-);
+      <MenuWrap>
+        {demoToken ? (
+          <ul>
+            <li>방 관리</li>
+            <li>방 생성</li>
+            <li>로그아웃</li>
+          </ul>
+        ) : (
+          <ul>
+            <li>회원가입</li>
+            <li>로그인</li>
+          </ul>
+        )}
+      </MenuWrap>
+    </NaviBarWrap>
+  );
+};
 
 const NaviBarWrap = styled.div`
   display: flex;
