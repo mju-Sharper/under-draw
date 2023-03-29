@@ -4,6 +4,7 @@ import './App.css';
 
 import Layout from './components/layout';
 import MainPage from './pages/MainPage';
+import Registration from './pages/Registration';
 import GlobalStyle from './styles/GlobalStyle';
 import Theme from './styles/Theme';
 
@@ -15,6 +16,7 @@ function App() {
         <Layout>
           <Routes>
             <Route path="/" element={<MainPage />} />
+            <Route path="/Registration" element={<Registration />} />
           </Routes>
         </Layout>
       </ThemeProvider>
