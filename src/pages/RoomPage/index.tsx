@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import Keyboard from '../../assets/Keyboard.svg';
+import { BasicButton } from '../../components/common/BasicButton';
 
 // 당연한거지만 나중에 데이터 받아오면 map함수 돌릴겁니다, 목업으로 해놓기엔 데이터 포맷을 모르겠어서
 
@@ -27,15 +28,28 @@ const RoomPage = () => (
         <StatusBox>
           <KeyBoardBox>
             <KeyBoard type="text" />
-            <img src={Keyboard} />
-            {/* 이거 나중에 호버 이벤트랑 클릭이벤트 추가해야될 듯 */}
+            <button onClick={() => window.alert('ㅎㅇ')}>
+              <KeyBoardImg src={Keyboard} />
+            </button>
           </KeyBoardBox>
           <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
           <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
           <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
         </StatusBox>
       </CommunityBox>
-      <BettingBox>여긴 버튼이 들어가욤</BettingBox>
+      <BettingBox>
+        <BettingCurrent>
+          <BettingText>TIME COUNT : 10:00</BettingText>
+        </BettingCurrent>
+        {/* 이거 나중에 리팩터링 분해하기 */}
+        <PercentButtonBox>여기 퍼센트 상자가 들어가면 됩니다</PercentButtonBox>
+        <BettingCurrent>
+          <BettingText>Point : 11,000,000 원</BettingText>
+        </BettingCurrent>
+        <BettingButton>
+          <BettingText>입찰하기</BettingText>
+        </BettingButton>
+      </BettingBox>
     </TradeContainer>
     <UserContainer>
       <CurrentUserCount>현재 접속자수 : 300명</CurrentUserCount>
@@ -94,7 +108,7 @@ const StatusBox = styled.div`
 const BettingBox = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   width: 400px;
   height: 230px;
@@ -145,7 +159,7 @@ const Content = styled.p`
 `;
 
 const TimeContent = styled(Content)`
-  margin-left: 145px;
+  margin-left: 120px;
 `;
 
 const BettingContent = styled(Content)`
@@ -174,5 +188,41 @@ const KeyBoardBox = styled.div`
 const KeyBoard = styled.input`
   flex: 1;
   border: none;
+`;
+
+const KeyBoardImg = styled.img`
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const BettingCurrent = styled.div`
+  width: 400px;
+  height: 40px;
+  margin: 0 auto;
+  background-color: pink;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const PercentButtonBox = styled.div`
+  width: 400px;
+  height: 40px;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto;
+`;
+const BettingButton = styled(BasicButton)`
+  width: 240px;
+  height: 40px;
+`;
+
+const BettingText = styled.p`
+  ${({ theme }) => theme.fonts.B_POINT_20}
+  color: ${({ theme }) => theme.colors.WHITE};
 `;
 export default RoomPage;
