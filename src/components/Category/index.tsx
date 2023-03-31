@@ -8,25 +8,25 @@ import { categoryItemList } from '../../utils/mock';
 const getCategroyfromFilter = (filter: string) => {
   switch (filter) {
     case '전자제품':
-      return '전자제품';
+      return 'electronic';
     case '아웃도어·스포츠·골프':
-      return '아웃도어·스포츠·골프';
+      return 'outdoor';
     case '가구':
-      return '가구';
+      return 'furniture';
     case '귀금속':
-      return '귀금속';
+      return 'jewellery';
     case '자동차':
-      return '자동차';
+      return 'car';
     case '패션·잡화·뷰티':
-      return '패션·잡화·뷰티';
+      return 'fashion';
     case '사무':
-      return '사무';
+      return 'office';
     case '주류':
-      return '주류';
+      return 'drink';
     case '집':
-      return '집';
+      return 'house';
     case '기타':
-      return '기타';
+      return 'other';
     default:
       return 'default';
   }
@@ -50,7 +50,7 @@ const CategoryListBox = () => {
           <span>
             <img src={`${item.icon}`} />
           </span>
-          {filter === `${item.name}` ? (
+          {filter === `${item.id}` ? (
             <p style={{ color: '#6462B9' }}>{item.name}</p>
           ) : (
             <p>{item.name}</p>

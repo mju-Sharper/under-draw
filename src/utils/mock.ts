@@ -10,16 +10,16 @@ import OtherIcon from '../assets/OtherIcon.svg';
 import OutdoorIcon from '../assets/OutdoorIcon.svg';
 
 export const categoryItemList = [
-  { name: '전자제품', icon: ElectronicIcon },
-  { name: '아웃도어·스포츠·골프', icon: OutdoorIcon },
-  { name: '가구', icon: FurnitureIcon },
-  { name: '귀금속', icon: JewelleryIcon },
-  { name: '자동차', icon: CarIcon },
-  { name: '패션·잡화·뷰티', icon: FashionIcon },
-  { name: '사무', icon: OfficeIcon },
-  { name: '주류', icon: DrinkIcon },
-  { name: '집', icon: HouseIcon },
-  { name: '기타', icon: OtherIcon },
+  { id: 'electronic', name: '전자제품', icon: ElectronicIcon },
+  { id: 'outdoor', name: '아웃도어·스포츠·골프', icon: OutdoorIcon },
+  { id: 'furniture', name: '가구', icon: FurnitureIcon },
+  { id: 'jewellery', name: '귀금속', icon: JewelleryIcon },
+  { id: 'car', name: '자동차', icon: CarIcon },
+  { id: 'fashion', name: '패션·잡화·뷰티', icon: FashionIcon },
+  { id: 'office', name: '사무', icon: OfficeIcon },
+  { id: 'drink', name: '주류', icon: DrinkIcon },
+  { id: 'house', name: '집', icon: HouseIcon },
+  { id: 'other', name: '기타', icon: OtherIcon },
 ];
 
 export const categoryTest = [

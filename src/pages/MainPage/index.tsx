@@ -4,7 +4,6 @@ import CategoryListBox from '../../components/Category';
 import ProductContainer from '../../components/ProductContainer';
 // 임시 목록 파일
 import { categoryTest } from '../../utils/mock';
-// import { categoryClickTest } from '../../utils/mock';
 
 // TODO ProductContainer/SearchContainer/MyRoomContainer 상황에 맞게 렌더링되도록 구현해보기
 // 넘어가는 products의 값이 다르도록?
