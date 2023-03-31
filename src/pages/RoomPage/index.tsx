@@ -1,9 +1,31 @@
 import styled from 'styled-components';
 
+import Arrow from '../../assets/Arrow.svg';
 import Keyboard from '../../assets/Keyboard.svg';
 import { BasicButton } from '../../components/common/BasicButton';
 
+import UserBox from './UserBox';
+
 // 당연한거지만 나중에 데이터 받아오면 map함수 돌릴겁니다, 목업으로 해놓기엔 데이터 포맷을 모르겠어서
+
+const PERCENT_ARRAY = [1, 3, 5, 10];
+const USER_ARRAY = [
+  'User 1',
+  'User 2',
+  'User 3',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+];
 
 const RoomPage = () => (
   <Container>
@@ -20,10 +42,11 @@ const RoomPage = () => (
           <Content>시작가 : 1000만원</Content>
         </InfoBox>
       </ItemInfoBox>
-      <CommunityBox>
+      <CommunicationBox>
         <StatusBox>
           <BettingContent>이름 : 10,000,000만원 입찰</BettingContent>
           <BettingContent>이름 : 15,000,000만원 입찰</BettingContent>
+          {/* 이건 채팅인데 어떻게 받아오려나...배열인가 */}
         </StatusBox>
         <StatusBox>
           <KeyBoardBox>
@@ -35,14 +58,21 @@ const RoomPage = () => (
           <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
           <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
           <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
+          {/* 이건 채팅인데 어떻게 받아오려나...배열인가 */}
         </StatusBox>
-      </CommunityBox>
+      </CommunicationBox>
       <BettingBox>
         <BettingCurrent>
           <BettingText>TIME COUNT : 10:00</BettingText>
         </BettingCurrent>
         {/* 이거 나중에 리팩터링 분해하기 */}
-        <PercentButtonBox>여기 퍼센트 상자가 들어가면 됩니다</PercentButtonBox>
+        <PercentButtonBox>
+          {PERCENT_ARRAY.map((item, index) => (
+            <PercentButton key={index}>
+              <BettingText>{item} %</BettingText>
+            </PercentButton>
+          ))}
+        </PercentButtonBox>
         <BettingCurrent>
           <BettingText>Point : 11,000,000 원</BettingText>
         </BettingCurrent>
@@ -52,10 +82,28 @@ const RoomPage = () => (
       </BettingBox>
     </TradeContainer>
     <UserContainer>
-      <CurrentUserCount>현재 접속자수 : 300명</CurrentUserCount>
+      <>
+        <CurrentUserCount>현재 접속자수 : 300명</CurrentUserCount>
+        <CurrentUserBox>
+          <button onClick={() => window.alert('ㅎㅇ')}>
+            <ArrowImg src={Arrow} />
+          </button>
+          {USER_ARRAY.map((item, index) => (
+            <UserBox key={index} name={item} />
+          ))}
+        </CurrentUserBox>
+      </>
     </UserContainer>
   </Container>
 );
+const ArrowImg = styled.img`
+  position: relative;
+  /* CurrentUserBox 기준으로 계산 */
+  bottom: -375px;
+  left: -135px;
+  width: 30px;
+  height: 30px;
+`;
 
 const Container = styled.div`
   display: flex;
@@ -65,7 +113,6 @@ const Container = styled.div`
   height: 854px;
   /* height: 90vh; //이건 한번 보고 */
   margin-top: 33px;
-  background-color: pink;
 `;
 
 const TradeContainer = styled.div`
@@ -76,7 +123,6 @@ const TradeContainer = styled.div`
   width: 945px;
   height: 778px;
   margin: auto;
-  background-color: orange;
 `;
 
 const ItemInfoBox = styled.div`
@@ -89,7 +135,7 @@ const ItemInfoBox = styled.div`
   background-color: ${({ theme }) => theme.colors.NAVY};
 `;
 
-const CommunityBox = styled.div`
+const CommunicationBox = styled.div`
   display: flex;
   justify-content: space-between;
   width: 945px;
@@ -112,7 +158,6 @@ const BettingBox = styled.div`
   align-items: center;
   width: 400px;
   height: 230px;
-  background-color: ${({ theme }) => theme.colors.NAVY};
 `;
 
 const UserContainer = styled.div`
@@ -130,6 +175,16 @@ const CurrentUserCount = styled.p`
   ${({ theme }) => theme.fonts.B_POINT_18}
   color: ${({ theme }) => theme.colors.WHITE};
   margin-right: 27px;
+`;
+
+const CurrentUserBox = styled.div`
+  width: 300px; //이것도 계산안됨
+  height: 750px;
+  margin: 0px auto;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const ImgBox = styled.div`
@@ -159,7 +214,7 @@ const Content = styled.p`
 `;
 
 const TimeContent = styled(Content)`
-  margin-left: 120px;
+  margin-left: 100px;
 `;
 
 const BettingContent = styled(Content)`
@@ -200,7 +255,7 @@ const BettingCurrent = styled.div`
   width: 400px;
   height: 40px;
   margin: 0 auto;
-  background-color: pink;
+  background-color: ${({ theme }) => theme.colors.NAVY};
   border-radius: 5px;
   display: flex;
   justify-content: center;
@@ -210,12 +265,23 @@ const BettingCurrent = styled.div`
 const PercentButtonBox = styled.div`
   width: 400px;
   height: 40px;
-  background-color: white;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin: 0 auto;
 `;
+
+const PercentButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90px;
+  height: 40px;
+  border-radius: 5px;
+  background-color: ${({ theme }) => theme.colors.NAVY};
+`;
+
 const BettingButton = styled(BasicButton)`
   width: 240px;
   height: 40px;
