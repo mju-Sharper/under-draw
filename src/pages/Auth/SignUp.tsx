@@ -118,7 +118,7 @@ const SingInErrMsg = styled.p`
 
 const ToLoginText = styled.p`
   position: absolute;
-  top: -45px;
+  top: -30px;
   left: 140px;
   color: ${({ theme }) => theme.colors.WHITE};
   ${({ theme }) => theme.fonts.SB_POINT_14};

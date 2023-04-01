@@ -29,6 +29,7 @@ const InputBaseBox = styled.input<InputBaseProps>`
   height: ${({ height }) => (height ? `${height}` : `30`)}px;
   padding: 17px 0 17px 20px;
   border-radius: 10px;
+  border: none;
   outline-color: ${({ theme }) => theme.colors.PURPLE};
   ${({ theme }) => theme.fonts.SB_POINT_16};
 
