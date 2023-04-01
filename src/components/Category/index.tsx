@@ -38,9 +38,7 @@ const CategoryListBox = () => {
   return (
     <CategoryWrap>
       <CategoryTitle>전체 카테고리</CategoryTitle>
-      <hr
-        style={{ width: '240px', border: '1px solid #424242', padding: '0' }}
-      />
+      <CategoryListHr />
 
       {categoryItemList.map((item) => (
         <ListNameWrap
@@ -73,6 +71,12 @@ const CategoryTitle = styled.p`
   ${({ theme }) => theme.fonts.R_BASIC_20}
   margin: 0;
   padding: 12px 8px 0;
+`;
+
+const CategoryListHr = styled.hr`
+  width: 240px;
+  border: 1px solid #424242;
+  padding: 0;
 `;
 
 const ListNameWrap = styled.div`
