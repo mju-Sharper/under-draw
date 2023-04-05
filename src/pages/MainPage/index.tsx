@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
 import CategoryListBox from '../../components/Category';
-import ProductContainer from '../../components/ProductContainer';
+import PageNation from '../../components/Main/PageNation';
+import ProductContainer from '../../components/Main/ProductContainer';
 // 임시 목록 파일
 import { categoryTest } from '../../utils/mock';
 
@@ -14,6 +15,7 @@ const MainPage = () => (
     </CategoryAside>
     <MainContentBox>
       <ProductContainer products={categoryTest} />
+      <PageNation products={categoryTest} />
     </MainContentBox>
   </MainPageWrap>
 );
@@ -21,19 +23,20 @@ const MainPage = () => (
 const MainPageWrap = styled.div`
   width: 100%;
   height: 100%;
-  overflow: hidden;
 `;
 
 // 메인페이지 주요 컨텐츠 박스 => default/검색결과/방 관리
 const MainContentBox = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   margin-top: 64px;
 `;
 
 const CategoryAside = styled.aside`
   position: fixed;
-  margin: 64px 36px 0 44px;
+  margin: 0 36px 0 44px;
 `;
 
 export default MainPage;
