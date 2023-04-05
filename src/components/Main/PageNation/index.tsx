@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import Arrow from '../../../assets/Arrow.svg';
+import { PageOffset } from '../../../atoms/pageOffsetAtom';
 
 interface Props {
   products: productCategoryProps[];
@@ -10,8 +12,27 @@ interface Props {
 
 const PageNation = ({ products }: Props) => {
   const totalPages = Math.ceil(products?.length / 3);
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageNumbers = [1, 2, 3, 4, 5];
+  const numbersArray = new Array(totalPages).fill(0);
+  const [currentPage, setCurrentPage] = useRecoilState(PageOffset);
+  const [currentPageArray, setCurrentPageArray] = useState([0]);
+
+  // 페이지네이션 버튼에서 5까지만 보여주기 위한 cut 함수
+  const sliceArrayFunc = (totalPages: number) => {
+    const totalPageArray = numbersArray.map((_, i) => i);
+    return Array(Math.ceil(totalPages / 5))
+      .fill(0)
+      .map(() => totalPageArray.splice(0, 5));
+  };
+
+  useEffect(() => {
+    const sliceArray = sliceArrayFunc(totalPages);
+    setCurrentPageArray(sliceArray[0]);
+
+    // 다음 페이지 배열로 넘어감
+    if (currentPage % 5 === 1 || currentPage % 5 > 1) {
+      setCurrentPageArray(sliceArray[Math.floor(currentPage / 5)]);
+    }
+  }, [currentPage]);
 
   if (totalPages) {
     return (
@@ -23,19 +44,22 @@ const PageNation = ({ products }: Props) => {
           <img src={Arrow} />
         </PrevBtnArrow>
         <PageNumWrap>
-          {pageNumbers.map((idx) => (
+          {currentPageArray.map((idx) => (
             <div key={idx}>
               <div onClick={() => setCurrentPage(idx + 1)}>
                 {currentPage === idx + 1 ? (
-                  <PageNumActive>{idx}</PageNumActive>
+                  <PageNumActive>{idx + 1}</PageNumActive>
                 ) : (
-                  <PageNumNonActive>{idx}</PageNumNonActive>
+                  <PageNumNonActive>{idx + 1}</PageNumNonActive>
                 )}
               </div>
             </div>
           ))}
         </PageNumWrap>
-        <NextBtnArrow onClick={() => setCurrentPage((prev) => prev + 1)}>
+        <NextBtnArrow
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+          disabled={currentPage === totalPages}
+        >
           <img src={Arrow} />
         </NextBtnArrow>
       </PageBtnWrap>

@@ -11,12 +11,12 @@ interface Props {
 
 // 페이지네이션 3개까지만 보일 수 있도록 offset을 활용해 slice
 const ProductContainer = ({ products }: Props) => {
-  const offset = useRecoilValue(PageOffset);
+  const offset = (useRecoilValue(PageOffset) - 1) * 3;
 
   return (
     <ProductBoxWrap>
       {products?.slice(offset, offset + 3).map((item) => (
-        <ItemBox key={item.productName} items={item} />
+        <ItemBox key={item.productTitle} items={item} />
       ))}
     </ProductBoxWrap>
   );

@@ -2,5 +2,5 @@ import { atom } from 'recoil';
 
 export const PageOffset = atom({
   key: 'PageOffset',
-  default: 0,
+  default: 1,
 });
