@@ -1,39 +1,19 @@
-import { useEffect } from 'react';
-
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { registInfo } from '../../atoms/registAtom';
 
-const date = new Date();
-const year = date.getFullYear();
-const month = date.getMonth() + 1;
-const day = date.getDate();
-
-interface dateInterface {
-  [key: string]: number;
-}
-
-const todayObject: dateInterface = { 년: year, 월: month, 일: day };
-
 const DateInput = () => {
   const [content, setContent] = useRecoilState(registInfo);
 
-  useEffect(() => {
-    setContent({ ...content, date: { year, month, day } });
-  }, []);
   return (
     <ItemBox>
       <ItemName>경매날짜</ItemName>
       <Selector>
-        <>
-          {Object.keys(todayObject).map((item, index) => (
-            <>
-              <DateBox>{todayObject[item]}</DateBox>
-              <ItemName key={index}>{item}</ItemName>
-            </>
-          ))}
-        </>
+        <DateBox
+          type="date"
+          onChange={(e) => setContent({ ...content, date: e.target.value })}
+        />
       </Selector>
     </ItemBox>
   );
@@ -63,10 +43,8 @@ const Selector = styled.div`
   margin-left: 8px;
 `;
 
-const DateBox = styled.div`
-  display: flex;
-  align-items: center;
-  width: 60px;
+const DateBox = styled.input`
+  width: 220px;
   height: 20px;
   border-radius: 10px;
   padding: 5px;
