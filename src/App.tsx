@@ -7,6 +7,7 @@ import SignIn from './pages/Auth/SignIn';
 import SignUp from './pages/Auth/SignUp';
 import MainPage from './pages/MainPage';
 import Registration from './pages/Registration';
+import RoomPage from './pages/RoomPage';
 import GlobalStyle from './styles/GlobalStyle';
 import Theme from './styles/Theme';
 
@@ -18,6 +19,7 @@ function App() {
         <Layout>
           <Routes>
             <Route path="/" element={<MainPage />} />
+            <Route path="/room" element={<RoomPage />} />
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/sign-up" element={<SignUp />} />
             <Route path="/Registration" element={<Registration />} />
