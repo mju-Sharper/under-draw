@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import PhotoBox from '../common/PhotoBox';
+import PhotoBox from '../../common/PhotoBox';
 
 interface ItemBoxProps {
   items?: productCategoryProps;
@@ -40,7 +40,7 @@ const ItemBoxWrap = styled.div`
   width: 760px;
   height: 224px;
   border-radius: 10px;
-  margin-bottom: 55px;
+  margin-bottom: 45px;
   background-color: ${({ theme }) => theme.colors.NAVY};
 `;
 
