@@ -1,3 +1,7 @@
+import { useState } from 'react';
+
+import axios from 'axios';
+import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -5,8 +9,7 @@ import AuthFormBox from '../../components/Auth/AuthModalBox';
 import ButtonBase from '../../components/common/Button/ButtonBase';
 import CheckBox from '../../components/common/CheckBox';
 import InputBase from '../../components/common/InputArea/InputBase';
-
-// TODO SignInErrMsg 는 잘못된 형식을 submit했을시에만 보이도록 하기
+import { API } from '../../utils/constant';
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -14,30 +17,73 @@ const SignIn = () => {
     navigate('/sign-up');
   };
 
+  // valid를 false라고 기본 설정 | true(아이디, 패스워드 입력 안 했을 시/axios 에러일 시)
+  const [formValid, setFormValid] = useState(false);
+  const [userId, setUserId] = useState('');
+  const [password, setPassword] = useState('');
+  const [, setCookie] = useCookies(['userToken']);
+
+  const handleChangeId = (id: string) => {
+    setUserId(id);
+  };
+
+  const handleChangePw = (pw: string) => {
+    setPassword(pw);
+  };
+
+  const handleSubmit = (data: React.FormEvent<HTMLFormElement>) => {
+    data.preventDefault();
+
+    if (userId && password) {
+      return axios
+        .post(`${API}auth/signin`, { userId, password })
+        .then((res) => {
+          if (res.status === 201) {
+            const accessToken = res.data.data.accessToken;
+            setCookie('userToken', accessToken);
+            navigate('/');
+          }
+        })
+        .catch((error) => error && setFormValid(true));
+    } else if (!userId || !password) {
+      setFormValid(true);
+    }
+  };
+
   return (
     <SignInPageWrap>
       <AuthFormBox authTitle={`LOGIN`}>
         <div style={{ marginTop: '40px' }}>
-          <form>
+          <form onSubmit={handleSubmit}>
             <LabelInputBox>
               <label>ID</label>
               <InputBase
                 width={500}
                 height={55}
+                maxLength={20}
+                value={userId}
                 placeholder={`아이디를 입력해주세요`}
+                onChange={(e) => handleChangeId(e.target.value)}
                 type={`text`}
               />
-              <SingInErrMsg>존재하지 않는 아이디입니다!</SingInErrMsg>
+              {formValid && (
+                <SingInErrMsg>존재하지 않는 아이디입니다!</SingInErrMsg>
+              )}
             </LabelInputBox>
             <LabelInputBox>
               <label>PASSWORD</label>
               <InputBase
                 width={500}
                 height={55}
-                placeholder={`비밀번호 8자~20자(영문, 숫자, 특수문자 포함)`}
+                maxLength={20}
+                value={password}
+                placeholder={`비밀번호 6자~20자(영문, 숫자, 특수문자 포함)`}
+                onChange={(e) => handleChangePw(e.target.value)}
                 type={`password`}
               />
-              <SingInErrMsg>비밀번호가 올바르지 않습니다!</SingInErrMsg>
+              {formValid && (
+                <SingInErrMsg>비밀번호가 올바르지 않습니다!</SingInErrMsg>
+              )}
             </LabelInputBox>
             <CheckBox>로그인 유지</CheckBox>
             <div style={{ marginTop: '62px', position: 'relative' }}>

@@ -23,6 +23,7 @@ const SignUp = () => {
               <InputBase
                 width={391}
                 height={50}
+                maxLength={20}
                 placeholder={`아이디 5자~20자`}
                 type={`text`}
               />
@@ -52,7 +53,8 @@ const SignUp = () => {
               <InputBase
                 width={391}
                 height={50}
-                placeholder={`비밀번호 8자~20자(영문, 숫자, 특수문자 포함)`}
+                maxLength={20}
+                placeholder={`비밀번호 6자~20자(영문, 숫자, 특수문자 포함)`}
                 type={`password`}
               />
               <SingInErrMsg>비밀번호 형식이 올바르지 않습니다!</SingInErrMsg>

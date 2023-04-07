@@ -1,3 +1,4 @@
+import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
 import { useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
@@ -6,10 +7,10 @@ import LionMarket from '../../../assets/LionMarket.svg';
 import { categoryAtom } from '../../../atoms/categoryAtom';
 import SearchInput from '../Search';
 
-const demoToken = false;
-
 const NavigationBar = () => {
   const returnCategory = useResetRecoilState(categoryAtom);
+  // useCookies는 배열반환
+  const token = useCookies(['userToken']);
 
   return (
     <NaviBarWrap>
@@ -23,7 +24,7 @@ const NavigationBar = () => {
         <SearchInput />
       </span>
       <MenuWrap>
-        {demoToken ? (
+        {token[0].userToken ? (
           <ul>
             <li>방 관리</li>
             <li>방 생성</li>
