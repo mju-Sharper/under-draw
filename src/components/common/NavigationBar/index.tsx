@@ -9,8 +9,11 @@ import SearchInput from '../Search';
 
 const NavigationBar = () => {
   const returnCategory = useResetRecoilState(categoryAtom);
-  // useCookies는 배열반환
-  const token = useCookies(['userToken']);
+  // 두 번째 인자는 setCookie이지만 사용하지 않아 빈 값으로 처리
+  const [token, , removeCookie] = useCookies(['userToken']);
+  const handleRemoveToken = () => {
+    removeCookie('userToken');
+  };
 
   return (
     <NaviBarWrap>
@@ -24,11 +27,11 @@ const NavigationBar = () => {
         <SearchInput />
       </span>
       <MenuWrap>
-        {token[0].userToken ? (
+        {token.userToken ? (
           <ul>
             <li>방 관리</li>
             <li>방 생성</li>
-            <li>로그아웃</li>
+            <li onClick={handleRemoveToken}>로그아웃</li>
           </ul>
         ) : (
           <ul>
