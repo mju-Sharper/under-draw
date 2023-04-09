@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import Arrow from '../../assets/Arrow.svg';
+import BaseImg from '../../assets/BaseImg.png';
 import Plus from '../../assets/PlusButton.svg';
 import { registInfo } from '../../atoms/registAtom';
 import { BasicButton } from '../../components/common/BasicButton';
@@ -14,7 +15,7 @@ import MenuInput from './MenuInput';
 
 const Registration = () => {
   const [registItemInfo, setReigstItemInfo] = useRecoilState(registInfo);
-  const [imgFile, setImgFile] = useState('');
+  const [imgFile, setImgFile] = useState(`${BaseImg}`);
   const imgRef = useRef<HTMLInputElement>(null);
 
   const saveImgFile = () => {
@@ -153,6 +154,7 @@ const PlusButton = styled.button`
 const ImgPreView = styled.img`
   width: 100%;
   height: 100%;
+  border-radius: 15px;
   object-fit: cover;
 `;
 
