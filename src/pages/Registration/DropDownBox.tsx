@@ -7,7 +7,7 @@ import DropDown from '../../assets/DropDown.svg';
 import DropUp from '../../assets/DropUp.svg';
 import { registInfo } from '../../atoms/registAtom';
 
-import { TEMP_DATA } from './MENU';
+import { CATEGORY_DATA } from './MENU';
 
 interface DropDownBoxProps {
   title: string;
@@ -32,7 +32,7 @@ const DropDownBox = ({ title }: DropDownBoxProps) => {
         </Selector>
         {isShowContent && (
           <SelectMenuBox>
-            {TEMP_DATA.map((item, index) => (
+            {CATEGORY_DATA.map((item, index) => (
               <SelectMenu
                 key={index}
                 onClick={() => {
