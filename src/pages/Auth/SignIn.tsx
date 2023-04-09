@@ -9,6 +9,7 @@ import AuthFormBox from '../../components/Auth/AuthModalBox';
 import ButtonBase from '../../components/common/Button/ButtonBase';
 import CheckBox from '../../components/common/CheckBox';
 import InputBase from '../../components/common/InputArea/InputBase';
+import { showToastSignIn, showToastErr } from '../../components/common/Toast';
 import { API } from '../../utils/constant';
 
 const SignIn = () => {
@@ -31,6 +32,11 @@ const SignIn = () => {
     setPassword(pw);
   };
 
+  const handleErrMessage = () => {
+    setFormValid(true);
+    showToastErr();
+  };
+
   const handleSubmit = (data: React.FormEvent<HTMLFormElement>) => {
     data.preventDefault();
 
@@ -40,13 +46,14 @@ const SignIn = () => {
         .then((res) => {
           if (res.status === 201) {
             const accessToken = res.data.data.accessToken;
+            showToastSignIn();
             setCookie('userToken', accessToken);
             navigate('/');
           }
         })
-        .catch((error) => error && setFormValid(true));
+        .catch((error) => error && handleErrMessage());
     } else if (!userId || !password) {
-      setFormValid(true);
+      handleErrMessage();
     }
   };
 

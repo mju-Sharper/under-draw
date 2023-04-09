@@ -8,6 +8,11 @@ import AuthFormBox from '../../components/Auth/AuthModalBox';
 import ButtonBase from '../../components/common/Button/ButtonBase';
 import InputBase from '../../components/common/InputArea/InputBase';
 import {
+  showToastErr,
+  showToastSignUp,
+  showToastSignUpNoContent,
+} from '../../components/common/Toast';
+import {
   EMAIL_REGEXP,
   PASSWORD_REGEXP,
   ID_REGEXP,
@@ -29,72 +34,56 @@ const SignUp = () => {
   });
   const [pwCheck, setPwCheck] = useState('');
 
-  // valid를 false라고 기본 설정 | true(형식에 안 맞을 시)
+  // valid를 true라고 기본 설정 | false(형식에 안 맞을 시)
   const [InfoValid, setInfoValid] = useState({
-    idValid: false,
-    passwordValid: false,
-    phoneValid: false,
-    emailValid: false,
+    idValid: true,
+    passwordValid: true,
+    phoneValid: true,
+    emailValid: true,
   });
-  const [pwCheckValid, setPwCheckValid] = useState(false);
-  const [idOverlap, setIdOverlap] = useState(false);
+  const [pwCheckValid, setPwCheckValid] = useState(true);
+
+  const formValid =
+    InfoValid.emailValid &&
+    InfoValid.passwordValid &&
+    InfoValid.phoneValid &&
+    InfoValid.idValid &&
+    pwCheckValid;
 
   const handleSubmit = (data: React.FormEvent<HTMLFormElement>) => {
     data.preventDefault();
 
-    // 형식, 정규식 검사
-    // TODO 훅으로 빼도 괜찮을 것 같기도 ... 지저분
     if (userInfo.password !== pwCheck) {
-      setPwCheckValid(true);
-    } else {
       setPwCheckValid(false);
-    }
-
-    if (!ID_REGEXP.test(userInfo.userId)) {
-      setInfoValid({ ...InfoValid, idValid: true });
     } else {
-      setInfoValid({ ...InfoValid, idValid: false });
+      setPwCheckValid(true);
     }
 
-    if (!PASSWORD_REGEXP.test(userInfo.password)) {
-      setInfoValid({ ...InfoValid, passwordValid: true });
-    } else {
-      setInfoValid({ ...InfoValid, passwordValid: false });
-    }
-
-    if (!EMAIL_REGEXP.test(userInfo.email)) {
-      setInfoValid({ ...InfoValid, emailValid: true });
-    } else {
-      setInfoValid({ ...InfoValid, emailValid: false });
-    }
-
-    if (!PHONE_REGEXP.test(userInfo.phone)) {
-      setInfoValid({ ...InfoValid, phoneValid: true });
-    } else {
-      setInfoValid({ ...InfoValid, passwordValid: false });
-    }
-
-    const formValid = !(
-      pwCheckValid &&
-      InfoValid.emailValid &&
-      InfoValid.idValid &&
-      InfoValid.passwordValid &&
-      InfoValid.phoneValid
-    );
+    // false일 시 에러메세지 보이도록
+    setInfoValid((prevInfoValid) => ({
+      ...prevInfoValid,
+      idValid: ID_REGEXP.test(userInfo.userId),
+      passwordValid: PASSWORD_REGEXP.test(userInfo.password),
+      phoneValid: PHONE_REGEXP.test(userInfo.phone),
+      emailValid: EMAIL_REGEXP.test(userInfo.email),
+    }));
 
     if (formValid) {
-      console.log('형식에 맞게 입력완료!!!!');
       return axios
         .post(`${API}auth/signup`, {
           ...userInfo,
         })
         .then((res) => {
           if (res.status === 201) {
-            const data = res.data.data;
-            console.log(data);
+            showToastSignUp();
+            naviagte('/sign-in');
           }
         })
-        .catch((error) => error && setIdOverlap(true));
+        .catch((error) => {
+          error && showToastErr();
+        });
+    } else {
+      showToastSignUpNoContent();
     }
   };
 
@@ -116,9 +105,9 @@ const SignUp = () => {
                   setUserInfo({ ...userInfo, userId: e.target.value })
                 }
               />
-              {idOverlap && (
+              {/* {idOverlap && (
                 <SingInErrMsg>이미 존재하는 아이디입니다!</SingInErrMsg>
-              )}
+              )} */}
             </LabelInputBox>
             <LabelInputBox>
               <label>휴대폰 번호</label>
@@ -145,7 +134,7 @@ const SignUp = () => {
                   setUserInfo({ ...userInfo, email: e.target.value })
                 }
               />
-              {InfoValid.emailValid && (
+              {!InfoValid.emailValid && (
                 <SingInErrMsg>이메일 형식이 올바르지 않습니다!</SingInErrMsg>
               )}
             </LabelInputBox>
@@ -162,7 +151,7 @@ const SignUp = () => {
                   setUserInfo({ ...userInfo, password: e.target.value })
                 }
               />
-              {InfoValid.passwordValid && (
+              {!InfoValid.passwordValid && (
                 <SingInErrMsg>비밀번호 형식이 올바르지 않습니다!</SingInErrMsg>
               )}
             </LabelInputBox>
@@ -176,7 +165,7 @@ const SignUp = () => {
                 type={`password`}
                 onChange={(e) => setPwCheck(e.target.value)}
               />
-              {pwCheckValid && (
+              {!pwCheckValid && (
                 <SingInErrMsg>비밀번호를 다시 한 번 확인해주세요!</SingInErrMsg>
               )}
             </LabelInputBox>
