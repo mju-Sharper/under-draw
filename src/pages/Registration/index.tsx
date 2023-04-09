@@ -25,10 +25,11 @@ const Registration = () => {
       reader.onloadend = (e) => {
         const result = e?.target?.result as string;
         setImgFile(result);
-        setReigstItemInfo({ ...registItemInfo, imgSrc: result });
+        setReigstItemInfo({ ...registItemInfo, imageUrl: result });
       };
     }
   };
+
   return (
     <Container>
       <ContentContainer
@@ -43,8 +44,8 @@ const Registration = () => {
           <SelectBox>
             <InputBox>
               <DropDownBox title="품목" />
-              <MenuInput title="품명" keyName="itemName" />
-              <MenuInput title="시작가" keyName="itemBetPrice" />
+              <MenuInput title="품명" keyName="name" />
+              <MenuInput title="시작가" keyName="startingBid" />
               <DateInput />
             </InputBox>
             <ImgUpload>

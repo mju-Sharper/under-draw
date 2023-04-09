@@ -10,7 +10,7 @@ interface MenuInputProps {
 
 const MenuInput = ({ title, keyName }: MenuInputProps) => {
   const [content, setContent] = useRecoilState(registInfo);
-  const inputType = keyName === 'itemBetPrice' ? 'number' : 'text';
+  const inputType = keyName === 'startingBid' ? 'number' : 'text';
   return (
     <ItemBox>
       <ItemName>{title}</ItemName>

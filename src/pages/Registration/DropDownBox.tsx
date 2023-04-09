@@ -22,7 +22,7 @@ const DropDownBox = ({ title }: DropDownBoxProps) => {
       <ItemName>{title}</ItemName>
       <SelectBox>
         <Selector>
-          {content.itemCategory}
+          {content.category}
           <DropDownButton
             type="button"
             onClick={() => setIsShowContent(!isShowContent)}
@@ -36,7 +36,7 @@ const DropDownBox = ({ title }: DropDownBoxProps) => {
               <SelectMenu
                 key={index}
                 onClick={() => {
-                  setContent({ ...content, itemCategory: item });
+                  setContent({ ...content, category: item });
                   setIsShowContent(false);
                 }}
               >

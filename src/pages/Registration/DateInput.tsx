@@ -12,7 +12,9 @@ const DateInput = () => {
       <Selector>
         <DateBox
           type="date"
-          onChange={(e) => setContent({ ...content, date: e.target.value })}
+          onChange={(e) =>
+            setContent({ ...content, auctionTime: e.target.value })
+          }
         />
       </Selector>
     </ItemBox>
