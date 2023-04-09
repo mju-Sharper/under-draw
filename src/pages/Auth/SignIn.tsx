@@ -77,7 +77,7 @@ const SignIn = () => {
                 height={55}
                 maxLength={20}
                 value={password}
-                placeholder={`비밀번호 6자~20자(영문, 숫자, 특수문자 포함)`}
+                placeholder={`비밀번호 8자~20자(영문, 숫자, 특수문자 포함)`}
                 onChange={(e) => handleChangePw(e.target.value)}
                 type={`password`}
               />
@@ -130,8 +130,6 @@ const SingInErrMsg = styled.p`
   padding-left: 17px;
   color: ${({ theme }) => theme.colors.PINK};
   ${({ theme }) => theme.fonts.SB_POINT_14};
-
-  /* visibility: hidden; */
 `;
 
 const ToSignUpText = styled.p`

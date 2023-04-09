@@ -1,11 +1,19 @@
+import { useState } from 'react';
+
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import AuthFormBox from '../../components/Auth/AuthModalBox';
 import ButtonBase from '../../components/common/Button/ButtonBase';
 import InputBase from '../../components/common/InputArea/InputBase';
-
-// TODO SignInErrMsg 는 잘못된 형식을 submit했을시에만 보이도록 하기
+import {
+  EMAIL_REGEXP,
+  PASSWORD_REGEXP,
+  ID_REGEXP,
+  PHONE_REGEXP,
+  API,
+} from '../../utils/constant';
 
 const SignUp = () => {
   const naviagte = useNavigate();
@@ -13,11 +21,88 @@ const SignUp = () => {
     naviagte('/sign-in');
   };
 
+  const [userInfo, setUserInfo] = useState({
+    userId: '',
+    password: '',
+    phone: '',
+    email: '',
+  });
+  const [pwCheck, setPwCheck] = useState('');
+
+  // valid를 false라고 기본 설정 | true(형식에 안 맞을 시)
+  const [InfoValid, setInfoValid] = useState({
+    idValid: false,
+    passwordValid: false,
+    phoneValid: false,
+    emailValid: false,
+  });
+  const [pwCheckValid, setPwCheckValid] = useState(false);
+  const [idOverlap, setIdOverlap] = useState(false);
+
+  const handleSubmit = (data: React.FormEvent<HTMLFormElement>) => {
+    data.preventDefault();
+
+    // 형식, 정규식 검사
+    // TODO 훅으로 빼도 괜찮을 것 같기도 ... 지저분
+    if (userInfo.password !== pwCheck) {
+      setPwCheckValid(true);
+    } else {
+      setPwCheckValid(false);
+    }
+
+    if (!ID_REGEXP.test(userInfo.userId)) {
+      setInfoValid({ ...InfoValid, idValid: true });
+    } else {
+      setInfoValid({ ...InfoValid, idValid: false });
+    }
+
+    if (!PASSWORD_REGEXP.test(userInfo.password)) {
+      setInfoValid({ ...InfoValid, passwordValid: true });
+    } else {
+      setInfoValid({ ...InfoValid, passwordValid: false });
+    }
+
+    if (!EMAIL_REGEXP.test(userInfo.email)) {
+      setInfoValid({ ...InfoValid, emailValid: true });
+    } else {
+      setInfoValid({ ...InfoValid, emailValid: false });
+    }
+
+    if (!PHONE_REGEXP.test(userInfo.phone)) {
+      setInfoValid({ ...InfoValid, phoneValid: true });
+    } else {
+      setInfoValid({ ...InfoValid, passwordValid: false });
+    }
+
+    const formValid = !(
+      pwCheckValid &&
+      InfoValid.emailValid &&
+      InfoValid.idValid &&
+      InfoValid.passwordValid &&
+      InfoValid.phoneValid
+    );
+
+    if (formValid) {
+      console.log('형식에 맞게 입력완료!!!!');
+      return axios
+        .post(`${API}auth/signup`, {
+          ...userInfo,
+        })
+        .then((res) => {
+          if (res.status === 201) {
+            const data = res.data.data;
+            console.log(data);
+          }
+        })
+        .catch((error) => error && setIdOverlap(true));
+    }
+  };
+
   return (
     <SignUpPageWrap>
       <AuthFormBox authTitle={`SIGN-UP`} height={720}>
         <div style={{ marginTop: '35px' }}>
-          <form>
+          <form onSubmit={handleSubmit}>
             <LabelInputBox>
               <label>ID</label>
               <InputBase
@@ -25,9 +110,15 @@ const SignUp = () => {
                 height={50}
                 maxLength={20}
                 placeholder={`아이디 5자~20자`}
+                value={userInfo.userId}
                 type={`text`}
+                onChange={(e) =>
+                  setUserInfo({ ...userInfo, userId: e.target.value })
+                }
               />
-              <SingInErrMsg>이미 존재하는 아이디입니다!</SingInErrMsg>
+              {idOverlap && (
+                <SingInErrMsg>이미 존재하는 아이디입니다!</SingInErrMsg>
+              )}
             </LabelInputBox>
             <LabelInputBox>
               <label>휴대폰 번호</label>
@@ -35,7 +126,11 @@ const SignUp = () => {
                 width={391}
                 height={50}
                 placeholder={`휴대폰 번호를 입력해주세요`}
+                value={userInfo.phone}
                 type={`text`}
+                onChange={(e) =>
+                  setUserInfo({ ...userInfo, phone: e.target.value })
+                }
               />
             </LabelInputBox>
             <LabelInputBox>
@@ -44,9 +139,15 @@ const SignUp = () => {
                 width={391}
                 height={50}
                 placeholder={`이메일을 입력해주세요`}
+                value={userInfo.email}
                 type={`text`}
+                onChange={(e) =>
+                  setUserInfo({ ...userInfo, email: e.target.value })
+                }
               />
-              <SingInErrMsg>이메일 형식이 올바르지 않습니다!</SingInErrMsg>
+              {InfoValid.emailValid && (
+                <SingInErrMsg>이메일 형식이 올바르지 않습니다!</SingInErrMsg>
+              )}
             </LabelInputBox>
             <LabelInputBox>
               <label>PASSWORD</label>
@@ -54,10 +155,16 @@ const SignUp = () => {
                 width={391}
                 height={50}
                 maxLength={20}
-                placeholder={`비밀번호 6자~20자(영문, 숫자, 특수문자 포함)`}
+                placeholder={`비밀번호 8자~20자(영문, 숫자, 특수문자 포함)`}
+                value={userInfo.password}
                 type={`password`}
+                onChange={(e) =>
+                  setUserInfo({ ...userInfo, password: e.target.value })
+                }
               />
-              <SingInErrMsg>비밀번호 형식이 올바르지 않습니다!</SingInErrMsg>
+              {InfoValid.passwordValid && (
+                <SingInErrMsg>비밀번호 형식이 올바르지 않습니다!</SingInErrMsg>
+              )}
             </LabelInputBox>
             <LabelInputBox>
               <label>PW-CHECK</label>
@@ -65,9 +172,13 @@ const SignUp = () => {
                 width={391}
                 height={50}
                 placeholder={`비밀번호를 한 번 더 입력해주세요`}
+                value={pwCheck}
                 type={`password`}
+                onChange={(e) => setPwCheck(e.target.value)}
               />
-              <SingInErrMsg>비밀번호를 다시 한 번 확인해주세요!</SingInErrMsg>
+              {pwCheckValid && (
+                <SingInErrMsg>비밀번호를 다시 한 번 확인해주세요!</SingInErrMsg>
+              )}
             </LabelInputBox>
             <div style={{ marginTop: '75px', position: 'relative' }}>
               <ButtonBase
@@ -114,8 +225,6 @@ const SingInErrMsg = styled.p`
   padding-left: 124px;
   color: ${({ theme }) => theme.colors.PINK};
   ${({ theme }) => theme.fonts.SB_POINT_14};
-
-  /* visibility: hidden; */
 `;
 
 const ToLoginText = styled.p`
