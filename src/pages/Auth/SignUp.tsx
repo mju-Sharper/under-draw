@@ -44,10 +44,10 @@ const SignUp = () => {
   const [pwCheckValid, setPwCheckValid] = useState(true);
 
   const formValid = !(
-    InfoValid.emailValid &&
-    InfoValid.passwordValid &&
-    InfoValid.phoneValid &&
-    InfoValid.idValid &&
+    InfoValid.emailValid ||
+    InfoValid.passwordValid ||
+    InfoValid.phoneValid ||
+    InfoValid.idValid ||
     pwCheckValid
   );
 
@@ -56,17 +56,24 @@ const SignUp = () => {
 
     if (userInfo.password !== pwCheck) {
       setPwCheckValid(false);
+    } else if (pwCheck === '') {
+      setPwCheckValid(true);
     } else {
       setPwCheckValid(true);
     }
 
-    // false일 시 에러메세지 보이도록
+    // false일 시 에러메세지 보이도록 (빈칸으로 제출 시 작성해달라는 토스트 띄우기 위해 true로)
     setInfoValid((prevInfoValid) => ({
       ...prevInfoValid,
-      idValid: ID_REGEXP.test(userInfo.userId),
-      passwordValid: PASSWORD_REGEXP.test(userInfo.password),
-      phoneValid: PHONE_REGEXP.test(userInfo.phone),
-      emailValid: EMAIL_REGEXP.test(userInfo.email),
+      idValid: userInfo.userId === '' ? true : ID_REGEXP.test(userInfo.userId),
+      passwordValid:
+        userInfo.password === ''
+          ? true
+          : PASSWORD_REGEXP.test(userInfo.password),
+      phoneValid:
+        userInfo.phone === '' ? true : PHONE_REGEXP.test(userInfo.phone),
+      emailValid:
+        userInfo.email === '' ? true : EMAIL_REGEXP.test(userInfo.email),
     }));
 
     if (formValid) {

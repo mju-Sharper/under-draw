@@ -21,6 +21,10 @@ export const showToastSignUpNoContent = () => {
   toast('정보를 모두 작성해주세요!');
 };
 
+export const showToastLogout = () => {
+  toast('로그아웃 되었습니다!');
+};
+
 export const Toast = () => (
   <ToastWrap
     limit={1}

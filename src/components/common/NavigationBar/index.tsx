@@ -6,12 +6,14 @@ import styled from 'styled-components';
 import LionMarket from '../../../assets/LionMarket.svg';
 import { categoryAtom } from '../../../atoms/categoryAtom';
 import SearchInput from '../Search';
+import { showToastLogout } from '../Toast';
 
 const NavigationBar = () => {
   const returnCategory = useResetRecoilState(categoryAtom);
   // 두 번째 인자는 setCookie이지만 사용하지 않아 빈 값으로 처리
   const [token, , removeCookie] = useCookies(['userToken']);
   const handleRemoveToken = () => {
+    showToastLogout();
     removeCookie('userToken');
   };
 
