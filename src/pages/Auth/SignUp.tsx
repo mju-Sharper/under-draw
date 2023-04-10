@@ -43,12 +43,13 @@ const SignUp = () => {
   });
   const [pwCheckValid, setPwCheckValid] = useState(true);
 
-  const formValid =
+  const formValid = !(
     InfoValid.emailValid &&
     InfoValid.passwordValid &&
     InfoValid.phoneValid &&
     InfoValid.idValid &&
-    pwCheckValid;
+    pwCheckValid
+  );
 
   const handleSubmit = (data: React.FormEvent<HTMLFormElement>) => {
     data.preventDefault();
