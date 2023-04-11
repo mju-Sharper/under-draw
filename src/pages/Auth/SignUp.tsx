@@ -64,11 +64,10 @@ const SignUp = () => {
     // false일 시 에러메세지 보이도록 (빈칸으로 제출 시 작성해달라는 토스트 띄우기 위해 true로)
     setInfoValid((prevInfoValid) => ({
       ...prevInfoValid,
-      idValid: userInfo.userId === '' ? true : ID_REGEXP.test(userInfo.userId),
-      passwordValid:
-        userInfo.password === ''
-          ? true
-          : PASSWORD_REGEXP.test(userInfo.password),
+      idValid: !userInfo.userId ? true : ID_REGEXP.test(userInfo.userId),
+      passwordValid: !userInfo.password
+        ? true
+        : PASSWORD_REGEXP.test(userInfo.password),
       phoneValid: !userInfo.phone ? true : PHONE_REGEXP.test(userInfo.phone),
       emailValid: !userInfo.email ? true : EMAIL_REGEXP.test(userInfo.email),
     }));
