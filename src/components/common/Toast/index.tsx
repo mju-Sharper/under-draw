@@ -1,29 +1,13 @@
 import { ToastContainer, Slide, toast } from 'react-toastify';
 import styled from 'styled-components';
 
-export const showToastNoToken = () => {
-  toast('로그인 후 이용해주세요!');
+export const showToastMessage = (msg: string) => {
+  toast(msg);
 };
 
-export const showToastSignIn = () => {
-  toast('로그인 되었습니다!');
-};
-
-export const showToastErr = () => {
-  toast('다시 확인해주세요!');
-};
-
-export const showToastSignUp = () => {
-  toast('성공적으로 가입되었습니다!');
-};
-
-export const showToastSignUpNoContent = () => {
-  toast('정보를 모두 작성해주세요!');
-};
-
-export const showToastLogout = () => {
-  toast('로그아웃 되었습니다!');
-};
+// export const showToastNoToken = () => {
+//   toast('로그인 후 이용해주세요!');
+// };
 
 export const Toast = () => (
   <ToastWrap

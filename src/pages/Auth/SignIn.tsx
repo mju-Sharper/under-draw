@@ -9,7 +9,7 @@ import AuthFormBox from '../../components/Auth/AuthModalBox';
 import ButtonBase from '../../components/common/Button/ButtonBase';
 import CheckBox from '../../components/common/CheckBox';
 import InputBase from '../../components/common/InputArea/InputBase';
-import { showToastSignIn, showToastErr } from '../../components/common/Toast';
+import { showToastMessage } from '../../components/common/Toast';
 import { API } from '../../utils/constant';
 
 const SignIn = () => {
@@ -34,7 +34,7 @@ const SignIn = () => {
 
   const handleErrMessage = () => {
     setFormValid(true);
-    showToastErr();
+    showToastMessage('다시 확인해주세요!');
   };
 
   const handleSubmit = (data: React.FormEvent<HTMLFormElement>) => {
@@ -46,7 +46,7 @@ const SignIn = () => {
         .then((res) => {
           if (res.status === 201) {
             const accessToken = res.data.data.accessToken;
-            showToastSignIn();
+            showToastMessage('로그인 되었습니다!');
             setCookie('userToken', accessToken);
             navigate('/');
           }

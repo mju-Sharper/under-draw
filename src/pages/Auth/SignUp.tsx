@@ -7,11 +7,7 @@ import styled from 'styled-components';
 import AuthFormBox from '../../components/Auth/AuthModalBox';
 import ButtonBase from '../../components/common/Button/ButtonBase';
 import InputBase from '../../components/common/InputArea/InputBase';
-import {
-  showToastErr,
-  showToastSignUp,
-  showToastSignUpNoContent,
-} from '../../components/common/Toast';
+import { showToastMessage } from '../../components/common/Toast';
 import {
   EMAIL_REGEXP,
   PASSWORD_REGEXP,
@@ -86,15 +82,15 @@ const SignUp = () => {
         })
         .then((res) => {
           if (res.status === 201) {
-            showToastSignUp();
+            showToastMessage('성공적으로 가입되었습니다!');
             naviagte('/sign-in');
           }
         })
         .catch((error) => {
-          error && showToastErr();
+          error && showToastMessage('다시 확인해주세요!');
         });
     } else {
-      showToastSignUpNoContent();
+      showToastMessage('정보를 모두 작성해주세요!');
     }
   };
 
