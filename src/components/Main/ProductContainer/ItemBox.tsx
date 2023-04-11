@@ -10,23 +10,23 @@ interface ItemBoxProps {
 // TODO API 연결 후 상품정보 넘기기
 const ItemBox = ({ items }: ItemBoxProps) => (
   <ItemBoxWrap>
-    <PhotoBox />
+    <PhotoBox src={items?.imageUrl} />
     <div style={{ marginLeft: '22px' }}>
       <ProductInfoListWrap>
         <li>
           제목 : <p>{items?.productTitle}</p>
         </li>
         <li>
-          품목 : <p>{items?.productCategory}</p>
+          품목 : <p>{items?.category}</p>
         </li>
         <li>
-          품명 : <p>{items?.productName}</p>
+          품명 : <p>{items?.name}</p>
         </li>
         <li>
-          시작가 : <p>{items?.productPrice}</p>
+          시작가 : <p>{items?.startingBid}</p>
         </li>
         <li>
-          경매 시간 : <p>{items?.startTime}</p>
+          경매 시간 : <p>{items?.auctionTime}</p>
         </li>
       </ProductInfoListWrap>
     </div>
