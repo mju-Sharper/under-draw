@@ -69,10 +69,8 @@ const SignUp = () => {
         userInfo.password === ''
           ? true
           : PASSWORD_REGEXP.test(userInfo.password),
-      phoneValid:
-        userInfo.phone === '' ? true : PHONE_REGEXP.test(userInfo.phone),
-      emailValid:
-        userInfo.email === '' ? true : EMAIL_REGEXP.test(userInfo.email),
+      phoneValid: !userInfo.phone ? true : PHONE_REGEXP.test(userInfo.phone),
+      emailValid: !userInfo.email ? true : EMAIL_REGEXP.test(userInfo.email),
     }));
 
     if (formValid) {
