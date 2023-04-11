@@ -3,24 +3,30 @@ import styled from 'styled-components';
 interface InputBaseProps {
   width?: number;
   height?: number;
+  maxLength?: number;
   placeholder?: string;
   value?: string;
   type?: string;
+  onChange?: (_e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const InputBase = ({
   width,
   height,
+  maxLength,
   placeholder,
   value,
   type,
+  onChange,
 }: InputBaseProps) => (
   <InputBaseBox
     value={value}
     width={width}
     height={height}
+    maxLength={maxLength}
     placeholder={placeholder}
     type={type}
+    onChange={onChange}
   />
 );
 
