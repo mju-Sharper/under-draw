@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import Arrow from '../../assets/Arrow.svg';
+import BaseImg from '../../assets/BaseImg.png';
 import Plus from '../../assets/PlusButton.svg';
 import { registInfo } from '../../atoms/registAtom';
 import { BasicButton } from '../../components/common/BasicButton';
@@ -14,7 +15,7 @@ import MenuInput from './MenuInput';
 
 const Registration = () => {
   const [registItemInfo, setReigstItemInfo] = useRecoilState(registInfo);
-  const [imgFile, setImgFile] = useState('');
+  const [imgFile, setImgFile] = useState(`${BaseImg}`);
   const imgRef = useRef<HTMLInputElement>(null);
 
   const saveImgFile = () => {
@@ -25,10 +26,11 @@ const Registration = () => {
       reader.onloadend = (e) => {
         const result = e?.target?.result as string;
         setImgFile(result);
-        setReigstItemInfo({ ...registItemInfo, imgSrc: result });
+        setReigstItemInfo({ ...registItemInfo, imageUrl: result });
       };
     }
   };
+
   return (
     <Container>
       <ContentContainer
@@ -43,8 +45,8 @@ const Registration = () => {
           <SelectBox>
             <InputBox>
               <DropDownBox title="품목" />
-              <MenuInput title="품명" keyName="itemName" />
-              <MenuInput title="시작가" keyName="itemBetPrice" />
+              <MenuInput title="품명" keyName="name" />
+              <MenuInput title="시작가" keyName="startingBid" />
               <DateInput />
             </InputBox>
             <ImgUpload>
@@ -152,6 +154,7 @@ const PlusButton = styled.button`
 const ImgPreView = styled.img`
   width: 100%;
   height: 100%;
+  border-radius: 15px;
   object-fit: cover;
 `;
 
