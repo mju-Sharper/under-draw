@@ -14,7 +14,7 @@ const ItemBox = ({ items }: ItemBoxProps) => {
   return (
     <>
       <ItemBoxWrap>
-        <PhotoBox />
+        <PhotoBox src={items?.imageUrl} />
         <div style={{ marginLeft: '22px' }}>
           <ProductInfoListWrap>
             <li>

@@ -14,6 +14,8 @@ import DateInput from './DateInput';
 import DropDownBox from './DropDownBox';
 import MenuInput from './MenuInput';
 
+import type { registInterface } from '../../atoms/registAtom';
+
 const Registration = () => {
   const [registItemInfo, setReigstItemInfo] = useRecoilState(registInfo);
   const [imgFile, setImgFile] = useState<File>();
@@ -34,11 +36,13 @@ const Registration = () => {
     }
   };
 
-  const test = (fileData: File | undefined) => {
+  //이거 나중에 함수 분리하기
+
+  const imageUpload = (fileData: File | undefined) => {
     if (fileData) {
       axios
         .post(
-          `${process.env.REACT_APP_API_URL}/products/image `,
+          `${process.env.REACT_APP_API_URL}products/image `,
           {
             image: fileData,
           },
@@ -49,20 +53,40 @@ const Registration = () => {
             },
           },
         )
+        .then((res) => {
+          setReigstItemInfo({
+            ...registItemInfo,
+            imageUrl: res.data.data.imageUrl,
+          });
+          registInfoUpload(registItemInfo);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      console.log('실행이 안되었습니다');
+    }
+  };
+
+  const registInfoUpload = (registItemInfo: registInterface) => {
+    if (registItemInfo) {
+      axios
+        .post(`${process.env.REACT_APP_API_URL}products `, registItemInfo, {
+          headers: {
+            Authorization: `bearer ${process.env.REACT_APP_ACCESS_TOKEN}`,
+          },
+        })
         .then((res) => console.log(res))
         .catch((err) => console.log(err));
     } else {
-      console.log('tlqkf');
+      console.log('실행이 안되었습니다');
     }
   };
 
   return (
     <Container>
       <ContentContainer
-        // onSubmit={() => window.alert(JSON.stringify(registItemInfo))}
         onSubmit={(e) => {
           e.preventDefault();
-          test(imgFile);
+          imageUpload(imgFile);
         }}
       >
         <TitleBox>

@@ -16,7 +16,7 @@ const MainPage = () => {
 
   const getProduct = () => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/products`)
+      .get(`${process.env.REACT_APP_API_URL}products`)
       .then((res) => setProducts(res.data.data))
       .catch((err) => console.log(err));
   };
