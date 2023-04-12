@@ -1,3 +1,4 @@
+import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
 import { useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
@@ -5,11 +6,16 @@ import styled from 'styled-components';
 import LionMarket from '../../../assets/LionMarket.svg';
 import { categoryAtom } from '../../../atoms/categoryAtom';
 import SearchInput from '../Search';
-
-const demoToken = false;
+import { showToastMessage } from '../Toast';
 
 const NavigationBar = () => {
   const returnCategory = useResetRecoilState(categoryAtom);
+  // 두 번째 인자는 setCookie이지만 사용하지 않아 빈 값으로 처리
+  const [token, , removeCookie] = useCookies(['userToken']);
+  const handleRemoveToken = () => {
+    showToastMessage('로그아웃 되었습니다!');
+    removeCookie('userToken');
+  };
 
   return (
     <NaviBarWrap>
@@ -23,11 +29,11 @@ const NavigationBar = () => {
         <SearchInput />
       </span>
       <MenuWrap>
-        {demoToken ? (
+        {token.userToken ? (
           <ul>
             <li>방 관리</li>
             <li>방 생성</li>
-            <li>로그아웃</li>
+            <li onClick={handleRemoveToken}>로그아웃</li>
           </ul>
         ) : (
           <ul>
