@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
+import Delete from '../../../assets/Delete.svg';
 import Setting from '../../../assets/Setting.svg';
 import PhotoBox from '../../common/PhotoBox';
 
@@ -43,9 +44,14 @@ const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
         {/* SettingBtn이 보이는 조건1: 방 관리 버튼 클릭 | 조건2: 판매 물품이 있을 시에만 해당 버튼 보이도록 */}
         {/* 현재는 testBoolean 값으로 보여주게 놔두었습니다 */}
         {isClicked && (
-          <SettingBtn onClick={handleMoveEditPage}>
-            <img src={Setting} />
-          </SettingBtn>
+          <>
+            <DeleteBtn>
+              <img src={Delete} />
+            </DeleteBtn>
+            <SettingBtn onClick={handleMoveEditPage}>
+              <img src={Setting} />
+            </SettingBtn>
+          </>
         )}
       </ItemBoxWrap>
     </>
@@ -87,6 +93,12 @@ const ProductInfoListWrap = styled.ul`
 const SettingBtn = styled.button`
   position: absolute;
   right: 22px;
+  bottom: 16px;
+`;
+
+const DeleteBtn = styled.button`
+  position: absolute;
+  right: 78px;
   bottom: 16px;
 `;
 
