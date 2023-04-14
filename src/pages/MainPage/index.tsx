@@ -1,25 +1,31 @@
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import { manageBtnAtom } from '../../atoms/manageBtnAtom';
 import CategoryListBox from '../../components/Category';
 import PageNation from '../../components/Main/PageNation';
 import ProductContainer from '../../components/Main/ProductContainer';
 // 임시 목록 파일
-import { categoryTest } from '../../utils/mock';
+import { categoryTest, editClickTest } from '../../utils/mock';
 
 // TODO ProductContainer/SearchContainer/MyRoomContainer 상황에 맞게 렌더링되도록 구현해보기
 // 넘어가는 products의 값이 다르도록?
-const MainPage = () => (
-  <MainPageWrap>
-    <CategoryAside>
-      <CategoryListBox />
-    </CategoryAside>
-    <MainContentBox>
-      <ProductContainer products={categoryTest} />
-      <PageNation products={categoryTest} />
-    </MainContentBox>
-  </MainPageWrap>
-);
+const MainPage = () => {
+  const isClickManageBtn = useRecoilValue(manageBtnAtom);
+  const productList = isClickManageBtn ? editClickTest : categoryTest;
 
+  return (
+    <MainPageWrap>
+      <CategoryAside>
+        <CategoryListBox />
+      </CategoryAside>
+      <MainContentBox>
+        <ProductContainer products={productList} isClicked={isClickManageBtn} />
+        <PageNation products={productList} />
+      </MainContentBox>
+    </MainPageWrap>
+  );
+};
 const MainPageWrap = styled.div`
   width: 100%;
   height: 100%;

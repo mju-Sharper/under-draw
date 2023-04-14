@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import Setting from '../../../assets/Setting.svg';
@@ -5,12 +6,17 @@ import PhotoBox from '../../common/PhotoBox';
 
 interface ItemBoxProps {
   items?: productCategoryProps;
+  isClicked?: boolean;
 }
 
 // TODO API 연결 후 photo에 src 넣기
 // TODO API 연결 후 상품정보 넘기기
-const ItemBox = ({ items }: ItemBoxProps) => {
-  const testEditBtn = true;
+const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
+  const navigate = useNavigate();
+  const handleMoveEditPage = () => {
+    navigate('/edit-page');
+  };
+
   return (
     <>
       <ItemBoxWrap>
@@ -36,8 +42,8 @@ const ItemBox = ({ items }: ItemBoxProps) => {
         </div>
         {/* SettingBtn이 보이는 조건1: 방 관리 버튼 클릭 | 조건2: 판매 물품이 있을 시에만 해당 버튼 보이도록 */}
         {/* 현재는 testBoolean 값으로 보여주게 놔두었습니다 */}
-        {testEditBtn && (
-          <SettingBtn>
+        {isClicked && (
+          <SettingBtn onClick={handleMoveEditPage}>
             <img src={Setting} />
           </SettingBtn>
         )}

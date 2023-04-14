@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Layout from './components/layout';
 import SignIn from './pages/Auth/SignIn';
 import SignUp from './pages/Auth/SignUp';
+import EditPage from './pages/EditPage';
 import MainPage from './pages/MainPage';
 import Registration from './pages/Registration';
 import RoomPage from './pages/RoomPage';
@@ -25,6 +26,7 @@ function App() {
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/sign-up" element={<SignUp />} />
             <Route path="/Registration" element={<Registration />} />
+            <Route path="/edit-page" element={<EditPage />} />
           </Routes>
         </Layout>
         <Toast />

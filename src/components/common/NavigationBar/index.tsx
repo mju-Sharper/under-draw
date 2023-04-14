@@ -1,15 +1,26 @@
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
-import { useResetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import LionMarket from '../../../assets/LionMarket.svg';
 import { categoryAtom } from '../../../atoms/categoryAtom';
+import { manageBtnAtom } from '../../../atoms/manageBtnAtom';
 import SearchInput from '../Search';
 import { showToastMessage } from '../Toast';
 
 const NavigationBar = () => {
+  // TODO 이걸로 방관리 판단하게 할지는 우선 API 나오고 더 확인해볼 예정
+  // 방 관리 클릭 시 true 변경
+  const handleClickManageBtn = useSetRecoilState(manageBtnAtom);
+  const handleClickMainBtn = useResetRecoilState(manageBtnAtom);
   const returnCategory = useResetRecoilState(categoryAtom);
+
+  const handleReturn = () => {
+    handleClickMainBtn();
+    returnCategory();
+  };
+
   // 두 번째 인자는 setCookie이지만 사용하지 않아 빈 값으로 처리
   const [token, , removeCookie] = useCookies(['userToken']);
   const handleRemoveToken = () => {
@@ -19,11 +30,13 @@ const NavigationBar = () => {
 
   return (
     <NaviBarWrap>
-      <LogoWrap onClick={() => returnCategory()}>
+      <LogoWrap onClick={handleReturn}>
         <span>
           <img src={LionMarket} />
         </span>
-        <p>사자마켓</p>
+        <p>
+          <Link to="/">사자마켓</Link>
+        </p>
       </LogoWrap>
       <span style={{ position: 'absolute', left: '33.4%' }}>
         <SearchInput />
@@ -31,7 +44,7 @@ const NavigationBar = () => {
       <MenuWrap>
         {token.userToken ? (
           <ul>
-            <li>방 관리</li>
+            <li onClick={() => handleClickManageBtn(true)}>방 관리</li>
             <li>방 생성</li>
             <li onClick={handleRemoveToken}>로그아웃</li>
           </ul>
