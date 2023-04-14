@@ -1,4 +1,6 @@
-import { useRecoilValue } from 'recoil';
+import { useEffect } from 'react';
+
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { PageOffset } from '../../../atoms/pageOffsetAtom';
@@ -13,6 +15,12 @@ interface Props {
 // 페이지네이션 3개까지만 보일 수 있도록 offset을 활용해 slice
 const ProductContainer = ({ products, isClicked }: Props) => {
   const offset = (useRecoilValue(PageOffset) - 1) * 3;
+  const resetOffset = useResetRecoilState(PageOffset);
+
+  // 다시 offset 0부터 보일 수 있도록 추가
+  useEffect(() => {
+    resetOffset();
+  }, [isClicked]);
 
   return (
     <ProductBoxWrap>
