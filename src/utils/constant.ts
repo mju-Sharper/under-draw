@@ -10,9 +10,9 @@ export const API = process.env.REACT_APP_API_URL;
 
 // instance api
 export const instanceAPI = axios.create({
-  baseURL: API,
+  baseURL: `${API}`,
   headers: {
-    Authorization: `Bearer ${getCookie()})}`,
+    Authorization: `Bearer ${getCookie()}`,
   },
 });
 

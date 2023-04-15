@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 
+import axios from 'axios';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -15,26 +16,54 @@ import MenuInput from './MenuInput';
 
 const Registration = () => {
   const [registItemInfo, setReigstItemInfo] = useRecoilState(registInfo);
-  const [imgFile, setImgFile] = useState(`${BaseImg}`);
+  const [imgFile, setImgFile] = useState<File>();
+  const [imgSrc, setImgSrc] = useState(`${BaseImg}`);
   const imgRef = useRef<HTMLInputElement>(null);
 
   const saveImgFile = () => {
     if (imgRef.current && imgRef.current.files) {
-      const file = imgRef.current.files[0];
+      const file = imgRef.current.files[0] as File;
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onloadend = (e) => {
         const result = e?.target?.result as string;
-        setImgFile(result);
+        setImgFile(file);
+        setImgSrc(result);
         setReigstItemInfo({ ...registItemInfo, imageUrl: result });
       };
+    }
+  };
+
+  const test = (fileData: File | undefined) => {
+    if (fileData) {
+      axios
+        .post(
+          `${process.env.REACT_APP_API_URL}/products/image `,
+          {
+            image: fileData,
+          },
+          {
+            headers: {
+              Authorization: `bearer ${process.env.REACT_APP_ACCESS_TOKEN}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          },
+        )
+        .then((res) => console.log(res))
+        .catch((err) => console.log(err));
+    } else {
+      console.log('tlqkf');
     }
   };
 
   return (
     <Container>
       <ContentContainer
-        onSubmit={() => window.alert(JSON.stringify(registItemInfo))}
+        // onSubmit={() => window.alert(JSON.stringify(registItemInfo))}
+        onSubmit={(e) => {
+          e.preventDefault();
+          test(imgFile);
+        }}
       >
         <TitleBox>
           <img src={Arrow} />
@@ -61,7 +90,7 @@ const Registration = () => {
             </ImgUpload>
           </SelectBox>
           <ImgBox>
-            <ImgPreView src={imgFile} />
+            <ImgPreView src={imgSrc} />
             {/* 여기 이미지 없으면 뭐 들어갈지 고민 필요 */}
           </ImgBox>
         </ItemBox>

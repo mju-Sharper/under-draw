@@ -32,7 +32,7 @@ const PageNation = ({ products }: Props) => {
     if (currentPage % 5 === 1 || currentPage % 5 > 1) {
       setCurrentPageArray(sliceArray[Math.floor(currentPage / 5)]);
     }
-  }, [currentPage]);
+  }, [currentPage, totalPages]);
 
   if (totalPages) {
     return (
@@ -44,7 +44,7 @@ const PageNation = ({ products }: Props) => {
           <img src={Arrow} />
         </PrevBtnArrow>
         <PageNumWrap>
-          {currentPageArray.map((idx) => (
+          {currentPageArray?.map((idx) => (
             <div key={idx}>
               <div onClick={() => setCurrentPage(idx + 1)}>
                 {currentPage === idx + 1 ? (
