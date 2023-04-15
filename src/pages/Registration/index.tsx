@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
@@ -21,14 +21,29 @@ interface productIdInterface {
   productId: string;
 }
 const Registration = () => {
-  //props가아니라 라우터로 파라미터 넘기면 다른 방법으로 체킹해야되지않나
-  //선택할 때 해당 아이템 정보를 불러와야됨
   const productId: productIdInterface = useLocation()?.state;
   const navigate = useNavigate();
   const [registItemInfo, setReigstItemInfo] = useRecoilState(registInfo);
   const [imgFile, setImgFile] = useState<File>();
   const [imgSrc, setImgSrc] = useState(`${BaseImg}`);
   const imgRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (productId) {
+      getSpecialItem();
+    }
+  }, []);
+
+  const getSpecialItem = () => {
+    instanceAPI
+      .get(`products/${productId}`)
+      .then((res) => {
+        console.log(res.data);
+        const test = res.data;
+        setReigstItemInfo({ ...test });
+      })
+      .catch((err) => console.log(err));
+  };
 
   const saveImgFile = () => {
     if (imgRef.current && imgRef.current.files) {
@@ -148,7 +163,7 @@ const Registration = () => {
             </ImgUpload>
           </SelectBox>
           <ImgBox>
-            <ImgPreView src={imgSrc} />
+            <ImgPreView src={registItemInfo.imageUrl || imgSrc} />
             {/* 여기 이미지 없으면 뭐 들어갈지 고민 필요 */}
           </ImgBox>
         </ItemBox>

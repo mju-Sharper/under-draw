@@ -5,6 +5,7 @@ import { registInfo } from '../../atoms/registAtom';
 
 const DateInput = () => {
   const [content, setContent] = useRecoilState(registInfo);
+  const date = content.auctionTime?.substring(0, 10);
 
   return (
     <ItemBox>
@@ -12,6 +13,7 @@ const DateInput = () => {
       <Selector>
         <DateBox
           type="date"
+          value={date}
           onChange={(e) =>
             setContent({ ...content, auctionTime: e.target.value })
           }

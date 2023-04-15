@@ -3,7 +3,7 @@ interface productCategoryProps {
   id?: string;
   productTitle?: string;
   name?: string;
-  startingBid?: string;
+  startingBid?: number;
   imageUrl?: string;
   auctionTime?: string;
   category?: string;
