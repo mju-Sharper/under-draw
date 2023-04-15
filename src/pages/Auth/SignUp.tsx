@@ -74,7 +74,7 @@ const SignUp = () => {
 
     if (formValid) {
       return axios
-        .post(`${API}auth/signup`, {
+        .post(`${API}/auth/signup`, {
           ...userInfo,
         })
         .then((res) => {
