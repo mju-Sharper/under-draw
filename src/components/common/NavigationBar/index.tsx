@@ -1,15 +1,37 @@
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
-import { useResetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import LionMarket from '../../../assets/LionMarket.svg';
 import { categoryAtom } from '../../../atoms/categoryAtom';
+import { manageBtnAtom, manageListAtom } from '../../../atoms/manageAtom';
+import { instanceAPI } from '../../../utils/constant';
 import SearchInput from '../Search';
 import { showToastMessage } from '../Toast';
 
 const NavigationBar = () => {
+  const handleClickManageBtn = useSetRecoilState(manageBtnAtom);
+  const handleSetUserProducts = useSetRecoilState(manageListAtom);
+
+  const handleClickMainBtn = useResetRecoilState(manageBtnAtom);
   const returnCategory = useResetRecoilState(categoryAtom);
+
+  const handleReturn = () => {
+    handleClickMainBtn();
+    returnCategory();
+  };
+
+  const handleClickManage = () => {
+    handleClickManageBtn(true);
+
+    instanceAPI.get(`/products/user-products`).then((res) => {
+      if (res.status === 200) {
+        handleSetUserProducts(res.data.data);
+      }
+    });
+  };
+
   // 두 번째 인자는 setCookie이지만 사용하지 않아 빈 값으로 처리
   const [token, , removeCookie] = useCookies(['userToken']);
   const handleRemoveToken = () => {
@@ -19,11 +41,13 @@ const NavigationBar = () => {
 
   return (
     <NaviBarWrap>
-      <LogoWrap onClick={() => returnCategory()}>
+      <LogoWrap onClick={handleReturn}>
         <span>
           <img src={LionMarket} />
         </span>
-        <p>사자마켓</p>
+        <p>
+          <Link to="/">사자마켓</Link>
+        </p>
       </LogoWrap>
       <span style={{ position: 'absolute', left: '33.4%' }}>
         <SearchInput />
@@ -31,7 +55,7 @@ const NavigationBar = () => {
       <MenuWrap>
         {token.userToken ? (
           <ul>
-            <li>방 관리</li>
+            <li onClick={handleClickManage}>방 관리</li>
             <li>방 생성</li>
             <li onClick={handleRemoveToken}>로그아웃</li>
           </ul>

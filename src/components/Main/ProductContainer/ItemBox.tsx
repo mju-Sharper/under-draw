@@ -1,16 +1,23 @@
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
+import Delete from '../../../assets/Delete.svg';
 import Setting from '../../../assets/Setting.svg';
 import PhotoBox from '../../common/PhotoBox';
 
 interface ItemBoxProps {
   items?: productCategoryProps;
+  isClicked?: boolean;
 }
 
-// TODO API 연결 후 photo에 src 넣기
-// TODO API 연결 후 상품정보 넘기기
-const ItemBox = ({ items }: ItemBoxProps) => {
-  const testEditBtn = true;
+const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
+  const navigate = useNavigate();
+
+  // 여기 Registration으로 이동시에 props도 넘겨줄 수 있도록 ?
+  const handleMoveEditPage = () => {
+    navigate('/Registration');
+  };
+
   return (
     <>
       <ItemBoxWrap>
@@ -34,12 +41,15 @@ const ItemBox = ({ items }: ItemBoxProps) => {
             </li>
           </ProductInfoListWrap>
         </div>
-        {/* SettingBtn이 보이는 조건1: 방 관리 버튼 클릭 | 조건2: 판매 물품이 있을 시에만 해당 버튼 보이도록 */}
-        {/* 현재는 testBoolean 값으로 보여주게 놔두었습니다 */}
-        {testEditBtn && (
-          <SettingBtn>
-            <img src={Setting} />
-          </SettingBtn>
+        {isClicked && (
+          <>
+            <DeleteBtn>
+              <img src={Delete} />
+            </DeleteBtn>
+            <SettingBtn onClick={handleMoveEditPage}>
+              <img src={Setting} />
+            </SettingBtn>
+          </>
         )}
       </ItemBoxWrap>
     </>
@@ -81,6 +91,12 @@ const ProductInfoListWrap = styled.ul`
 const SettingBtn = styled.button`
   position: absolute;
   right: 22px;
+  bottom: 16px;
+`;
+
+const DeleteBtn = styled.button`
+  position: absolute;
+  right: 78px;
   bottom: 16px;
 `;
 
