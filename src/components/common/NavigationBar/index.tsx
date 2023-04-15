@@ -5,20 +5,31 @@ import styled from 'styled-components';
 
 import LionMarket from '../../../assets/LionMarket.svg';
 import { categoryAtom } from '../../../atoms/categoryAtom';
-import { manageBtnAtom } from '../../../atoms/manageBtnAtom';
+import { manageBtnAtom, manageListAtom } from '../../../atoms/manageAtom';
+import { instanceAPI } from '../../../utils/constant';
 import SearchInput from '../Search';
 import { showToastMessage } from '../Toast';
 
 const NavigationBar = () => {
-  // TODO 이걸로 방관리 판단하게 할지는 우선 API 나오고 더 확인해볼 예정
-  // 방 관리 클릭 시 true 변경
   const handleClickManageBtn = useSetRecoilState(manageBtnAtom);
+  const handleSetUserProducts = useSetRecoilState(manageListAtom);
+
   const handleClickMainBtn = useResetRecoilState(manageBtnAtom);
   const returnCategory = useResetRecoilState(categoryAtom);
 
   const handleReturn = () => {
     handleClickMainBtn();
     returnCategory();
+  };
+
+  const handleClickManage = () => {
+    handleClickManageBtn(true);
+
+    instanceAPI.get(`/products/user-products`).then((res) => {
+      if (res.status === 200) {
+        handleSetUserProducts(res.data.data);
+      }
+    });
   };
 
   // 두 번째 인자는 setCookie이지만 사용하지 않아 빈 값으로 처리
@@ -44,7 +55,7 @@ const NavigationBar = () => {
       <MenuWrap>
         {token.userToken ? (
           <ul>
-            <li onClick={() => handleClickManageBtn(true)}>방 관리</li>
+            <li onClick={handleClickManage}>방 관리</li>
             <li>방 생성</li>
             <li onClick={handleRemoveToken}>로그아웃</li>
           </ul>

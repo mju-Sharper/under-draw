@@ -10,12 +10,12 @@ interface ItemBoxProps {
   isClicked?: boolean;
 }
 
-// TODO API 연결 후 photo에 src 넣기
-// TODO API 연결 후 상품정보 넘기기
 const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
   const navigate = useNavigate();
+
+  // 여기 Registration으로 이동시에 props도 넘겨줄 수 있도록 ?
   const handleMoveEditPage = () => {
-    navigate('/edit-page');
+    navigate('/Registration');
   };
 
   return (
@@ -41,8 +41,6 @@ const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
             </li>
           </ProductInfoListWrap>
         </div>
-        {/* SettingBtn이 보이는 조건1: 방 관리 버튼 클릭 | 조건2: 판매 물품이 있을 시에만 해당 버튼 보이도록 */}
-        {/* 현재는 testBoolean 값으로 보여주게 놔두었습니다 */}
         {isClicked && (
           <>
             <DeleteBtn>
