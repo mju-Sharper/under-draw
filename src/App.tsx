@@ -28,7 +28,7 @@ function App() {
               path="/Registration"
               element={
                 // <Registration productId="b2055ec5-4cc8-445e-accc-b26e317c3215" />
-                <Registration productId="" />
+                <Registration />
               }
             />
             {/* productId있으면 업데이트 없으면 등록 */}

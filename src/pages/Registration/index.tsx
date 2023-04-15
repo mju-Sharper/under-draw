@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 
+import { useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -19,9 +20,10 @@ import type { registInterface } from '../../atoms/registAtom';
 interface productIdInterface {
   productId: string;
 }
-const Registration = ({ productId }: productIdInterface) => {
+const Registration = () => {
   //props가아니라 라우터로 파라미터 넘기면 다른 방법으로 체킹해야되지않나
   //선택할 때 해당 아이템 정보를 불러와야됨
+  const productId: productIdInterface = useLocation()?.state;
   const [registItemInfo, setReigstItemInfo] = useRecoilState(registInfo);
   const [imgFile, setImgFile] = useState<File>();
   const [imgSrc, setImgSrc] = useState(`${BaseImg}`);
