@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -24,6 +24,7 @@ const Registration = () => {
   //props가아니라 라우터로 파라미터 넘기면 다른 방법으로 체킹해야되지않나
   //선택할 때 해당 아이템 정보를 불러와야됨
   const productId: productIdInterface = useLocation()?.state;
+  const navigate = useNavigate();
   const [registItemInfo, setReigstItemInfo] = useRecoilState(registInfo);
   const [imgFile, setImgFile] = useState<File>();
   const [imgSrc, setImgSrc] = useState(`${BaseImg}`);
@@ -86,7 +87,7 @@ const Registration = () => {
   const deleteTest = () => {
     instanceAPI
       .delete(`products/${productId}`)
-      .then((res) => console.log(res))
+      .then(() => navigate('/'))
       .catch((err) => console.log(err));
   };
   const updateTest = () => {
@@ -108,7 +109,7 @@ const Registration = () => {
             ...registItemInfo,
             imageUrl: res.data.data.imageUrl,
           })
-          .then((res) => console.log(res))
+          .then(() => navigate('/'))
           .catch((err) => console.log(err));
       })
       .catch((err) => console.log(err));

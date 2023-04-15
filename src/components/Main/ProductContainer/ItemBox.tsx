@@ -42,7 +42,7 @@ const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
         </div>
         {isClicked && (
           <>
-            <DeleteBtn>
+            <DeleteBtn onClick={handleMoveEditPage}>
               <img src={Delete} />
             </DeleteBtn>
             <SettingBtn onClick={handleMoveEditPage}>
