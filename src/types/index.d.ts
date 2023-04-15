@@ -1,8 +1,10 @@
 // 임시 타입
 interface productCategoryProps {
+  id?: string;
   productTitle?: string;
-  productCategory?: string;
-  productName?: string;
-  productPrice?: string;
-  startTime?: string;
+  name?: string;
+  startingBid?: string;
+  imageUrl?: string;
+  auctionTime?: string;
+  category?: string;
 }
