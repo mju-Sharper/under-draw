@@ -12,14 +12,7 @@ interface ItemBoxProps {
 
 const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
   const navigate = useNavigate();
-  // const setCurrentItemInfo = useSetRecoilState(registInfo);
-  // 여기 Registration으로 이동시에 props도 넘겨줄 수 있도록 ?
   const handleMoveEditPage = () => {
-    // if (!items) return;
-    // if (!Object.keys(items).includes('')) {
-    //   setCurrentItemInfo(items);
-    // }
-
     navigate('/Registration', { state: items?.id });
   };
 
@@ -29,9 +22,9 @@ const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
         <PhotoBox src={items?.imageUrl} />
         <div style={{ marginLeft: '22px' }}>
           <ProductInfoListWrap>
-            <li>
+            {/* <li>
               제목 : <p>{items?.productTitle}</p>
-            </li>
+            </li> */}
             <li>
               품목 : <p>{items?.category}</p>
             </li>

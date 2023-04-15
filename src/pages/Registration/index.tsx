@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import Arrow from '../../assets/Arrow.svg';
@@ -24,6 +24,7 @@ const Registration = () => {
   const productId: productIdInterface = useLocation()?.state;
   const navigate = useNavigate();
   const [registItemInfo, setReigstItemInfo] = useRecoilState(registInfo);
+  const resetRegistItemInfo = useResetRecoilState(registInfo);
   const [imgFile, setImgFile] = useState<File>();
   const [imgSrc, setImgSrc] = useState(`${BaseImg}`);
   const imgRef = useRef<HTMLInputElement>(null);
@@ -31,6 +32,8 @@ const Registration = () => {
   useEffect(() => {
     if (productId) {
       getSpecialItem();
+    } else {
+      resetRegistItemInfo();
     }
   }, []);
 
@@ -38,9 +41,8 @@ const Registration = () => {
     instanceAPI
       .get(`products/${productId}`)
       .then((res) => {
-        console.log(res.data);
-        const test = res.data;
-        setReigstItemInfo({ ...test });
+        const selectedItem = res.data;
+        setReigstItemInfo({ ...selectedItem });
       })
       .catch((err) => console.log(err));
   };

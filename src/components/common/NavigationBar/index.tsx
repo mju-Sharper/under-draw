@@ -56,7 +56,9 @@ const NavigationBar = () => {
         {token.userToken ? (
           <ul>
             <li onClick={handleClickManage}>방 관리</li>
-            <li>방 생성</li>
+            <li>
+              <Link to="/Registration">방 생성</Link>
+            </li>
             <li onClick={handleRemoveToken}>로그아웃</li>
           </ul>
         ) : (
