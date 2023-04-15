@@ -42,7 +42,7 @@ const SignIn = () => {
 
     if (userId && password) {
       return axios
-        .post(`${API}/auth/signin`, { userId, password })
+        .post(`${API}auth/signin`, { userId, password })
         .then((res) => {
           if (res.status === 201) {
             const accessToken = res.data.data.accessToken;

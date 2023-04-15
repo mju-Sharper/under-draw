@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 
-import axios from 'axios';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -9,6 +8,7 @@ import BaseImg from '../../assets/BaseImg.png';
 import Plus from '../../assets/PlusButton.svg';
 import { registInfo } from '../../atoms/registAtom';
 import { BasicButton } from '../../components/common/BasicButton';
+import { instanceAPI } from '../../utils/constant';
 
 import DateInput from './DateInput';
 import DropDownBox from './DropDownBox';
@@ -16,7 +16,12 @@ import MenuInput from './MenuInput';
 
 import type { registInterface } from '../../atoms/registAtom';
 
-const Registration = () => {
+interface productIdInterface {
+  productId: string;
+}
+const Registration = ({ productId }: productIdInterface) => {
+  //props가아니라 라우터로 파라미터 넘기면 다른 방법으로 체킹해야되지않나
+  //선택할 때 해당 아이템 정보를 불러와야됨
   const [registItemInfo, setReigstItemInfo] = useRecoilState(registInfo);
   const [imgFile, setImgFile] = useState<File>();
   const [imgSrc, setImgSrc] = useState(`${BaseImg}`);
@@ -40,15 +45,14 @@ const Registration = () => {
 
   const imageUpload = (fileData: File | undefined) => {
     if (fileData) {
-      axios
+      instanceAPI
         .post(
-          `${process.env.REACT_APP_API_URL}products/image `,
+          `products/image `,
           {
             image: fileData,
           },
           {
             headers: {
-              Authorization: `bearer ${process.env.REACT_APP_ACCESS_TOKEN}`,
               'Content-Type': 'multipart/form-data',
             },
           },
@@ -68,17 +72,44 @@ const Registration = () => {
 
   const registInfoUpload = (registItemInfo: registInterface) => {
     if (registItemInfo) {
-      axios
-        .post(`${process.env.REACT_APP_API_URL}products `, registItemInfo, {
-          headers: {
-            Authorization: `bearer ${process.env.REACT_APP_ACCESS_TOKEN}`,
-          },
-        })
+      instanceAPI
+        .post(`products `, registItemInfo)
         .then((res) => console.log(res))
         .catch((err) => console.log(err));
     } else {
       console.log('실행이 안되었습니다');
     }
+  };
+
+  const deleteTest = () => {
+    instanceAPI
+      .delete(`products/${productId}`)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
+  const updateTest = () => {
+    instanceAPI
+      .post(
+        `products/image`,
+        {
+          image: imgFile,
+        },
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      )
+      .then((res) => {
+        instanceAPI
+          .patch(`products/${productId}`, {
+            ...registItemInfo,
+            imageUrl: res.data.data.imageUrl,
+          })
+          .then((res) => console.log(res))
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -124,9 +155,20 @@ const Registration = () => {
         >
           <img src={Plus} />
         </PlusButton>
-        <ReigstButton type="submit">
-          <RegistText>등록하기</RegistText>
-        </ReigstButton>
+        {productId ? (
+          <>
+            <ReigstButton type="button" onClick={() => updateTest()}>
+              <RegistText>수정하기</RegistText>
+            </ReigstButton>
+            <ReigstButton type="button" onClick={() => deleteTest()}>
+              <RegistText>품목삭제</RegistText>
+            </ReigstButton>
+          </>
+        ) : (
+          <ReigstButton type="submit">
+            <RegistText>등록하기</RegistText>
+          </ReigstButton>
+        )}
       </ContentContainer>
     </Container>
   );
@@ -231,10 +273,11 @@ const ImgUpload = styled.label`
 const ReigstButton = styled(BasicButton)`
   width: 200px;
   height: 50px;
-  margin: auto;
+  margin: 0 auto 32px;
 `;
 
 const RegistText = styled.p`
+  line-height: 50px;
   ${({ theme }) => theme.fonts.SB_POINT_20}
   color: ${({ theme }) => theme.colors.WHITE};
 `;

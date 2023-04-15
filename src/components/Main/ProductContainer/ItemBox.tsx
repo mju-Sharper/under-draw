@@ -12,7 +12,6 @@ interface ItemBoxProps {
 
 const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
   const navigate = useNavigate();
-
   // 여기 Registration으로 이동시에 props도 넘겨줄 수 있도록 ?
   const handleMoveEditPage = () => {
     navigate('/Registration');
