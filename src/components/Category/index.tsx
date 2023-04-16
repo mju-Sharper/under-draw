@@ -55,7 +55,7 @@ const CategoryListBox = () => {
           <span>
             <img src={`${item.icon}`} />
           </span>
-          {filter === `${item.id}` ? (
+          {filter === `${item.name}` ? (
             <p style={{ color: '#6462B9' }}>{item.name}</p>
           ) : (
             <p>{item.name}</p>
