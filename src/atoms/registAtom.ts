@@ -10,3 +10,11 @@ export const registInfo = atom({
     imageUrl: '',
   },
 });
+
+export interface registInterface {
+  category: string;
+  name: string;
+  startingBid: number;
+  auctionTime: string;
+  imageUrl: string;
+}

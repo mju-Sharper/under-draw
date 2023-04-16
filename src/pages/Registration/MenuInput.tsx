@@ -11,11 +11,14 @@ interface MenuInputProps {
 const MenuInput = ({ title, keyName }: MenuInputProps) => {
   const [content, setContent] = useRecoilState(registInfo);
   const inputType = keyName === 'startingBid' ? 'number' : 'text';
+  const currentValue =
+    keyName === 'startingBid' ? content.startingBid : content.name;
   return (
     <ItemBox>
       <ItemName>{title}</ItemName>
       <InputBox
         type={inputType}
+        value={currentValue}
         placeholder={`${title}을 입력해주세요`}
         onChange={(e) => setContent({ ...content, [keyName]: e.target.value })}
       />

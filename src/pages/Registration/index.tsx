@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import axios from 'axios';
-import { useRecoilState } from 'recoil';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useRecoilState, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import Arrow from '../../assets/Arrow.svg';
@@ -9,16 +9,43 @@ import BaseImg from '../../assets/BaseImg.png';
 import Plus from '../../assets/PlusButton.svg';
 import { registInfo } from '../../atoms/registAtom';
 import { BasicButton } from '../../components/common/BasicButton';
+import { instanceAPI } from '../../utils/constant';
 
 import DateInput from './DateInput';
 import DropDownBox from './DropDownBox';
 import MenuInput from './MenuInput';
 
+import type { registInterface } from '../../atoms/registAtom';
+
+interface productIdInterface {
+  productId: string;
+}
 const Registration = () => {
+  const productId: productIdInterface = useLocation()?.state;
+  const navigate = useNavigate();
   const [registItemInfo, setReigstItemInfo] = useRecoilState(registInfo);
+  const resetRegistItemInfo = useResetRecoilState(registInfo);
   const [imgFile, setImgFile] = useState<File>();
   const [imgSrc, setImgSrc] = useState(`${BaseImg}`);
   const imgRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (productId) {
+      getSpecialItem();
+    } else {
+      resetRegistItemInfo();
+    }
+  }, []);
+
+  const getSpecialItem = () => {
+    instanceAPI
+      .get(`products/${productId}`)
+      .then((res) => {
+        const selectedItem = res.data;
+        setReigstItemInfo({ ...selectedItem });
+      })
+      .catch((err) => console.log(err));
+  };
 
   const saveImgFile = () => {
     if (imgRef.current && imgRef.current.files) {
@@ -34,35 +61,83 @@ const Registration = () => {
     }
   };
 
-  const test = (fileData: File | undefined) => {
+  //이거 나중에 함수 분리하기
+
+  const imageUpload = (fileData: File | undefined) => {
     if (fileData) {
-      axios
+      instanceAPI
         .post(
-          `${process.env.REACT_APP_API_URL}/products/image `,
+          `products/image `,
           {
             image: fileData,
           },
           {
             headers: {
-              Authorization: `bearer ${process.env.REACT_APP_ACCESS_TOKEN}`,
               'Content-Type': 'multipart/form-data',
             },
           },
         )
+        .then((res) => {
+          setReigstItemInfo({
+            ...registItemInfo,
+            imageUrl: res.data.data.imageUrl,
+          });
+          registInfoUpload(registItemInfo);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      console.log('실행이 안되었습니다');
+    }
+  };
+
+  const registInfoUpload = (registItemInfo: registInterface) => {
+    if (registItemInfo) {
+      instanceAPI
+        .post(`products `, registItemInfo)
         .then((res) => console.log(res))
         .catch((err) => console.log(err));
     } else {
-      console.log('tlqkf');
+      console.log('실행이 안되었습니다');
     }
+  };
+
+  const deleteTest = () => {
+    instanceAPI
+      .delete(`products/${productId}`)
+      .then(() => navigate('/'))
+      .catch((err) => console.log(err));
+  };
+  const updateTest = () => {
+    instanceAPI
+      .post(
+        `products/image`,
+        {
+          image: imgFile,
+        },
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      )
+      .then((res) => {
+        instanceAPI
+          .patch(`products/${productId}`, {
+            ...registItemInfo,
+            imageUrl: res.data.data.imageUrl,
+          })
+          .then(() => navigate('/'))
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
     <Container>
       <ContentContainer
-        // onSubmit={() => window.alert(JSON.stringify(registItemInfo))}
         onSubmit={(e) => {
           e.preventDefault();
-          test(imgFile);
+          imageUpload(imgFile);
         }}
       >
         <TitleBox>
@@ -90,7 +165,7 @@ const Registration = () => {
             </ImgUpload>
           </SelectBox>
           <ImgBox>
-            <ImgPreView src={imgSrc} />
+            <ImgPreView src={registItemInfo.imageUrl || imgSrc} />
             {/* 여기 이미지 없으면 뭐 들어갈지 고민 필요 */}
           </ImgBox>
         </ItemBox>
@@ -100,9 +175,20 @@ const Registration = () => {
         >
           <img src={Plus} />
         </PlusButton>
-        <ReigstButton type="submit">
-          <RegistText>등록하기</RegistText>
-        </ReigstButton>
+        {productId ? (
+          <>
+            <ReigstButton type="button" onClick={() => updateTest()}>
+              <RegistText>수정하기</RegistText>
+            </ReigstButton>
+            <ReigstButton type="button" onClick={() => deleteTest()}>
+              <RegistText>품목삭제</RegistText>
+            </ReigstButton>
+          </>
+        ) : (
+          <ReigstButton type="submit">
+            <RegistText>등록하기</RegistText>
+          </ReigstButton>
+        )}
       </ContentContainer>
     </Container>
   );
@@ -207,10 +293,11 @@ const ImgUpload = styled.label`
 const ReigstButton = styled(BasicButton)`
   width: 200px;
   height: 50px;
-  margin: auto;
+  margin: 0 auto 32px;
 `;
 
 const RegistText = styled.p`
+  line-height: 50px;
   ${({ theme }) => theme.fonts.SB_POINT_20}
   color: ${({ theme }) => theme.colors.WHITE};
 `;

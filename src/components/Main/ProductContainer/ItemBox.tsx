@@ -12,10 +12,8 @@ interface ItemBoxProps {
 
 const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
   const navigate = useNavigate();
-
-  // 여기 Registration으로 이동시에 props도 넘겨줄 수 있도록 ?
   const handleMoveEditPage = () => {
-    navigate('/Registration');
+    navigate('/Registration', { state: items?.id });
   };
 
   return (
@@ -24,9 +22,9 @@ const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
         <PhotoBox src={items?.imageUrl} />
         <div style={{ marginLeft: '22px' }}>
           <ProductInfoListWrap>
-            <li>
+            {/* <li>
               제목 : <p>{items?.productTitle}</p>
-            </li>
+            </li> */}
             <li>
               품목 : <p>{items?.category}</p>
             </li>
@@ -43,7 +41,7 @@ const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
         </div>
         {isClicked && (
           <>
-            <DeleteBtn>
+            <DeleteBtn onClick={handleMoveEditPage}>
               <img src={Delete} />
             </DeleteBtn>
             <SettingBtn onClick={handleMoveEditPage}>
