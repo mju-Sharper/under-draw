@@ -94,7 +94,10 @@ const Registration = () => {
     if (registItemInfo) {
       instanceAPI
         .post(`products `, registItemInfo)
-        .then((res) => console.log(res))
+        .then((res) => {
+          console.log(res);
+          navigate('/');
+        })
         .catch((err) => console.log(err));
     } else {
       console.log('실행이 안되었습니다');
