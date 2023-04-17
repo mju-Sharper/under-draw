@@ -32,7 +32,7 @@ const PageNation = ({ productsLength }: Props) => {
     if (clickPageNum % 5 === 1 || clickPageNum % 5 > 1) {
       setCurrentPageArray(sliceArray[Math.floor(clickPageNum / 5)]);
     }
-  }, [totalPages]);
+  }, [clickPageNum, totalPages]);
 
   if (totalPages) {
     return (
