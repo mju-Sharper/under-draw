@@ -89,6 +89,7 @@ const NaviBarWrap = styled.div`
   margin: 0 auto;
   padding: 0 50px;
   background-color: ${({ theme }) => theme.colors.NAVY};
+  z-index: 10;
 `;
 
 const LogoWrap = styled.div`
