@@ -12,6 +12,7 @@ interface Props {
   isClicked?: boolean;
 }
 
+// TODO 페이지네이션 로직 전부 수정하기
 // 페이지네이션 3개까지만 보일 수 있도록 offset을 활용해 slice
 const ProductContainer = ({ products, isClicked }: Props) => {
   const offset = (useRecoilValue(PageOffset) - 1) * 3;
@@ -25,7 +26,12 @@ const ProductContainer = ({ products, isClicked }: Props) => {
   return (
     <ProductBoxWrap>
       {products?.slice(offset, offset + 3).map((item) => (
-        <ItemBox key={item.productTitle} items={item} isClicked={isClicked} />
+        <ItemBox
+          key={item.productTitle}
+          items={item}
+          isClicked={isClicked}
+          productsId={item.id}
+        />
       ))}
     </ProductBoxWrap>
   );
