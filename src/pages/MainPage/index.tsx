@@ -4,18 +4,21 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { categoryAtom } from '../../atoms/categoryAtom';
-import { manageBtnAtom, manageListAtom } from '../../atoms/manageAtom';
+import {
+  manageBtnAtom,
+  manageListAtom,
+  manageListLength,
+} from '../../atoms/manageAtom';
 import { pageNum } from '../../atoms/pageNumAtom';
 import CategoryListBox from '../../components/Category';
 import PageNation from '../../components/Main/PageNation';
 import ProductContainer from '../../components/Main/ProductContainer';
 import { instanceAPI } from '../../utils/constant';
 
-// TODO ProductContainer/SearchContainer/MyRoomContainer 상황에 맞게 렌더링되도록 구현해보기
-// 넘어가는 products의 값이 다르도록?
 const MainPage = () => {
   const isClickManageBtn = useRecoilValue(manageBtnAtom);
   const userProducts = useRecoilValue(manageListAtom);
+  const userProductsLength = useRecoilValue(manageListLength);
   const currentCategory = useRecoilValue(categoryAtom);
   const currentPageNum = useRecoilValue(pageNum);
 
@@ -53,7 +56,11 @@ const MainPage = () => {
       </CategoryAside>
       <MainContentBox>
         <ProductContainer products={productList} isClicked={isClickManageBtn} />
-        <PageNation productsLength={totalPageLength} />
+        <PageNation
+          productsLength={
+            isClickManageBtn ? userProductsLength : totalPageLength
+          }
+        />
       </MainContentBox>
     </MainPageWrap>
   );
