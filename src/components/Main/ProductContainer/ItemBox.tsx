@@ -8,6 +8,7 @@ import PhotoBox from '../../common/PhotoBox';
 interface ItemBoxProps {
   items?: productCategoryProps;
   isClicked?: boolean;
+  productsId?: string;
 }
 
 const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
@@ -16,11 +17,17 @@ const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
     navigate('/Registration', { state: items?.id });
   };
 
+  // TODO room페이지 컴포넌트로 넘어갈 때 정보 넘겨줘야함
+  // TODO 내가 만든 방인지 다른 사람 방인지 검증 후, 보여주는 room 화면 다르도록 해야함
+  const handleMoveRoom = () => {
+    navigate('/room');
+  };
+
   return (
     <>
       <ItemBoxWrap>
         <PhotoBox src={items?.imageUrl} />
-        <div style={{ marginLeft: '22px' }}>
+        <div style={{ marginLeft: '22px' }} onClick={handleMoveRoom}>
           <ProductInfoListWrap>
             {/* <li>
               제목 : <p>{items?.productTitle}</p>

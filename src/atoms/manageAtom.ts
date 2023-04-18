@@ -9,3 +9,8 @@ export const manageListAtom = atom({
   key: 'manageListAtom',
   default: [],
 });
+
+export const manageListLength = atom({
+  key: 'manageListLength',
+  default: 0,
+});

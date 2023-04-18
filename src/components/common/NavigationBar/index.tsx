@@ -5,7 +5,11 @@ import styled from 'styled-components';
 
 import LionMarket from '../../../assets/LionMarket.svg';
 import { categoryAtom } from '../../../atoms/categoryAtom';
-import { manageBtnAtom, manageListAtom } from '../../../atoms/manageAtom';
+import {
+  manageBtnAtom,
+  manageListAtom,
+  manageListLength,
+} from '../../../atoms/manageAtom';
 import { instanceAPI } from '../../../utils/constant';
 import SearchInput from '../Search';
 import { showToastMessage } from '../Toast';
@@ -13,6 +17,7 @@ import { showToastMessage } from '../Toast';
 const NavigationBar = () => {
   const handleClickManageBtn = useSetRecoilState(manageBtnAtom);
   const handleSetUserProducts = useSetRecoilState(manageListAtom);
+  const handleSetUserProductsLength = useSetRecoilState(manageListLength);
 
   const handleClickMainBtn = useResetRecoilState(manageBtnAtom);
   const returnCategory = useResetRecoilState(categoryAtom);
@@ -25,8 +30,9 @@ const NavigationBar = () => {
   const handleClickManage = () => {
     handleClickManageBtn(true);
 
-    instanceAPI.get(`/products/user-products`).then((res) => {
+    return instanceAPI.get(`products/user-products`).then((res) => {
       if (res.status === 200) {
+        handleSetUserProductsLength(res.data.meta.itemCount);
         handleSetUserProducts(res.data.data);
       }
     });
@@ -89,6 +95,7 @@ const NaviBarWrap = styled.div`
   margin: 0 auto;
   padding: 0 50px;
   background-color: ${({ theme }) => theme.colors.NAVY};
+  z-index: 10;
 `;
 
 const LogoWrap = styled.div`

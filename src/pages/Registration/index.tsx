@@ -94,7 +94,10 @@ const Registration = () => {
     if (registItemInfo) {
       instanceAPI
         .post(`products `, registItemInfo)
-        .then((res) => console.log(res))
+        .then((res) => {
+          console.log(res);
+          navigate('/');
+        })
         .catch((err) => console.log(err));
     } else {
       console.log('실행이 안되었습니다');
@@ -140,7 +143,7 @@ const Registration = () => {
           imageUpload(imgFile);
         }}
       >
-        <TitleBox>
+        <TitleBox onClick={() => navigate('/')}>
           <img src={Arrow} />
           <Title>제목</Title>
         </TitleBox>
@@ -228,6 +231,7 @@ const Title = styled.p`
 `;
 
 const BreakLine = styled.div`
+  width: 700px;
   height: 3px;
   margin-top: 32px;
   background-color: ${({ theme }) => theme.colors.WHITE};
@@ -236,7 +240,7 @@ const BreakLine = styled.div`
 const ItemBox = styled.div`
   display: flex;
   height: 265px;
-  margin-top: 53px;
+  margin-top: 53px; // TODO 여기 margin이랑 BrakeLine이랑 안 맞아서 라인이 안 보이네요! 수정필요할 것 같습니다!
   border-radius: 15px;
   background-color: #1e1e1e; //얜 또 따로놈
 `;
