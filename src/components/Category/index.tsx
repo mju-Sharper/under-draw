@@ -2,6 +2,7 @@ import { useRecoilState, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { categoryAtom } from '../../atoms/categoryAtom';
+import { searchItemAtom } from '../../atoms/searchItemAtom';
 import { categoryItemList } from '../../utils/mock';
 
 // TODO atom selector 활용해봐도 괜찮을듯,, => 필요없어서 없앱니다!
@@ -34,6 +35,8 @@ import { categoryItemList } from '../../utils/mock';
 
 const CategoryListBox = () => {
   const [filter, setFilter] = useRecoilState(categoryAtom);
+  const [searchItem] = useRecoilState(searchItemAtom);
+  const resetSearchItem = useResetRecoilState(searchItemAtom);
   const resetFilter = useResetRecoilState(categoryAtom);
 
   return (
@@ -48,6 +51,9 @@ const CategoryListBox = () => {
             if (item.name === '기타') {
               resetFilter();
               return;
+            }
+            if (searchItem) {
+              resetSearchItem();
             }
             setFilter(item.name);
           }}
