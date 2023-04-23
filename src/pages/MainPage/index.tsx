@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { categoryAtom } from '../../atoms/categoryAtom';
@@ -10,6 +10,7 @@ import {
   manageListLength,
 } from '../../atoms/manageAtom';
 import { pageNum } from '../../atoms/pageNumAtom';
+import { searchItemAtom } from '../../atoms/searchItemAtom';
 import CategoryListBox from '../../components/Category';
 import PageNation from '../../components/Main/PageNation';
 import ProductContainer from '../../components/Main/ProductContainer';
@@ -21,16 +22,27 @@ const MainPage = () => {
   const userProductsLength = useRecoilValue(manageListLength);
   const currentCategory = useRecoilValue(categoryAtom);
   const currentPageNum = useRecoilValue(pageNum);
+  const currentSearchItem = useRecoilValue(searchItemAtom);
+
+  const resetCategory = useResetRecoilState(categoryAtom);
 
   const [totalPageLength, setTotalPageLength] = useState(0);
   const [products, setProducts] = useState([]);
   const productList = isClickManageBtn ? userProducts : products;
 
-  const getProduct = (currentCategory: string, currentPageNum: number) => {
+  const getProduct = (
+    currentCategory: string,
+    currentPageNum: number,
+    currentSearchItem: string,
+  ) => {
     instanceAPI
       .get(
         `products`,
-        currentCategory
+        currentSearchItem
+          ? {
+              params: { page: 1, search: currentSearchItem },
+            }
+          : currentCategory
           ? {
               params: { category: currentCategory, page: currentPageNum },
             }
@@ -41,13 +53,16 @@ const MainPage = () => {
       .then((res) => {
         setTotalPageLength(res.data.meta.itemCount);
         setProducts(res.data.data);
+        if (currentSearchItem) {
+          resetCategory();
+        }
       })
       .catch((err) => console.log(err));
   };
 
   useEffect(() => {
-    getProduct(currentCategory, currentPageNum);
-  }, [currentCategory, currentPageNum]);
+    getProduct(currentCategory, currentPageNum, currentSearchItem);
+  }, [currentCategory, currentPageNum, currentSearchItem]);
 
   return (
     <MainPageWrap>
