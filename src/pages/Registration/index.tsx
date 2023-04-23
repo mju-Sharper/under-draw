@@ -103,8 +103,6 @@ const Registration = () => {
       console.log('실행이 안되었습니다');
     }
   };
-
-  //delete, update 성공시 atom으로 관리해서 리렌더링시키고, 리렌더링하면 다시 atom값 초기화하기
   //console은 나중에 삭제하기
   const deleteTest = () => {
     instanceAPI
@@ -113,28 +111,35 @@ const Registration = () => {
       .catch((err) => console.log(err));
   };
   const updateTest = () => {
-    instanceAPI
-      .post(
-        `products/image`,
-        {
-          image: imgFile,
-        },
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        },
-      )
-      .then((res) => {
-        instanceAPI
+    imgFile
+      ? instanceAPI
+          .post(
+            `products/image`,
+            {
+              image: imgFile,
+            },
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            },
+          )
+          .then((res) => {
+            instanceAPI
+              .patch(`products/${productId}`, {
+                ...registItemInfo,
+                imageUrl: res.data.data.imageUrl,
+              })
+              .then(() => navigate('/'))
+              .catch((err) => console.log(err));
+          })
+          .catch((err) => console.log(err))
+      : instanceAPI
           .patch(`products/${productId}`, {
             ...registItemInfo,
-            imageUrl: res.data.data.imageUrl,
           })
           .then(() => navigate('/'))
           .catch((err) => console.log(err));
-      })
-      .catch((err) => console.log(err));
   };
 
   return (
