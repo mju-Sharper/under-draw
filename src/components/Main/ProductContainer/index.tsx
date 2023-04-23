@@ -4,6 +4,7 @@ import { useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { pageNum } from '../../../atoms/pageNumAtom';
+import GuideBox from '../../common/GuideBox';
 
 import ItemBox from './ItemBox';
 
@@ -22,14 +23,20 @@ const ProductContainer = ({ products, isClicked }: Props) => {
 
   return (
     <ProductBoxWrap>
-      {products.map((item) => (
-        <ItemBox
-          key={item.productTitle}
-          items={item}
-          isClicked={isClicked}
-          productsId={item.id}
-        />
-      ))}
+      {products.length === 0 ? (
+        <GuideBox msg="상품이 없어요!" />
+      ) : (
+        <>
+          {products.map((item) => (
+            <ItemBox
+              key={item.productTitle}
+              items={item}
+              isClicked={isClicked}
+              productsId={item.id}
+            />
+          ))}
+        </>
+      )}
     </ProductBoxWrap>
   );
 };
