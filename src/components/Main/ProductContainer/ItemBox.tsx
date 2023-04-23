@@ -3,7 +3,9 @@ import styled from 'styled-components';
 
 import Delete from '../../../assets/Delete.svg';
 import Setting from '../../../assets/Setting.svg';
+import { getCookie } from '../../../utils/constant';
 import PhotoBox from '../../common/PhotoBox';
+import { showToastMessage } from '../../common/Toast';
 
 interface ItemBoxProps {
   items?: productCategoryProps;
@@ -12,6 +14,7 @@ interface ItemBoxProps {
 }
 
 const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
+  const accessToken = getCookie();
   const navigate = useNavigate();
   const handleMoveEditPage = () => {
     navigate('/Registration', { state: items?.id });
@@ -20,7 +23,9 @@ const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
   // TODO room페이지 컴포넌트로 넘어갈 때 정보 넘겨줘야함
   // TODO 내가 만든 방인지 다른 사람 방인지 검증 후, 보여주는 room 화면 다르도록 해야함
   const handleMoveRoom = () => {
-    navigate('/room');
+    accessToken
+      ? navigate('/room')
+      : showToastMessage('로그인 후 이용해주세요!');
   };
 
   return (
