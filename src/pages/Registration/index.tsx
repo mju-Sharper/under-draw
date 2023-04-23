@@ -104,6 +104,8 @@ const Registration = () => {
     }
   };
 
+  //delete, update 성공시 atom으로 관리해서 리렌더링시키고, 리렌더링하면 다시 atom값 초기화하기
+  //console은 나중에 삭제하기
   const deleteTest = () => {
     instanceAPI
       .delete(`products/${productId}`)

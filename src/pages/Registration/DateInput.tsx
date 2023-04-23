@@ -14,8 +14,9 @@ const DateInput = () => {
         <DateBox
           type="date"
           value={date}
-          onChange={(e) =>
-            setContent({ ...content, auctionTime: e.target.value })
+          onChange={
+            (e) => setContent({ ...content, auctionTime: e.target.value })
+            // 이것도 선택한 날짜가 오늘보다 이전이면 선택 안되게 바꿔야됨
           }
         />
       </Selector>

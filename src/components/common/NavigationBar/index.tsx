@@ -17,6 +17,8 @@ import { showToastMessage } from '../Toast';
 const NavigationBar = () => {
   const handleClickManageBtn = useSetRecoilState(manageBtnAtom);
   const handleSetUserProducts = useSetRecoilState(manageListAtom);
+  //관리자에 관련된 데이터들을 전역으로 관리하려고 하셨던 스페셜한 이유가 혹시 있으실까요?
+  //페이지 네이션 적용하시기 전이라서 그런가요?
   const handleSetUserProductsLength = useSetRecoilState(manageListLength);
 
   const handleClickMainBtn = useResetRecoilState(manageBtnAtom);
@@ -34,6 +36,7 @@ const NavigationBar = () => {
       if (res.status === 200) {
         handleSetUserProductsLength(res.data.meta.itemCount);
         handleSetUserProducts(res.data.data);
+        //주석 21라인이 클리어되면 해당 atom은 필요없을수도 있을 것 같습니다.
       }
     });
   };
