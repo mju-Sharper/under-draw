@@ -5,34 +5,6 @@ import { categoryAtom } from '../../atoms/categoryAtom';
 import { searchItemAtom } from '../../atoms/searchItemAtom';
 import { categoryItemList } from '../../utils/mock';
 
-// TODO atom selector 활용해봐도 괜찮을듯,, => 필요없어서 없앱니다!
-// const getCategroyfromFilter = (filter: string) => {
-//   switch (filter) {
-//     case '전자제품':
-//       return 'electronic';
-//     case '아웃도어·스포츠·골프':
-//       return 'outdoor';
-//     case '가구':
-//       return 'furniture';
-//     case '귀금속':
-//       return 'jewellery';
-//     case '자동차':
-//       return 'car';
-//     case '패션·잡화·뷰티':
-//       return 'fashion';
-//     case '사무':
-//       return 'office';
-//     case '주류':
-//       return 'drink';
-//     case '집':
-//       return 'house';
-//     case '기타':
-//       return 'other';
-//     default:
-//       return 'default';
-//   }
-// };
-
 const CategoryListBox = () => {
   const [filter, setFilter] = useRecoilState(categoryAtom);
   const [searchItem] = useRecoilState(searchItemAtom);

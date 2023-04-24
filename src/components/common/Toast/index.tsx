@@ -5,10 +5,6 @@ export const showToastMessage = (msg: string) => {
   toast(msg);
 };
 
-// export const showToastNoToken = () => {
-//   toast('로그인 후 이용해주세요!');
-// };
-
 export const Toast = () => (
   <ToastWrap
     limit={1}
