@@ -42,7 +42,8 @@ const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
               시작가 : <p>{items?.startingBid}</p>
             </li>
             <li>
-              경매 시간 : <p>{items?.auctionTime}</p>
+              경매 날짜 : <p>{items?.auctionTime?.substring(0, 10)}</p>
+              {/* 위에껀 데이터 베이스 밀고나서 등록할 때, 등록할 때 부터 substring하게끔. 데이터베이스 밀면 수정 */}
             </li>
           </ProductInfoListWrap>
         </div>
