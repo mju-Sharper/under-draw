@@ -8,6 +8,7 @@ import { manageBtnAtom, manageListLength } from '../../atoms/manageAtom';
 import { pageNum } from '../../atoms/pageNumAtom';
 import { searchItemAtom } from '../../atoms/searchItemAtom';
 import CategoryListBox from '../../components/Category';
+import { showToastMessage } from '../../components/common/Toast';
 import PageNation from '../../components/Main/PageNation';
 import ProductContainer from '../../components/Main/ProductContainer';
 import { instanceAPI } from '../../utils/constant';
@@ -58,7 +59,7 @@ const MainPage = () => {
           resetCategory();
         }
       })
-      .catch((err) => console.log(err));
+      .catch(() => showToastMessage('데이터를 불러오는데 실패했습니다.'));
   };
 
   useEffect(() => {
