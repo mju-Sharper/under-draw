@@ -9,6 +9,7 @@ import BaseImg from '../../assets/BaseImg.png';
 import Plus from '../../assets/PlusButton.svg';
 import { registInfo } from '../../atoms/registAtom';
 import { BasicButton } from '../../components/common/BasicButton';
+import { showToastMessage } from '../../components/common/Toast';
 import { instanceAPI } from '../../utils/constant';
 
 import DateInput from './DateInput';
@@ -44,7 +45,7 @@ const Registration = () => {
         const selectedItem = res.data;
         setReigstItemInfo({ ...selectedItem });
       })
-      .catch((err) => console.log(err));
+      .catch(() => showToastMessage('데이터를 불러오는데 실패했습니다.'));
   };
 
   const saveImgFile = () => {
@@ -84,9 +85,9 @@ const Registration = () => {
           });
           registInfoUpload(registItemInfo);
         })
-        .catch((err) => console.log(err));
+        .catch(() => showToastMessage('이미지 등록에 실패했습니다.'));
     } else {
-      console.log('실행이 안되었습니다');
+      showToastMessage('이미지 파일을 선택해주세요');
     }
   };
 
@@ -94,45 +95,55 @@ const Registration = () => {
     if (registItemInfo) {
       instanceAPI
         .post(`products `, registItemInfo)
-        .then((res) => {
-          console.log(res);
+        .then(() => {
           navigate('/');
         })
-        .catch((err) => console.log(err));
+        .catch(() => showToastMessage('제품 등록에 실패했습니다.'));
     } else {
-      console.log('실행이 안되었습니다');
+      showToastMessage('제품 정보를 모두 알맞게 입력해주세요');
     }
   };
-
+  //console은 나중에 삭제하기
   const deleteTest = () => {
     instanceAPI
       .delete(`products/${productId}`)
       .then(() => navigate('/'))
-      .catch((err) => console.log(err));
+      .catch(() => showToastMessage('제품을 삭제하는데 실패했습니다.'));
   };
   const updateTest = () => {
-    instanceAPI
-      .post(
-        `products/image`,
-        {
-          image: imgFile,
-        },
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        },
-      )
-      .then((res) => {
-        instanceAPI
+    imgFile
+      ? instanceAPI
+          .post(
+            `products/image`,
+            {
+              image: imgFile,
+            },
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            },
+          )
+          .then((res) => {
+            instanceAPI
+              .patch(`products/${productId}`, {
+                ...registItemInfo,
+                imageUrl: res.data.data.imageUrl,
+              })
+              .then(() => navigate('/'))
+              .catch(() =>
+                showToastMessage('제품 정보를 수정하는데 실패했습니다.'),
+              );
+          })
+          .catch(() => showToastMessage('이미지 등록에 실패했습니다.'))
+      : instanceAPI
           .patch(`products/${productId}`, {
             ...registItemInfo,
-            imageUrl: res.data.data.imageUrl,
           })
           .then(() => navigate('/'))
-          .catch((err) => console.log(err));
-      })
-      .catch((err) => console.log(err));
+          .catch(() =>
+            showToastMessage('제품 정보를 수정하는데 실패했습니다.'),
+          );
   };
 
   return (

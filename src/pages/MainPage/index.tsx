@@ -4,21 +4,19 @@ import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { categoryAtom } from '../../atoms/categoryAtom';
-import {
-  manageBtnAtom,
-  manageListAtom,
-  manageListLength,
-} from '../../atoms/manageAtom';
+import { manageBtnAtom, manageListLength } from '../../atoms/manageAtom';
 import { pageNum } from '../../atoms/pageNumAtom';
 import { searchItemAtom } from '../../atoms/searchItemAtom';
 import CategoryListBox from '../../components/Category';
+import { showToastMessage } from '../../components/common/Toast';
 import PageNation from '../../components/Main/PageNation';
 import ProductContainer from '../../components/Main/ProductContainer';
 import { instanceAPI } from '../../utils/constant';
 
 const MainPage = () => {
   const isClickManageBtn = useRecoilValue(manageBtnAtom);
-  const userProducts = useRecoilValue(manageListAtom);
+  //const userProducts = useRecoilValue(manageListAtom);
+  //관리창 넘어올 때 관리자에 해당되는 아이템들만 그려와야되니까 해당 로직 변경했습니다!
   const userProductsLength = useRecoilValue(manageListLength);
   const currentCategory = useRecoilValue(categoryAtom);
   const currentPageNum = useRecoilValue(pageNum);
@@ -28,7 +26,11 @@ const MainPage = () => {
 
   const [totalPageLength, setTotalPageLength] = useState(0);
   const [products, setProducts] = useState([]);
-  const productList = isClickManageBtn ? userProducts : products;
+  // const productList = isClickManageBtn ? userProducts : products;
+  const requestRouter = isClickManageBtn
+    ? 'products/user-products'
+    : `products`;
+  //관리자일때랑 일반 유저일때랑 받아와야하는 아이템리스트가 다르므로 라우터 분리.
 
   const getProduct = (
     currentCategory: string,
@@ -37,7 +39,7 @@ const MainPage = () => {
   ) => {
     instanceAPI
       .get(
-        `products`,
+        `${requestRouter}`,
         currentSearchItem
           ? {
               params: { page: 1, search: currentSearchItem },
@@ -57,7 +59,7 @@ const MainPage = () => {
           resetCategory();
         }
       })
-      .catch((err) => console.log(err));
+      .catch(() => showToastMessage('데이터를 불러오는데 실패했습니다.'));
   };
 
   useEffect(() => {
@@ -70,7 +72,7 @@ const MainPage = () => {
         <CategoryListBox />
       </CategoryAside>
       <MainContentBox>
-        <ProductContainer products={productList} isClicked={isClickManageBtn} />
+        <ProductContainer products={products} isClicked={isClickManageBtn} />
         <PageNation
           productsLength={
             isClickManageBtn ? userProductsLength : totalPageLength
