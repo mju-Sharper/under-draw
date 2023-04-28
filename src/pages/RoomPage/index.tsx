@@ -1,11 +1,14 @@
+import { useEffect } from 'react';
+
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import Arrow from '../../assets/Arrow.svg';
 import Keyboard from '../../assets/Keyboard.svg';
 import { BasicButton } from '../../components/common/BasicButton';
+import { showToastMessage } from '../../components/common/Toast';
 
 import UserBox from './UserBox';
-
 // 당연한거지만 나중에 데이터 받아오면 map함수 돌릴겁니다, 목업으로 해놓기엔 데이터 포맷을 모르겠어서
 
 const PERCENT_ARRAY = [1, 3, 5, 10];
@@ -27,75 +30,93 @@ const USER_ARRAY = [
   '',
 ];
 
-const RoomPage = () => (
-  <Container>
-    <TradeContainer>
-      <ItemInfoBox>
-        <ImgBox />
-        <InfoBox>
-          <TitleAndTimeBox>
-            <Content>제목: 중고차 3대 경매</Content>
-            <TimeContent>시간: 3월 11일 19시 30분</TimeContent>
-          </TitleAndTimeBox>
-          <Content>품목 : 자동차</Content>
-          <Content>품명 : 아반떼..?</Content>
-          <Content>시작가 : 1000만원</Content>
-        </InfoBox>
-      </ItemInfoBox>
-      <CommunicationBox>
-        <StatusBox>
-          <BettingContent>이름 : 10,000,000만원 입찰</BettingContent>
-          <BettingContent>이름 : 15,000,000만원 입찰</BettingContent>
-          {/* 이건 채팅인데 어떻게 받아오려나...배열인가 */}
-        </StatusBox>
-        <StatusBox>
-          <KeyBoardBox>
-            <KeyBoard type="text" />
+const RoomPage = () => {
+  const selectedItemInfo = useLocation()?.state;
+  const { createdAt, name, startingBid, category, imageUrl } = selectedItemInfo;
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!selectedItemInfo) {
+      showToastMessage('선택된 아이템이 없습니다.');
+      navigate('/');
+    } else {
+      console.log(selectedItemInfo);
+      console.log(imageUrl);
+      console.log('여기에서 이제 api찔러서 어드민인지 오너인지 체킁');
+    }
+  }, []);
+
+  return (
+    <Container>
+      <TradeContainer>
+        <ItemInfoBox>
+          <ImgBox>
+            <Image src={imageUrl} />
+          </ImgBox>
+          <InfoBox>
+            <TitleAndTimeBox>
+              <Content>제목: 중고차 3대 경매</Content>
+              <TimeContent>시간: {createdAt}</TimeContent>
+            </TitleAndTimeBox>
+            <Content>품목 : {category}</Content>
+            <Content>품명 : {name}</Content>
+            <Content>시작가 : {startingBid}</Content>
+          </InfoBox>
+        </ItemInfoBox>
+        <CommunicationBox>
+          <StatusBox>
+            <BettingContent>이름 : 10,000,000만원 입찰</BettingContent>
+            <BettingContent>이름 : 15,000,000만원 입찰</BettingContent>
+            {/* 이건 채팅인데 어떻게 받아오려나...배열인가 */}
+          </StatusBox>
+          <StatusBox>
+            <KeyBoardBox>
+              <KeyBoard type="text" />
+              <button onClick={() => window.alert('ㅎㅇ')}>
+                <KeyBoardImg src={Keyboard} />
+              </button>
+            </KeyBoardBox>
+            <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
+            <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
+            <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
+            {/* 이건 채팅인데 어떻게 받아오려나...배열인가 */}
+          </StatusBox>
+        </CommunicationBox>
+        <BettingBox>
+          <BettingCurrent>
+            <BettingText>TIME COUNT : 10:00</BettingText>
+          </BettingCurrent>
+          {/* 이거 나중에 리팩터링 분해하기 */}
+          <PercentButtonBox>
+            {PERCENT_ARRAY.map((item, index) => (
+              <PercentButton key={index}>
+                <BettingText>{item} %</BettingText>
+              </PercentButton>
+            ))}
+          </PercentButtonBox>
+          <BettingCurrent>
+            <BettingText>Point : 11,000,000 원</BettingText>
+          </BettingCurrent>
+          <BettingButton>
+            <BettingText>입찰하기</BettingText>
+          </BettingButton>
+        </BettingBox>
+      </TradeContainer>
+      <UserContainer>
+        <>
+          <CurrentUserCount>현재 접속자수 : 300명</CurrentUserCount>
+          <CurrentUserBox>
             <button onClick={() => window.alert('ㅎㅇ')}>
-              <KeyBoardImg src={Keyboard} />
+              <ArrowImg src={Arrow} />
             </button>
-          </KeyBoardBox>
-          <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
-          <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
-          <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
-          {/* 이건 채팅인데 어떻게 받아오려나...배열인가 */}
-        </StatusBox>
-      </CommunicationBox>
-      <BettingBox>
-        <BettingCurrent>
-          <BettingText>TIME COUNT : 10:00</BettingText>
-        </BettingCurrent>
-        {/* 이거 나중에 리팩터링 분해하기 */}
-        <PercentButtonBox>
-          {PERCENT_ARRAY.map((item, index) => (
-            <PercentButton key={index}>
-              <BettingText>{item} %</BettingText>
-            </PercentButton>
-          ))}
-        </PercentButtonBox>
-        <BettingCurrent>
-          <BettingText>Point : 11,000,000 원</BettingText>
-        </BettingCurrent>
-        <BettingButton>
-          <BettingText>입찰하기</BettingText>
-        </BettingButton>
-      </BettingBox>
-    </TradeContainer>
-    <UserContainer>
-      <>
-        <CurrentUserCount>현재 접속자수 : 300명</CurrentUserCount>
-        <CurrentUserBox>
-          <button onClick={() => window.alert('ㅎㅇ')}>
-            <ArrowImg src={Arrow} />
-          </button>
-          {USER_ARRAY.map((item, index) => (
-            <UserBox key={index} name={item} />
-          ))}
-        </CurrentUserBox>
-      </>
-    </UserContainer>
-  </Container>
-);
+            {USER_ARRAY.map((item, index) => (
+              <UserBox key={index} name={item} />
+            ))}
+          </CurrentUserBox>
+        </>
+      </UserContainer>
+    </Container>
+  );
+};
 const ArrowImg = styled.img`
   position: relative;
   /* CurrentUserBox 기준으로 계산 */
@@ -123,6 +144,12 @@ const TradeContainer = styled.div`
   width: 945px;
   height: 778px;
   margin: auto;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
 `;
 
 const ItemInfoBox = styled.div`
