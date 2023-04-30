@@ -1,8 +1,12 @@
+import { useEffect, useState } from 'react';
+
+import { io } from 'socket.io-client';
 import styled from 'styled-components';
 
 import Arrow from '../../assets/Arrow.svg';
 import Keyboard from '../../assets/Keyboard.svg';
 import { BasicButton } from '../../components/common/BasicButton';
+import { API, getCookie } from '../../utils/constant';
 
 import UserBox from './UserBox';
 
@@ -27,75 +31,115 @@ const USER_ARRAY = [
   '',
 ];
 
-const RoomPage = () => (
-  <Container>
-    <TradeContainer>
-      <ItemInfoBox>
-        <ImgBox />
-        <InfoBox>
-          <TitleAndTimeBox>
-            <Content>제목: 중고차 3대 경매</Content>
-            <TimeContent>시간: 3월 11일 19시 30분</TimeContent>
-          </TitleAndTimeBox>
-          <Content>품목 : 자동차</Content>
-          <Content>품명 : 아반떼..?</Content>
-          <Content>시작가 : 1000만원</Content>
-        </InfoBox>
-      </ItemInfoBox>
-      <CommunicationBox>
-        <StatusBox>
-          <BettingContent>이름 : 10,000,000만원 입찰</BettingContent>
-          <BettingContent>이름 : 15,000,000만원 입찰</BettingContent>
-          {/* 이건 채팅인데 어떻게 받아오려나...배열인가 */}
-        </StatusBox>
-        <StatusBox>
-          <KeyBoardBox>
-            <KeyBoard type="text" />
+const RoomPage = () => {
+  const socket = io(`${API}`, {
+    withCredentials: true,
+    transports: ['polling'],
+
+    // 재연결 횟수 정신없어서 2번으로 임시로 고정
+    reconnectionAttempts: 2,
+
+    // 4.x.x 버전에서는 cors로 속성 없음. transportOptions내부에서 수정해야 함
+    transportOptions: {
+      polling: {
+        extraHeaders: {
+          'access-control-allow-origin': '*',
+          // 서버 코드에서 jwt [1] 확인하므로 토큰도 보내기
+          Authorization: `Bearer ${getCookie()}`,
+        },
+      },
+    },
+  });
+
+  const [sendMsg, setSendMsg] = useState('');
+  const handleChangeMsg = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSendMsg(e.target.value);
+  };
+  const handleRequestMsg = () => {
+    console.log(sendMsg);
+  };
+
+  useEffect(() => {
+    // 서버에서 emit으로 보내주는 환영메세지 확인해보기
+    socket.on('alert', (message) => {
+      alert(message);
+    });
+  }, []);
+
+  return (
+    <Container>
+      <TradeContainer>
+        <ItemInfoBox>
+          <ImgBox />
+          <InfoBox>
+            <TitleAndTimeBox>
+              <Content>제목: 중고차 3대 경매</Content>
+              <TimeContent>시간: 3월 11일 19시 30분</TimeContent>
+            </TitleAndTimeBox>
+            <Content>품목 : 자동차</Content>
+            <Content>품명 : 아반떼..?</Content>
+            <Content>시작가 : 1000만원</Content>
+          </InfoBox>
+        </ItemInfoBox>
+        <CommunicationBox>
+          <StatusBox>
+            <BettingContent>이름 : 10,000,000만원 입찰</BettingContent>
+            <BettingContent>이름 : 15,000,000만원 입찰</BettingContent>
+            {/* 이건 채팅인데 어떻게 받아오려나...배열인가 */}
+          </StatusBox>
+          <StatusBox>
+            <KeyBoardBox>
+              <KeyBoard
+                type="text"
+                value={sendMsg}
+                onChange={handleChangeMsg}
+              />
+              <button onClick={handleRequestMsg}>
+                <KeyBoardImg src={Keyboard} />
+              </button>
+            </KeyBoardBox>
+            <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
+            <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
+            <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
+            {/* 이건 채팅인데 어떻게 받아오려나...배열인가 */}
+          </StatusBox>
+        </CommunicationBox>
+        <BettingBox>
+          <BettingCurrent>
+            <BettingText>TIME COUNT : 10:00</BettingText>
+          </BettingCurrent>
+          {/* 이거 나중에 리팩터링 분해하기 */}
+          <PercentButtonBox>
+            {PERCENT_ARRAY.map((item, index) => (
+              <PercentButton key={index}>
+                <BettingText>{item} %</BettingText>
+              </PercentButton>
+            ))}
+          </PercentButtonBox>
+          <BettingCurrent>
+            <BettingText>Point : 11,000,000 원</BettingText>
+          </BettingCurrent>
+          <BettingButton>
+            <BettingText>입찰하기</BettingText>
+          </BettingButton>
+        </BettingBox>
+      </TradeContainer>
+      <UserContainer>
+        <>
+          <CurrentUserCount>현재 접속자수 : 300명</CurrentUserCount>
+          <CurrentUserBox>
             <button onClick={() => window.alert('ㅎㅇ')}>
-              <KeyBoardImg src={Keyboard} />
+              <ArrowImg src={Arrow} />
             </button>
-          </KeyBoardBox>
-          <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
-          <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
-          <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
-          {/* 이건 채팅인데 어떻게 받아오려나...배열인가 */}
-        </StatusBox>
-      </CommunicationBox>
-      <BettingBox>
-        <BettingCurrent>
-          <BettingText>TIME COUNT : 10:00</BettingText>
-        </BettingCurrent>
-        {/* 이거 나중에 리팩터링 분해하기 */}
-        <PercentButtonBox>
-          {PERCENT_ARRAY.map((item, index) => (
-            <PercentButton key={index}>
-              <BettingText>{item} %</BettingText>
-            </PercentButton>
-          ))}
-        </PercentButtonBox>
-        <BettingCurrent>
-          <BettingText>Point : 11,000,000 원</BettingText>
-        </BettingCurrent>
-        <BettingButton>
-          <BettingText>입찰하기</BettingText>
-        </BettingButton>
-      </BettingBox>
-    </TradeContainer>
-    <UserContainer>
-      <>
-        <CurrentUserCount>현재 접속자수 : 300명</CurrentUserCount>
-        <CurrentUserBox>
-          <button onClick={() => window.alert('ㅎㅇ')}>
-            <ArrowImg src={Arrow} />
-          </button>
-          {USER_ARRAY.map((item, index) => (
-            <UserBox key={index} name={item} />
-          ))}
-        </CurrentUserBox>
-      </>
-    </UserContainer>
-  </Container>
-);
+            {USER_ARRAY.map((item, index) => (
+              <UserBox key={index} name={item} />
+            ))}
+          </CurrentUserBox>
+        </>
+      </UserContainer>
+    </Container>
+  );
+};
 const ArrowImg = styled.img`
   position: relative;
   /* CurrentUserBox 기준으로 계산 */
