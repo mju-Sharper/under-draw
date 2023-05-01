@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -7,11 +7,12 @@ import Arrow from '../../assets/Arrow.svg';
 import Keyboard from '../../assets/Keyboard.svg';
 import { BasicButton } from '../../components/common/BasicButton';
 import { showToastMessage } from '../../components/common/Toast';
+import { instanceAPI } from '../../utils/constant';
 
 import UserBox from './UserBox';
 // 당연한거지만 나중에 데이터 받아오면 map함수 돌릴겁니다, 목업으로 해놓기엔 데이터 포맷을 모르겠어서
-
-const PERCENT_ARRAY = [1, 3, 5, 10];
+const PERCENT_ARRAY = ['1%', '3%', '5%', '10%'];
+const CONTROL_ARRAY = ['START', 'NEXT', 'STOP', 'RESET'];
 const USER_ARRAY = [
   'User 1',
   'User 2',
@@ -32,16 +33,21 @@ const USER_ARRAY = [
 
 const RoomPage = () => {
   const selectedItemInfo = useLocation()?.state;
-  const { createdAt, name, startingBid, category, imageUrl } = selectedItemInfo;
+  const { createdAt, name, startingBid, category, imageUrl, id } =
+    selectedItemInfo;
   const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const buttonArray = isAdmin ? CONTROL_ARRAY : PERCENT_ARRAY;
   useEffect(() => {
     if (!selectedItemInfo) {
       showToastMessage('선택된 아이템이 없습니다.');
       navigate('/');
     } else {
       console.log(selectedItemInfo);
-      console.log(imageUrl);
-      console.log('여기에서 이제 api찔러서 어드민인지 오너인지 체킁');
+      instanceAPI
+        .get(`auth/admin/${id}`)
+        .then((res) => setIsAdmin(res.data.data.isAdmin))
+        .catch(() => showToastMessage('유효하지 않은 상품id입니다.'));
     }
   }, []);
 
@@ -87,18 +93,22 @@ const RoomPage = () => {
           </BettingCurrent>
           {/* 이거 나중에 리팩터링 분해하기 */}
           <PercentButtonBox>
-            {PERCENT_ARRAY.map((item, index) => (
+            {buttonArray.map((item, index) => (
               <PercentButton key={index}>
-                <BettingText>{item} %</BettingText>
+                <BettingText>{item}</BettingText>
               </PercentButton>
             ))}
           </PercentButtonBox>
-          <BettingCurrent>
-            <BettingText>Point : 11,000,000 원</BettingText>
-          </BettingCurrent>
-          <BettingButton>
-            <BettingText>입찰하기</BettingText>
-          </BettingButton>
+          {!isAdmin && (
+            <>
+              <BettingCurrent>
+                <BettingText>Point : 11,000,000 원</BettingText>
+              </BettingCurrent>
+              <BettingButton>
+                <BettingText>입찰하기</BettingText>
+              </BettingButton>
+            </>
+          )}
         </BettingBox>
       </TradeContainer>
       <UserContainer>
@@ -181,7 +191,6 @@ const StatusBox = styled.div`
 const BettingBox = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
   width: 400px;
   height: 230px;
@@ -281,7 +290,7 @@ const KeyBoardImg = styled.img`
 const BettingCurrent = styled.div`
   width: 400px;
   height: 40px;
-  margin: 0 auto;
+  margin: 0 auto 23px;
   background-color: ${({ theme }) => theme.colors.NAVY};
   border-radius: 5px;
   display: flex;
@@ -292,11 +301,10 @@ const BettingCurrent = styled.div`
 const PercentButtonBox = styled.div`
   width: 400px;
   height: 40px;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 auto;
+  margin: 0 auto 23px;
 `;
 
 const PercentButton = styled.button`
