@@ -23,7 +23,7 @@ const CategoryListBox = () => {
             if (searchItem) {
               resetSearchItem();
             }
-            if (item.name === '기타') {
+            if (item.name === 'ETC') {
               resetFilter();
               //순서때문에 실행되지 않았던 것 해결
               //리셋이기때문에 테마가 적용되지 않습니다.
