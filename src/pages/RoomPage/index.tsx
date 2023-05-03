@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { io } from 'socket.io-client';
 import styled from 'styled-components';
@@ -10,40 +10,21 @@ import { API, getCookie } from '../../utils/constant';
 
 import UserBox from './UserBox';
 
-// 당연한거지만 나중에 데이터 받아오면 map함수 돌릴겁니다, 목업으로 해놓기엔 데이터 포맷을 모르겠어서
-
 const PERCENT_ARRAY = [1, 3, 5, 10];
-const USER_ARRAY = [
-  'User 1',
-  'User 2',
-  'User 3',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-];
+
+type chatProps = socketChatMsg;
 
 const RoomPage = () => {
-  const socket = io(`${API}`, {
-    withCredentials: true,
-    transports: ['polling'],
-
-    // 재연결 횟수 정신없어서 2번으로 임시로 고정
+  const users = ['1', '2'];
+  const [sendMsg, setSendMsg] = useState(''); // 입력한 채팅
+  const [chat, setChat] = useState<chatProps[]>([]); // 받아올 채팅
+  // const [users, setUsers] = useState<string[]>([]); // 유저 목록
+  const socket = io(`${API}1`, {
     reconnectionAttempts: 2,
-
-    // 4.x.x 버전에서는 cors로 속성 없음. transportOptions내부에서 수정해야 함
+    transports: ['polling'],
     transportOptions: {
       polling: {
         extraHeaders: {
-          'access-control-allow-origin': '*',
           // 서버 코드에서 jwt [1] 확인하므로 토큰도 보내기
           Authorization: `Bearer ${getCookie()}`,
         },
@@ -51,20 +32,62 @@ const RoomPage = () => {
     },
   });
 
-  const [sendMsg, setSendMsg] = useState('');
-  const handleChangeMsg = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSendMsg(e.target.value);
-  };
-  const handleRequestMsg = () => {
-    console.log(sendMsg);
+  const handleChangeMsg = (message: string) => {
+    setSendMsg(message);
   };
 
+  // TODO socket userList 부분을 해결해야 구해와서 userId, isAdmin에 넣을 수 있을듯
+  const handleRequestMsg = () => {
+    if (socket && sendMsg.trim() !== '') {
+      const message = {
+        message: sendMsg,
+        // userInfo: {
+        //   userId: 'testId',
+        //   isAdmin: false,
+        // },
+      };
+      socket.emit('message', message);
+      setSendMsg('');
+    }
+  };
+
+  // const handleAlert = (alertMsg: string) => {
+  //   alert(alertMsg);
+  // };
+
+  // const handleUserList = (list: socketUserList) => {
+  //   const userSet = new Set<string>(
+  //     list.connectedUsers.map((user: socketUserListType) => user.userId),
+  //   );
+  //   const userArray = Array.from<string>(userSet);
+  //   setUsers((prevUsers) => {
+  //     if (prevUsers.length === 0) {
+  //       return userArray;
+  //     } else {
+  //       return prevUsers;
+  //     }
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   socket.on('alert', handleAlert);
+
+  //   return () => {
+  //     socket.off('alert', handleAlert);
+  //   };
+  // }, []);
+
   useEffect(() => {
-    // 서버에서 emit으로 보내주는 환영메세지 확인해보기
-    socket.on('alert', (message) => {
-      alert(message);
-    });
-  }, []);
+    if (!socket) return;
+    const handleReceiveMessage = (message: socketChatMsg) => {
+      setChat((prevMessages) => [...prevMessages, message]);
+    };
+    socket.on('message', handleReceiveMessage);
+    console.log(chat);
+    return () => {
+      socket.off('message', handleReceiveMessage);
+    };
+  }, [socket]);
 
   return (
     <Container>
@@ -92,7 +115,7 @@ const RoomPage = () => {
               <KeyBoard
                 type="text"
                 value={sendMsg}
-                onChange={handleChangeMsg}
+                onChange={(e) => handleChangeMsg(e.target.value)}
               />
               <button onClick={handleRequestMsg}>
                 <KeyBoardImg src={Keyboard} />
@@ -126,12 +149,12 @@ const RoomPage = () => {
       </TradeContainer>
       <UserContainer>
         <>
-          <CurrentUserCount>현재 접속자수 : 300명</CurrentUserCount>
+          <CurrentUserCount>현재 접속자수 : {users.length}명</CurrentUserCount>
           <CurrentUserBox>
             <button onClick={() => window.alert('ㅎㅇ')}>
               <ArrowImg src={Arrow} />
             </button>
-            {USER_ARRAY.map((item, index) => (
+            {users.map((item, index) => (
               <UserBox key={index} name={item} />
             ))}
           </CurrentUserBox>
@@ -335,4 +358,4 @@ const BettingText = styled.p`
   ${({ theme }) => theme.fonts.B_POINT_20}
   color: ${({ theme }) => theme.colors.WHITE};
 `;
-export default RoomPage;
+export default React.memo(RoomPage);

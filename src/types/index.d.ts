@@ -8,3 +8,20 @@ interface productCategoryProps {
   auctionTime?: string;
   category?: string;
 }
+
+interface socketUserList {
+  connectedUsers: socketUserListType[];
+}
+
+interface socketUserListType {
+  userId: string;
+  isAdmin: boolean;
+}
+
+interface socketChatMsg {
+  message: string;
+  userInfo: {
+    userId: string;
+    isAdmin: boolean;
+  };
+}
