@@ -21,7 +21,7 @@ const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
   };
   const handleMoveRoom = () => {
     accessToken
-      ? navigate('/room')
+      ? navigate('/room', { state: items })
       : showToastMessage('로그인 후 이용해주세요!');
   };
 

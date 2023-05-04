@@ -3,16 +3,19 @@
 // eslint 잠시 주석처리 해두었습니다. 해결후에 다 지울예정
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import Arrow from '../../assets/Arrow.svg';
 import Keyboard from '../../assets/Keyboard.svg';
 import { BasicButton } from '../../components/common/BasicButton';
-import { socket } from '../../utils/constant';
+import { showToastMessage } from '../../components/common/Toast';
+import { socket, instanceAPI } from '../../utils/constant';
 
 import UserBox from './UserBox';
 
-const PERCENT_ARRAY = [1, 3, 5, 10];
+const PERCENT_ARRAY = ['1%', '3%', '5%', '10%'];
+const CONTROL_ARRAY = ['START', 'NEXT', 'STOP', 'RESET'];
 
 type chatProps = socketChatMsg;
 
@@ -22,6 +25,26 @@ const RoomPage = () => {
   const [chat, setChat] = useState<chatProps[]>([]); // 받아올 채팅
   const [users, setUsers] = useState<string[]>([]); // 유저 목록
   const [isInitialLoad, setIsInitialLoad] = useState(false); // 유저 목록이 다 받아졌는지 확인(렌더링이 여러번 일어나서 필요할듯)
+
+  const selectedItemInfo = useLocation()?.state;
+  const { createdAt, name, startingBid, category, imageUrl, id } =
+    selectedItemInfo;
+  const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const buttonArray = isAdmin ? CONTROL_ARRAY : PERCENT_ARRAY;
+
+  useEffect(() => {
+    if (!selectedItemInfo) {
+      showToastMessage('선택된 아이템이 없습니다.');
+      navigate('/');
+    } else {
+      console.log(selectedItemInfo);
+      instanceAPI
+        .get(`auth/admin/${id}`)
+        .then((res) => setIsAdmin(res.data.data.isAdmin))
+        .catch(() => showToastMessage('유효하지 않은 상품id입니다.'));
+    }
+  }, []);
 
   const handleChangeMsg = (message: string) => {
     setSendMsg(message);
@@ -68,15 +91,17 @@ const RoomPage = () => {
     <Container>
       <TradeContainer>
         <ItemInfoBox>
-          <ImgBox />
+          <ImgBox>
+            <Image src={imageUrl} />
+          </ImgBox>
           <InfoBox>
             <TitleAndTimeBox>
               <Content>제목: 중고차 3대 경매</Content>
-              <TimeContent>시간: 3월 11일 19시 30분</TimeContent>
+              <TimeContent>시간: {createdAt}</TimeContent>
             </TitleAndTimeBox>
-            <Content>품목 : 자동차</Content>
-            <Content>품명 : 아반떼..?</Content>
-            <Content>시작가 : 1000만원</Content>
+            <Content>품목 : {category}</Content>
+            <Content>품명 : {name}</Content>
+            <Content>시작가 : {startingBid}</Content>
           </InfoBox>
         </ItemInfoBox>
         <CommunicationBox>
@@ -87,12 +112,8 @@ const RoomPage = () => {
           </StatusBox>
           <StatusBox>
             <KeyBoardBox>
-              <KeyBoard
-                type="text"
-                value={sendMsg}
-                onChange={(e) => handleChangeMsg(e.target.value)}
-              />
-              <button>
+              <KeyBoard type="text" />
+              <button onClick={() => window.alert('ㅎㅇ')}>
                 <KeyBoardImg src={Keyboard} />
               </button>
             </KeyBoardBox>
@@ -108,26 +129,27 @@ const RoomPage = () => {
           </BettingCurrent>
           {/* 이거 나중에 리팩터링 분해하기 */}
           <PercentButtonBox>
-            {PERCENT_ARRAY.map((item, index) => (
+            {buttonArray.map((item, index) => (
               <PercentButton key={index}>
-                <BettingText>{item} %</BettingText>
+                <BettingText>{item}</BettingText>
               </PercentButton>
             ))}
           </PercentButtonBox>
-          <BettingCurrent>
-            <BettingText>Point : 11,000,000 원</BettingText>
-          </BettingCurrent>
-          <BettingButton>
-            <BettingText>입찰하기</BettingText>
-          </BettingButton>
+          {!isAdmin && (
+            <>
+              <BettingCurrent>
+                <BettingText>Point : 11,000,000 원</BettingText>
+              </BettingCurrent>
+              <BettingButton>
+                <BettingText>입찰하기</BettingText>
+              </BettingButton>
+            </>
+          )}
         </BettingBox>
       </TradeContainer>
       <UserContainer>
         <>
-          <CurrentUserCount>
-            {/* <p>현재 접속자수 : {users.length}명</p> */}
-            ㅇㅇ
-          </CurrentUserCount>
+          <CurrentUserCount>현재 접속자수 : 300명</CurrentUserCount>
           <CurrentUserBox>
             <button onClick={() => window.alert('ㅎㅇ')}>
               <ArrowImg src={Arrow} />
@@ -171,6 +193,12 @@ const TradeContainer = styled.div`
   margin: auto;
 `;
 
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+`;
+
 const ItemInfoBox = styled.div`
   display: flex;
   flex-direction: row;
@@ -200,7 +228,6 @@ const StatusBox = styled.div`
 const BettingBox = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
   width: 400px;
   height: 230px;
@@ -301,7 +328,7 @@ const KeyBoardImg = styled.img`
 const BettingCurrent = styled.div`
   width: 400px;
   height: 40px;
-  margin: 0 auto;
+  margin: 0 auto 23px;
   background-color: ${({ theme }) => theme.colors.NAVY};
   border-radius: 5px;
   display: flex;
@@ -312,11 +339,10 @@ const BettingCurrent = styled.div`
 const PercentButtonBox = styled.div`
   width: 400px;
   height: 40px;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 auto;
+  margin: 0 auto 23px;
 `;
 
 const PercentButton = styled.button`

@@ -270,6 +270,9 @@ const InputBox = styled.div`
 `;
 
 const ImgBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 230px;
   height: 163px;
   border-radius: 15px;
@@ -282,8 +285,8 @@ const PlusButton = styled.button`
 `;
 
 const ImgPreView = styled.img`
-  width: 100%;
-  height: 100%;
+  /* width: 100%;
+  height: 100%; 일단 지워놓고 */
   border-radius: 15px;
   object-fit: cover;
 `;
