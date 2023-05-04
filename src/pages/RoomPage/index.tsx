@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable autofix/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// eslint 잠시 주석처리 해두었습니다. 해결후에 다 지울예정
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { io } from 'socket.io-client';
 import styled from 'styled-components';
 
 import Arrow from '../../assets/Arrow.svg';
 import Keyboard from '../../assets/Keyboard.svg';
 import { BasicButton } from '../../components/common/BasicButton';
-import { API, getCookie } from '../../utils/constant';
+import { socket } from '../../utils/constant';
 
 import UserBox from './UserBox';
 
@@ -15,79 +17,52 @@ const PERCENT_ARRAY = [1, 3, 5, 10];
 type chatProps = socketChatMsg;
 
 const RoomPage = () => {
-  const users = ['1', '2'];
+  const roomSocket = socket('1'); // TODO 원래는 room id값을 넘겨줘야 함
   const [sendMsg, setSendMsg] = useState(''); // 입력한 채팅
   const [chat, setChat] = useState<chatProps[]>([]); // 받아올 채팅
-  // const [users, setUsers] = useState<string[]>([]); // 유저 목록
-  const socket = io(`${API}1`, {
-    reconnectionAttempts: 2,
-    transports: ['polling'],
-    transportOptions: {
-      polling: {
-        extraHeaders: {
-          // 서버 코드에서 jwt [1] 확인하므로 토큰도 보내기
-          Authorization: `Bearer ${getCookie()}`,
-        },
-      },
-    },
-  });
+  const [users, setUsers] = useState<string[]>([]); // 유저 목록
+  const [isInitialLoad, setIsInitialLoad] = useState(false); // 유저 목록이 다 받아졌는지 확인(렌더링이 여러번 일어나서 필요할듯)
 
   const handleChangeMsg = (message: string) => {
     setSendMsg(message);
   };
 
-  // TODO socket userList 부분을 해결해야 구해와서 userId, isAdmin에 넣을 수 있을듯
-  const handleRequestMsg = () => {
-    if (socket && sendMsg.trim() !== '') {
-      const message = {
-        message: sendMsg,
-        // userInfo: {
-        //   userId: 'testId',
-        //   isAdmin: false,
-        // },
-      };
-      socket.emit('message', message);
-      setSendMsg('');
-    }
-  };
-
-  // const handleAlert = (alertMsg: string) => {
-  //   alert(alertMsg);
-  // };
-
-  // const handleUserList = (list: socketUserList) => {
-  //   const userSet = new Set<string>(
-  //     list.connectedUsers.map((user: socketUserListType) => user.userId),
-  //   );
-  //   const userArray = Array.from<string>(userSet);
-  //   setUsers((prevUsers) => {
-  //     if (prevUsers.length === 0) {
-  //       return userArray;
-  //     } else {
-  //       return prevUsers;
-  //     }
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   socket.on('alert', handleAlert);
-
-  //   return () => {
-  //     socket.off('alert', handleAlert);
-  //   };
-  // }, []);
+  // 중복제거 함수를 최적화
+  const removeDuplicates = useCallback((list: socketUserListType[]) => {
+    const userSet = new Set<string>(
+      list.map((user: socketUserListType) => user.userId),
+    );
+    return Array.from(userSet);
+  }, []);
 
   useEffect(() => {
-    if (!socket) return;
-    const handleReceiveMessage = (message: socketChatMsg) => {
-      setChat((prevMessages) => [...prevMessages, message]);
-    };
-    socket.on('message', handleReceiveMessage);
-    console.log(chat);
+    roomSocket.on('userList', (list) => {
+      setUsers((prevUsers) => {
+        // 처음 렌더링 후에만 유저 목록 업데이트
+        if (!isInitialLoad) {
+          setIsInitialLoad(true);
+          return removeDuplicates(list.connectedUsers);
+        }
+        return prevUsers;
+      });
+    });
+
     return () => {
-      socket.off('message', handleReceiveMessage);
+      roomSocket.off('userList');
     };
-  }, [socket]);
+  }, [setUsers, isInitialLoad, removeDuplicates]);
+
+  useEffect(() => {
+    if (isInitialLoad) {
+      roomSocket.on('alert', (message) => alert(message));
+    }
+
+    return () => {
+      roomSocket.off('alert');
+    };
+  }, [isInitialLoad]);
+
+  console.log(users);
 
   return (
     <Container>
@@ -117,7 +92,7 @@ const RoomPage = () => {
                 value={sendMsg}
                 onChange={(e) => handleChangeMsg(e.target.value)}
               />
-              <button onClick={handleRequestMsg}>
+              <button>
                 <KeyBoardImg src={Keyboard} />
               </button>
             </KeyBoardBox>
@@ -149,14 +124,18 @@ const RoomPage = () => {
       </TradeContainer>
       <UserContainer>
         <>
-          <CurrentUserCount>현재 접속자수 : {users.length}명</CurrentUserCount>
+          <CurrentUserCount>
+            {/* <p>현재 접속자수 : {users.length}명</p> */}
+            ㅇㅇ
+          </CurrentUserCount>
           <CurrentUserBox>
             <button onClick={() => window.alert('ㅎㅇ')}>
               <ArrowImg src={Arrow} />
             </button>
-            {users.map((item, index) => (
+            ㅇㅇ
+            {/* {users.map((item, index) => (
               <UserBox key={index} name={item} />
-            ))}
+            ))} */}
           </CurrentUserBox>
         </>
       </UserContainer>
@@ -292,6 +271,7 @@ const ChatContent = styled(Content)`
   ${({ theme }) => theme.fonts.B_POINT_17}
   margin: 5px 0px; //임의판단
   margin-left: 35px;
+  background-color: skyblue;
 `;
 
 const KeyBoardBox = styled.div`
