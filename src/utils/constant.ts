@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Cookies } from 'react-cookie';
+import { io } from 'socket.io-client';
 
 // 토큰 가져오기
 const cookie = new Cookies();
@@ -12,6 +13,22 @@ export const API = process.env.REACT_APP_API_URL;
 export const instanceAPI = axios.create({
   baseURL: `${API}`,
 });
+
+// 소켓 라이브러리 설정
+// 네비게이션 바 컴포넌트에서도 활용할 수 있도록 이곳에 설정해봤습니다.
+export const socket = (roomId: string) =>
+  io(`${API}${roomId}`, {
+    reconnectionAttempts: 1,
+    transports: ['polling'],
+    transportOptions: {
+      polling: {
+        extraHeaders: {
+          // 서버 코드에서 jwt [1] 확인하므로 토큰도 보내기
+          Authorization: `Bearer ${getCookie()}`,
+        },
+      },
+    },
+  });
 
 // 리프레시 토큰 없어서 우선 request만 정의
 instanceAPI.interceptors.request.use(
