@@ -1,7 +1,7 @@
 /* eslint-disable autofix/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // eslint 잠시 주석처리 해두었습니다. 해결후에 다 지울예정
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -10,7 +10,8 @@ import Arrow from '../../assets/Arrow.svg';
 import Keyboard from '../../assets/Keyboard.svg';
 import { BasicButton } from '../../components/common/BasicButton';
 import { showToastMessage } from '../../components/common/Toast';
-import { socket, instanceAPI } from '../../utils/constant';
+import { instanceAPI } from '../../utils/constant';
+import { socket } from '../../utils/socket';
 
 import UserBox from './UserBox';
 
@@ -19,12 +20,17 @@ const CONTROL_ARRAY = ['START', 'NEXT', 'STOP', 'RESET'];
 
 type chatProps = socketChatMsg;
 
+type User = {
+  userId: string;
+  isAdmin: boolean;
+};
+
+const roomSocket = socket('1'); // TODO 원래는 room id값을 넘겨줘야 함
+
 const RoomPage = () => {
-  const roomSocket = socket('1'); // TODO 원래는 room id값을 넘겨줘야 함
   const [sendMsg, setSendMsg] = useState(''); // 입력한 채팅
   const [chat, setChat] = useState<chatProps[]>([]); // 받아올 채팅
-  const [users, setUsers] = useState<string[]>([]); // 유저 목록
-  const [isInitialLoad, setIsInitialLoad] = useState(false); // 유저 목록이 다 받아졌는지 확인(렌더링이 여러번 일어나서 필요할듯)
+  const [users, setUsers] = useState<User[]>([]); // 유저 목록
 
   const selectedItemInfo = useLocation()?.state;
   const { createdAt, name, startingBid, category, imageUrl, id } =
@@ -50,42 +56,19 @@ const RoomPage = () => {
     setSendMsg(message);
   };
 
-  // 중복제거 함수를 최적화
-  const removeDuplicates = useCallback((list: socketUserListType[]) => {
-    const userSet = new Set<string>(
-      list.map((user: socketUserListType) => user.userId),
-    );
-    return Array.from(userSet);
-  }, []);
-
   useEffect(() => {
     roomSocket.on('userList', (list) => {
-      setUsers((prevUsers) => {
-        // 처음 렌더링 후에만 유저 목록 업데이트
-        if (!isInitialLoad) {
-          setIsInitialLoad(true);
-          return removeDuplicates(list.connectedUsers);
-        }
-        return prevUsers;
-      });
+      console.log('userList', list);
+      setUsers(list.connectedUsers);
     });
+    // roomSocket.on('alert', (message) => console.log(message));
 
     return () => {
+      console.log('return function');
       roomSocket.off('userList');
+      // roomSocket.off('alert');
     };
-  }, [setUsers, isInitialLoad, removeDuplicates]);
-
-  useEffect(() => {
-    if (isInitialLoad) {
-      roomSocket.on('alert', (message) => alert(message));
-    }
-
-    return () => {
-      roomSocket.off('alert');
-    };
-  }, [isInitialLoad]);
-
-  console.log(users);
+  }, []);
 
   return (
     <Container>
@@ -113,7 +96,7 @@ const RoomPage = () => {
           <StatusBox>
             <KeyBoardBox>
               <KeyBoard type="text" />
-              <button onClick={() => window.alert('ㅎㅇ')}>
+              <button onClick={() => console.log('ㅎㅇ')}>
                 <KeyBoardImg src={Keyboard} />
               </button>
             </KeyBoardBox>
@@ -151,7 +134,7 @@ const RoomPage = () => {
         <>
           <CurrentUserCount>현재 접속자수 : 300명</CurrentUserCount>
           <CurrentUserBox>
-            <button onClick={() => window.alert('ㅎㅇ')}>
+            <button onClick={() => console.log('ㅎㅇ')}>
               <ArrowImg src={Arrow} />
             </button>
             ㅇㅇ
@@ -255,6 +238,7 @@ const CurrentUserBox = styled.div`
   height: 750px;
   margin: 0px auto;
   overflow-y: scroll;
+
   &::-webkit-scrollbar {
     display: none;
   }
@@ -364,4 +348,4 @@ const BettingText = styled.p`
   ${({ theme }) => theme.fonts.B_POINT_20}
   color: ${({ theme }) => theme.colors.WHITE};
 `;
-export default React.memo(RoomPage);
+export default RoomPage;

@@ -10,12 +10,12 @@ import {
   manageListAtom,
   manageListLength,
 } from '../../../atoms/manageAtom';
-import { instanceAPI, socket } from '../../../utils/constant';
+import { instanceAPI } from '../../../utils/constant';
 import SearchInput from '../Search';
 import { showToastMessage } from '../Toast';
 
 const NavigationBar = () => {
-  const roomSocket = socket('1');
+  // const roomSocket = socket('1');
   const handleClickManageBtn = useSetRecoilState(manageBtnAtom);
   const handleSetUserProducts = useSetRecoilState(manageListAtom);
   //관리자에 관련된 데이터들을 전역으로 관리하려고 하셨던 스페셜한 이유가 혹시 있으실까요?
@@ -26,7 +26,7 @@ const NavigationBar = () => {
   const returnCategory = useResetRecoilState(categoryAtom);
 
   const handleReturn = () => {
-    roomSocket.disconnect();
+    // roomSocket.disconnect();
     handleClickMainBtn();
     returnCategory();
   };
