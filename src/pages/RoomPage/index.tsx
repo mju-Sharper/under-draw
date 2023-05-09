@@ -18,7 +18,10 @@ import UserBox from './UserBox';
 const PERCENT_ARRAY = ['1%', '3%', '5%', '10%'];
 const CONTROL_ARRAY = ['START', 'NEXT', 'STOP', 'RESET'];
 
-type chatProps = socketChatMsg;
+type ChatMsg = {
+  username: string;
+  message: string;
+};
 
 type User = {
   userId: string;
@@ -29,7 +32,7 @@ let roomSocket: any = null;
 
 const RoomPage = () => {
   const [sendMsg, setSendMsg] = useState(''); // 입력한 채팅
-  const [chat, setChat] = useState<chatProps[]>([]); // 받아올 채팅
+  const [chat, setChat] = useState<ChatMsg[]>([]); // 받아올 채팅
   const [users, setUsers] = useState<User[]>([]); // 유저 목록
 
   const selectedItemInfo = useLocation()?.state;
@@ -44,24 +47,37 @@ const RoomPage = () => {
       showToastMessage('선택된 아이템이 없습니다.');
       navigate('/');
     } else {
-      console.log(selectedItemInfo);
       instanceAPI
         .get(`auth/admin/${id}`)
         .then((res) => {
           setIsAdmin(res.data.data.isAdmin);
 
           // 입장시 소켓 연결, 유저에 따라 입장 확인
-          // eslint-disable-next-line no-var
           roomSocket = socket(`${id}`);
-          roomSocket.on('alert', (message: any) => console.log(message));
-          roomSocket.on('userList', (list: any) =>
+          roomSocket.on('alert', (message: string) => {
+            const welcomeChat: ChatMsg = {
+              username: '알림',
+              message: message,
+            };
+            setChat((prevChat) => [...prevChat, welcomeChat]);
+          });
+          roomSocket.on('userList', (list: socketUserList) =>
             setUsers(list.connectedUsers),
           );
-          roomSocket.on('message', (data: any) => console.log(data));
+          roomSocket.on('message', (data: socketChatMsg) => {
+            const newChat: ChatMsg = {
+              username: data.userInfo.userId,
+              message: data.message.message,
+            };
+            setChat((prevChat) => [...prevChat, newChat]);
+          });
 
           return () => {
             roomSocket.off('alert');
             roomSocket.off('userList');
+            roomSocket.off('message');
+
+            roomSocket.disconnect();
           };
         })
         .catch(() => showToastMessage('유효하지 않은 상품id입니다.'));
@@ -73,10 +89,10 @@ const RoomPage = () => {
   };
 
   const handleSendMsg = () => {
-    console.log('메로엠롱');
     roomSocket.emit('message', {
       message: sendMsg,
     });
+    setSendMsg('');
   };
 
   return (
@@ -113,7 +129,13 @@ const RoomPage = () => {
                 <KeyBoardImg src={Keyboard} />
               </button>
             </KeyBoardBox>
-            <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
+            <ChatContainer>
+              {chat.map((msg, idx) => (
+                <ChatContent key={idx}>
+                  {msg.username}: {msg.message}
+                </ChatContent>
+              ))}
+            </ChatContainer>
           </StatusBox>
         </CommunicationBox>
         <BettingBox>
@@ -287,11 +309,18 @@ const BettingContent = styled(Content)`
   margin-left: 35px;
 `;
 
+const ChatContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  height: 150px;
+  overflow: auto;
+  padding: 10px 35px;
+`;
+
 const ChatContent = styled(Content)`
   ${({ theme }) => theme.fonts.B_POINT_17}
-  margin: 5px 0px; //임의판단
-  margin-left: 35px;
-  background-color: skyblue;
+  margin: 3px 0;
 `;
 
 const KeyBoardBox = styled.div`

@@ -19,7 +19,7 @@ interface socketUserListType {
 }
 
 interface socketChatMsg {
-  message: string;
+  message: { message: string };
   userInfo: {
     userId: string;
     isAdmin: boolean;
