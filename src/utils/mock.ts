@@ -4,22 +4,21 @@ import ElectronicIcon from '../assets/ElectronicIcon.svg';
 import FashionIcon from '../assets/FashionIcon.svg';
 import FurnitureIcon from '../assets/FurnitureIcon.svg';
 import HouseIcon from '../assets/HouseIcon.svg';
-import JewelleryIcon from '../assets/JewelleryIcon.svg';
 import OfficeIcon from '../assets/OfficeIcon.svg';
 import OtherIcon from '../assets/OtherIcon.svg';
 import OutdoorIcon from '../assets/OutdoorIcon.svg';
 
 export const categoryItemList = [
-  { id: 'electronic', name: '전자제품', icon: ElectronicIcon },
-  { id: 'outdoor', name: '아웃도어·스포츠·골프', icon: OutdoorIcon },
-  { id: 'furniture', name: '가구', icon: FurnitureIcon },
-  { id: 'jewellery', name: '귀금속', icon: JewelleryIcon },
-  { id: 'car', name: '자동차', icon: CarIcon },
-  { id: 'fashion', name: '패션·잡화·뷰티', icon: FashionIcon },
-  { id: 'office', name: '사무', icon: OfficeIcon },
-  { id: 'drink', name: '주류', icon: DrinkIcon },
-  { id: 'house', name: '집', icon: HouseIcon },
-  { id: 'other', name: '기타', icon: OtherIcon },
+  { id: 'electronic', name: 'HOME_APPLICES', icon: ElectronicIcon },
+  { id: 'outdoor', name: 'SPORT', icon: OutdoorIcon },
+  { id: 'furniture', name: 'FURNITURE', icon: FurnitureIcon },
+  // { id: 'jewellery', name: '귀금속', icon: JewelleryIcon },
+  { id: 'car', name: 'CAR', icon: CarIcon },
+  { id: 'fashion', name: 'FASHION', icon: FashionIcon },
+  { id: 'office', name: 'OFFICE', icon: OfficeIcon },
+  { id: 'drink', name: 'DRINK', icon: DrinkIcon },
+  { id: 'house', name: 'HOME', icon: HouseIcon },
+  { id: 'other', name: 'ETC', icon: OtherIcon },
 ];
 
 export const categoryTest = [
