@@ -1,7 +1,7 @@
 /* eslint-disable autofix/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // eslint 잠시 주석처리 해두었습니다. 해결후에 다 지울예정
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -25,7 +25,7 @@ type User = {
   isAdmin: boolean;
 };
 
-const roomSocket = socket('1'); // TODO 원래는 room id값을 넘겨줘야 함
+let roomSocket: any = null;
 
 const RoomPage = () => {
   const [sendMsg, setSendMsg] = useState(''); // 입력한 채팅
@@ -47,7 +47,23 @@ const RoomPage = () => {
       console.log(selectedItemInfo);
       instanceAPI
         .get(`auth/admin/${id}`)
-        .then((res) => setIsAdmin(res.data.data.isAdmin))
+        .then((res) => {
+          setIsAdmin(res.data.data.isAdmin);
+
+          // 입장시 소켓 연결, 유저에 따라 입장 확인
+          // eslint-disable-next-line no-var
+          roomSocket = socket(`${id}`);
+          roomSocket.on('alert', (message: any) => console.log(message));
+          roomSocket.on('userList', (list: any) =>
+            setUsers(list.connectedUsers),
+          );
+          roomSocket.on('message', (data: any) => console.log(data));
+
+          return () => {
+            roomSocket.off('alert');
+            roomSocket.off('userList');
+          };
+        })
         .catch(() => showToastMessage('유효하지 않은 상품id입니다.'));
     }
   }, []);
@@ -56,19 +72,12 @@ const RoomPage = () => {
     setSendMsg(message);
   };
 
-  useEffect(() => {
-    roomSocket.on('userList', (list) => {
-      console.log('userList', list);
-      setUsers(list.connectedUsers);
+  const handleSendMsg = () => {
+    console.log('메로엠롱');
+    roomSocket.emit('message', {
+      message: sendMsg,
     });
-    // roomSocket.on('alert', (message) => console.log(message));
-
-    return () => {
-      console.log('return function');
-      roomSocket.off('userList');
-      // roomSocket.off('alert');
-    };
-  }, []);
+  };
 
   return (
     <Container>
@@ -95,15 +104,16 @@ const RoomPage = () => {
           </StatusBox>
           <StatusBox>
             <KeyBoardBox>
-              <KeyBoard type="text" />
-              <button onClick={() => console.log('ㅎㅇ')}>
+              <KeyBoard
+                type="text"
+                value={sendMsg}
+                onChange={(e) => handleChangeMsg(e.target.value)}
+              />
+              <button onClick={handleSendMsg}>
                 <KeyBoardImg src={Keyboard} />
               </button>
             </KeyBoardBox>
             <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
-            <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
-            <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
-            {/* 이건 채팅인데 어떻게 받아오려나...배열인가 */}
           </StatusBox>
         </CommunicationBox>
         <BettingBox>
@@ -132,15 +142,14 @@ const RoomPage = () => {
       </TradeContainer>
       <UserContainer>
         <>
-          <CurrentUserCount>현재 접속자수 : 300명</CurrentUserCount>
+          <CurrentUserCount>현재 접속자수 : {users.length}명</CurrentUserCount>
           <CurrentUserBox>
             <button onClick={() => console.log('ㅎㅇ')}>
               <ArrowImg src={Arrow} />
             </button>
-            ㅇㅇ
-            {/* {users.map((item, index) => (
-              <UserBox key={index} name={item} />
-            ))} */}
+            {users.map((item, index) => (
+              <UserBox key={index} name={item.userId} />
+            ))}
           </CurrentUserBox>
         </>
       </UserContainer>
