@@ -37,13 +37,28 @@ const RoomPage = () => {
     selectedItemInfo;
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [betPrice, setBetPrice] = useState(1000000);
   const buttonArray = isAdmin ? CONTROL_ARRAY : PERCENT_ARRAY;
+
+  const onBetButtonClick = (isAdmin: boolean, buttonArrayItem: string) => {
+    if (isAdmin) {
+      console.log('저는 관리자에요');
+      console.log(buttonArrayItem);
+      //여기에선 관리자에 관련된 이벤트가 할당되어야하고
+    } else {
+      const percentage =
+        1 +
+        parseInt(buttonArrayItem.substring(0, buttonArrayItem.length - 1)) /
+          100;
+      setBetPrice(Math.ceil(betPrice * percentage));
+    }
+  };
+
   useEffect(() => {
     if (!selectedItemInfo) {
       showToastMessage('선택된 아이템이 없습니다.');
       navigate('/');
     } else {
-      console.log(selectedItemInfo);
       instanceAPI
         .get(`auth/admin/${id}`)
         .then((res) => setIsAdmin(res.data.data.isAdmin))
@@ -94,7 +109,10 @@ const RoomPage = () => {
           {/* 이거 나중에 리팩터링 분해하기 */}
           <PercentButtonBox>
             {buttonArray.map((item, index) => (
-              <PercentButton key={index}>
+              <PercentButton
+                key={index}
+                onClick={() => onBetButtonClick(isAdmin, item)}
+              >
                 <BettingText>{item}</BettingText>
               </PercentButton>
             ))}
@@ -102,9 +120,13 @@ const RoomPage = () => {
           {!isAdmin && (
             <>
               <BettingCurrent>
-                <BettingText>Point : 11,000,000 원</BettingText>
+                <BettingText>Point : {betPrice} 원</BettingText>
               </BettingCurrent>
-              <BettingButton>
+              <BettingButton
+                onClick={() =>
+                  window.alert(`${betPrice}원으로 입찰처리가 되었습니다`)
+                }
+              >
                 <BettingText>입찰하기</BettingText>
               </BettingButton>
             </>
