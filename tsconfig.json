@@ -16,5 +16,12 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"],
+  "types": [
+    "node",
+    "@types/react",
+    "@types/react-dom",
+    "@types/socket.io-client"
+  ]
 }

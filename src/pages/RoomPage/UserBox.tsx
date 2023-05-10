@@ -14,7 +14,7 @@ const UserBox = ({ name }: userName) => (
 const UserNameBox = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   width: 200px;
   height: 38px;
   margin: 17px auto 0;
