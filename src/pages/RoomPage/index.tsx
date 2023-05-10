@@ -72,17 +72,24 @@ const RoomPage = () => {
             setChat((prevChat) => [...prevChat, newChat]);
           });
 
+          window.addEventListener('popstate', handlePopstate);
+
           return () => {
             roomSocket.off('alert');
             roomSocket.off('userList');
             roomSocket.off('message');
 
+            window.removeEventListener('popstate', handlePopstate);
             roomSocket.disconnect();
           };
         })
         .catch(() => showToastMessage('유효하지 않은 상품id입니다.'));
     }
   }, []);
+
+  const handlePopstate = () => {
+    roomSocket.disconnect();
+  };
 
   const handleChangeMsg = (message: string) => {
     setSendMsg(message);
