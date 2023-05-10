@@ -15,6 +15,7 @@ import SearchInput from '../Search';
 import { showToastMessage } from '../Toast';
 
 const NavigationBar = () => {
+  // const roomSocket = socket('1');
   const handleClickManageBtn = useSetRecoilState(manageBtnAtom);
   const handleSetUserProducts = useSetRecoilState(manageListAtom);
   //관리자에 관련된 데이터들을 전역으로 관리하려고 하셨던 스페셜한 이유가 혹시 있으실까요?
@@ -25,6 +26,7 @@ const NavigationBar = () => {
   const returnCategory = useResetRecoilState(categoryAtom);
 
   const handleReturn = () => {
+    // roomSocket.disconnect();
     handleClickMainBtn();
     returnCategory();
   };

@@ -1,3 +1,6 @@
+/* eslint-disable autofix/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// eslint 잠시 주석처리 해두었습니다. 해결후에 다 지울예정
 import { useEffect, useState } from 'react';
 
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -8,30 +11,30 @@ import Keyboard from '../../assets/Keyboard.svg';
 import { BasicButton } from '../../components/common/BasicButton';
 import { showToastMessage } from '../../components/common/Toast';
 import { instanceAPI } from '../../utils/constant';
+import { socket } from '../../utils/socket';
 
 import UserBox from './UserBox';
-// 당연한거지만 나중에 데이터 받아오면 map함수 돌릴겁니다, 목업으로 해놓기엔 데이터 포맷을 모르겠어서
+
 const PERCENT_ARRAY = ['1%', '3%', '5%', '10%'];
 const CONTROL_ARRAY = ['START', 'NEXT', 'STOP', 'RESET'];
-const USER_ARRAY = [
-  'User 1',
-  'User 2',
-  'User 3',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-  '',
-];
+
+type ChatMsg = {
+  username: string;
+  message: string;
+};
+
+type User = {
+  userId: string;
+  isAdmin: boolean;
+};
+
+let roomSocket: any = null;
 
 const RoomPage = () => {
+  const [sendMsg, setSendMsg] = useState(''); // 입력한 채팅
+  const [chat, setChat] = useState<ChatMsg[]>([]); // 받아올 채팅
+  const [users, setUsers] = useState<User[]>([]); // 유저 목록
+
   const selectedItemInfo = useLocation()?.state;
   const { createdAt, name, startingBid, category, imageUrl, id } =
     selectedItemInfo;
@@ -61,10 +64,51 @@ const RoomPage = () => {
     } else {
       instanceAPI
         .get(`auth/admin/${id}`)
-        .then((res) => setIsAdmin(res.data.data.isAdmin))
+        .then((res) => {
+          setIsAdmin(res.data.data.isAdmin);
+
+          // 입장시 소켓 연결, 유저에 따라 입장 확인
+          roomSocket = socket(`${id}`);
+          roomSocket.on('alert', (message: string) => {
+            const welcomeChat: ChatMsg = {
+              username: '알림',
+              message: message,
+            };
+            setChat((prevChat) => [...prevChat, welcomeChat]);
+          });
+          roomSocket.on('userList', (list: socketUserList) =>
+            setUsers(list.connectedUsers),
+          );
+          roomSocket.on('message', (data: socketChatMsg) => {
+            const newChat: ChatMsg = {
+              username: data.userInfo.userId,
+              message: data.message.message,
+            };
+            setChat((prevChat) => [...prevChat, newChat]);
+          });
+
+          return () => {
+            roomSocket.off('alert');
+            roomSocket.off('userList');
+            roomSocket.off('message');
+
+            roomSocket.disconnect();
+          };
+        })
         .catch(() => showToastMessage('유효하지 않은 상품id입니다.'));
     }
   }, []);
+
+  const handleChangeMsg = (message: string) => {
+    setSendMsg(message);
+  };
+
+  const handleSendMsg = () => {
+    roomSocket.emit('message', {
+      message: sendMsg,
+    });
+    setSendMsg('');
+  };
 
   return (
     <Container>
@@ -91,15 +135,22 @@ const RoomPage = () => {
           </StatusBox>
           <StatusBox>
             <KeyBoardBox>
-              <KeyBoard type="text" />
-              <button onClick={() => window.alert('ㅎㅇ')}>
+              <KeyBoard
+                type="text"
+                value={sendMsg}
+                onChange={(e) => handleChangeMsg(e.target.value)}
+              />
+              <button onClick={handleSendMsg}>
                 <KeyBoardImg src={Keyboard} />
               </button>
             </KeyBoardBox>
-            <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
-            <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
-            <ChatContent>이름 : 10,000,000만원 입찰</ChatContent>
-            {/* 이건 채팅인데 어떻게 받아오려나...배열인가 */}
+            <ChatContainer>
+              {chat.map((msg, idx) => (
+                <ChatContent key={idx}>
+                  {msg.username}: {msg.message}
+                </ChatContent>
+              ))}
+            </ChatContainer>
           </StatusBox>
         </CommunicationBox>
         <BettingBox>
@@ -135,13 +186,13 @@ const RoomPage = () => {
       </TradeContainer>
       <UserContainer>
         <>
-          <CurrentUserCount>현재 접속자수 : 300명</CurrentUserCount>
+          <CurrentUserCount>현재 접속자수 : {users.length}명</CurrentUserCount>
           <CurrentUserBox>
-            <button onClick={() => window.alert('ㅎㅇ')}>
+            <button onClick={() => console.log('ㅎㅇ')}>
               <ArrowImg src={Arrow} />
             </button>
-            {USER_ARRAY.map((item, index) => (
-              <UserBox key={index} name={item} />
+            {users.map((item, index) => (
+              <UserBox key={index} name={item.userId} />
             ))}
           </CurrentUserBox>
         </>
@@ -240,6 +291,7 @@ const CurrentUserBox = styled.div`
   height: 750px;
   margin: 0px auto;
   overflow-y: scroll;
+
   &::-webkit-scrollbar {
     display: none;
   }
@@ -279,10 +331,18 @@ const BettingContent = styled(Content)`
   margin-left: 35px;
 `;
 
+const ChatContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  height: 150px;
+  overflow: auto;
+  padding: 10px 35px;
+`;
+
 const ChatContent = styled(Content)`
   ${({ theme }) => theme.fonts.B_POINT_17}
-  margin: 5px 0px; //임의판단
-  margin-left: 35px;
+  margin: 3px 0;
 `;
 
 const KeyBoardBox = styled.div`
