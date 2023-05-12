@@ -22,18 +22,9 @@ function App() {
     <div className="App">
       <ThemeProvider theme={Theme}>
         <GlobalStyle />
-        <Layout>
-          <Routes>
+        <Routes>
+          <Route element={<Layout />}>
             <Route path="/" element={<MainPage />} />
-            <Route
-              path="/room"
-              element={
-                <AccessRightRoute
-                  token={token.userToken}
-                  component={<RoomPage />}
-                />
-              }
-            />
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/sign-up" element={<SignUp />} />
             <Route
@@ -45,8 +36,17 @@ function App() {
                 />
               }
             />
-          </Routes>
-        </Layout>
+          </Route>
+          <Route
+            path="/room"
+            element={
+              <AccessRightRoute
+                token={token.userToken}
+                component={<RoomPage />}
+              />
+            }
+          />
+        </Routes>
         <Toast />
       </ThemeProvider>
     </div>
