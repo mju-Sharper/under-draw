@@ -28,12 +28,19 @@ type User = {
   isAdmin: boolean;
 };
 
+type updatedAuction = {
+  bid: number;
+  bidder: string;
+};
+
 let roomSocket: any = null;
+let testSocket: any = null;
 
 const RoomPage = () => {
   const [sendMsg, setSendMsg] = useState(''); // 입력한 채팅
   const [chat, setChat] = useState<ChatMsg[]>([]); // 받아올 채팅
   const [users, setUsers] = useState<User[]>([]); // 유저 목록
+  const [test, setTest] = useState(0);
 
   const selectedItemInfo = useLocation()?.state;
   const { createdAt, name, startingBid, category, imageUrl, id } =
@@ -62,6 +69,7 @@ const RoomPage = () => {
       showToastMessage('선택된 아이템이 없습니다.');
       navigate('/');
     } else {
+      if (!testSocket) testSocket = socket(`${id}`);
       instanceAPI
         .get(`auth/admin/${id}`)
         .then((res) => {
@@ -69,6 +77,7 @@ const RoomPage = () => {
 
           // 입장시 소켓 연결, 유저에 따라 입장 확인
           roomSocket = socket(`${id}`);
+
           roomSocket.on('alert', (message: string) => {
             const welcomeChat: ChatMsg = {
               username: '알림',
@@ -79,6 +88,7 @@ const RoomPage = () => {
           roomSocket.on('userList', (list: socketUserList) =>
             setUsers(list.connectedUsers),
           );
+
           roomSocket.on('message', (data: socketChatMsg) => {
             const newChat: ChatMsg = {
               username: data.userInfo.userId,
@@ -91,13 +101,30 @@ const RoomPage = () => {
             roomSocket.off('alert');
             roomSocket.off('userList');
             roomSocket.off('message');
+            testSocket.off('bid');
 
             roomSocket.disconnect();
+            testSocket.disconnect();
           };
         })
         .catch(() => showToastMessage('유효하지 않은 상품id입니다.'));
     }
   }, []);
+
+  useEffect(() => {
+    testSocket.on('message', (data: any) => {
+      console.log(JSON.parse(data));
+      const errMsg = JSON.parse(data).data.error;
+      showToastMessage(errMsg);
+    });
+
+    testSocket.on('bid', (data: any) => {
+      console.log(data);
+      setTest(data.updatedAuction.bid);
+    });
+  }, [betPrice]);
+
+  //요청이 여러번 가고, 페이지 초기 렌더링 할 때 현재 입찰액 얼만지 나와야됨
 
   const handleChangeMsg = (message: string) => {
     setSendMsg(message);
@@ -131,7 +158,7 @@ const RoomPage = () => {
           <StatusBox>
             <BettingContent>이름 : 10,000,000만원 입찰</BettingContent>
             <BettingContent>이름 : 15,000,000만원 입찰</BettingContent>
-            {/* 이건 채팅인데 어떻게 받아오려나...배열인가 */}
+            {/* 이것도 추후에 입찰되는 대로 다 갱신해서 올려야됨 */}
           </StatusBox>
           <StatusBox>
             <KeyBoardBox>
@@ -171,12 +198,15 @@ const RoomPage = () => {
           {!isAdmin && (
             <>
               <BettingCurrent>
-                <BettingText>Point : {betPrice} 원</BettingText>
+                <BettingText>Point : {test} 원</BettingText>
               </BettingCurrent>
               <BettingButton
-                onClick={() =>
-                  window.alert(`${betPrice}원으로 입찰처리가 되었습니다`)
-                }
+                onClick={() => {
+                  console.log(betPrice);
+                  testSocket.emit('bid', {
+                    bid: betPrice,
+                  });
+                }}
               >
                 <BettingText>입찰하기</BettingText>
               </BettingButton>
