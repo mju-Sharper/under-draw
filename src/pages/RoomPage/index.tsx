@@ -37,17 +37,16 @@ let roomSocket: any = null;
 let testSocket: any = null;
 
 const RoomPage = () => {
+  const selectedItemInfo = useLocation()?.state;
+  const { createdAt, name, startingBid, category, imageUrl, id, bid } =
+    selectedItemInfo;
   const [sendMsg, setSendMsg] = useState(''); // 입력한 채팅
   const [chat, setChat] = useState<ChatMsg[]>([]); // 받아올 채팅
   const [users, setUsers] = useState<User[]>([]); // 유저 목록
-  const [test, setTest] = useState(0);
-
-  const selectedItemInfo = useLocation()?.state;
-  const { createdAt, name, startingBid, category, imageUrl, id } =
-    selectedItemInfo;
-  const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
-  const [betPrice, setBetPrice] = useState(1000000);
+  const [betPrice, setBetPrice] = useState(bid); //사용자가 시작하는 금액도 처음엔 bid로 변경되어야됨
+  //근데 이렇게하면 새로고침하면 터지는데
+  const navigate = useNavigate();
   const buttonArray = isAdmin ? CONTROL_ARRAY : PERCENT_ARRAY;
 
   const onBetButtonClick = (isAdmin: boolean, buttonArrayItem: string) => {
@@ -96,6 +95,16 @@ const RoomPage = () => {
             };
             setChat((prevChat) => [...prevChat, newChat]);
           });
+          testSocket.on('message', (data: any) => {
+            console.log(JSON.parse(data));
+            const errMsg = JSON.parse(data).data.error;
+            showToastMessage(errMsg);
+          });
+
+          testSocket.on('bid', (data: any) => {
+            console.log(data);
+            setBetPrice(data.updatedAuction.bid);
+          });
 
           return () => {
             roomSocket.off('alert');
@@ -110,19 +119,6 @@ const RoomPage = () => {
         .catch(() => showToastMessage('유효하지 않은 상품id입니다.'));
     }
   }, []);
-
-  useEffect(() => {
-    testSocket.on('message', (data: any) => {
-      console.log(JSON.parse(data));
-      const errMsg = JSON.parse(data).data.error;
-      showToastMessage(errMsg);
-    });
-
-    testSocket.on('bid', (data: any) => {
-      console.log(data);
-      setTest(data.updatedAuction.bid);
-    });
-  }, [betPrice]);
 
   //요청이 여러번 가고, 페이지 초기 렌더링 할 때 현재 입찰액 얼만지 나와야됨
 
@@ -198,7 +194,7 @@ const RoomPage = () => {
           {!isAdmin && (
             <>
               <BettingCurrent>
-                <BettingText>Point : {test} 원</BettingText>
+                <BettingText>Point : {betPrice} 원</BettingText>
               </BettingCurrent>
               <BettingButton
                 onClick={() => {
