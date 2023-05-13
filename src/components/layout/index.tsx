@@ -1,3 +1,4 @@
+import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 
 import NavigationBar from '../common/NavigationBar';
@@ -9,7 +10,7 @@ interface layoutProps {
 const Layout = ({ children }: layoutProps) => (
   <LayoutContainer>
     <NavigationBar />
-    <LayoutContents>{children}</LayoutContents>
+    <LayoutContents>{children || <Outlet />}</LayoutContents>
   </LayoutContainer>
 );
 

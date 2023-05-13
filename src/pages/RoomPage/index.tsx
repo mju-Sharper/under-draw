@@ -1,6 +1,3 @@
-/* eslint-disable autofix/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// eslint 잠시 주석처리 해두었습니다. 해결후에 다 지울예정
 import { useEffect, useState } from 'react';
 
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -9,6 +6,7 @@ import styled from 'styled-components';
 import Arrow from '../../assets/Arrow.svg';
 import Keyboard from '../../assets/Keyboard.svg';
 import { BasicButton } from '../../components/common/BasicButton';
+import NavigationBar from '../../components/common/NavigationBar';
 import { showToastMessage } from '../../components/common/Toast';
 import { instanceAPI } from '../../utils/constant';
 import { socket } from '../../utils/socket';
@@ -72,17 +70,24 @@ const RoomPage = () => {
             setChat((prevChat) => [...prevChat, newChat]);
           });
 
+          window.addEventListener('popstate', handlePopstate);
+
           return () => {
             roomSocket.off('alert');
             roomSocket.off('userList');
             roomSocket.off('message');
 
+            window.removeEventListener('popstate', handlePopstate);
             roomSocket.disconnect();
           };
         })
         .catch(() => showToastMessage('유효하지 않은 상품id입니다.'));
     }
   }, []);
+
+  const handlePopstate = () => {
+    roomSocket.disconnect();
+  };
 
   const handleChangeMsg = (message: string) => {
     setSendMsg(message);
@@ -97,6 +102,7 @@ const RoomPage = () => {
 
   return (
     <Container>
+      <NavigationBar roomSocket={roomSocket} />
       <TradeContainer>
         <ItemInfoBox>
           <ImgBox>
@@ -178,6 +184,7 @@ const RoomPage = () => {
     </Container>
   );
 };
+
 const ArrowImg = styled.img`
   position: relative;
   /* CurrentUserBox 기준으로 계산 */
@@ -189,12 +196,10 @@ const ArrowImg = styled.img`
 
 const Container = styled.div`
   display: flex;
-  justify-content: space-between;
-  margin: auto;
-  width: 90%;
+  justify-content: space-evenly;
+  width: 100%;
   height: 854px;
-  /* height: 90vh; //이건 한번 보고 */
-  margin-top: 33px;
+  margin-top: 100px;
 `;
 
 const TradeContainer = styled.div`
@@ -204,7 +209,7 @@ const TradeContainer = styled.div`
   justify-content: space-between;
   width: 945px;
   height: 778px;
-  margin: auto;
+  margin: auto 20px;
 `;
 
 const Image = styled.img`
@@ -215,7 +220,6 @@ const Image = styled.img`
 
 const ItemInfoBox = styled.div`
   display: flex;
-  flex-direction: row;
   align-items: center;
   width: 945px;
   height: 224px;
@@ -252,7 +256,7 @@ const UserContainer = styled.div`
   flex-direction: column;
   width: 320px;
   height: 854px;
-  margin: auto;
+  margin: 38px auto;
   border-radius: 15px;
   background-color: ${({ theme }) => theme.colors.NAVY};
 `;
