@@ -25,3 +25,24 @@ interface socketChatMsg {
     isAdmin: boolean;
   };
 }
+
+interface bidErrMsg {
+  event: string;
+  data: {
+    id: string;
+    error: string;
+  };
+}
+
+interface bidDataType {
+  updatedAuction: {
+    bid: number;
+    bidder: string;
+  };
+  userInfo: {
+    userId: string;
+    isAdmin: boolean;
+    enterTime: string;
+  };
+  sendTime: string; //귀찮아서 우선 이렇게했습니다..
+}

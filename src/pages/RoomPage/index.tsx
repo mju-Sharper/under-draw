@@ -45,6 +45,9 @@ const RoomPage = () => {
   const [users, setUsers] = useState<User[]>([]); // 유저 목록
   const [isAdmin, setIsAdmin] = useState(false);
   const [betPrice, setBetPrice] = useState(bid); //사용자가 시작하는 금액도 처음엔 bid로 변경되어야됨
+  const [bettingContentArray, setBettingContentArray] = useState<
+    updatedAuction[]
+  >([]);
   //근데 이렇게하면 새로고침하면 터지는데
   const navigate = useNavigate();
   const buttonArray = isAdmin ? CONTROL_ARRAY : PERCENT_ARRAY;
@@ -95,15 +98,17 @@ const RoomPage = () => {
             };
             setChat((prevChat) => [...prevChat, newChat]);
           });
-          testSocket.on('message', (data: any) => {
+          testSocket.on('message', (data: string) => {
+            //이게 에러문 반환은 bidErrMsg 타입이여야되는데 왠지 몰라도 string으로 작용함
             console.log(JSON.parse(data));
             const errMsg = JSON.parse(data).data.error;
             showToastMessage(errMsg);
           });
 
-          testSocket.on('bid', (data: any) => {
-            console.log(data);
+          testSocket.on('bid', (data: bidDataType) => {
             setBetPrice(data.updatedAuction.bid);
+            setBettingContentArray((prev) => [...prev, data.updatedAuction]);
+            //가끔 state랑 prev랑 차이로 에러가 발생할 수 있다.... 그래서 해당 로직에서는 prev사용
           });
 
           return () => {
@@ -119,8 +124,6 @@ const RoomPage = () => {
         .catch(() => showToastMessage('유효하지 않은 상품id입니다.'));
     }
   }, []);
-
-  //요청이 여러번 가고, 페이지 초기 렌더링 할 때 현재 입찰액 얼만지 나와야됨
 
   const handleChangeMsg = (message: string) => {
     setSendMsg(message);
@@ -152,9 +155,11 @@ const RoomPage = () => {
         </ItemInfoBox>
         <CommunicationBox>
           <StatusBox>
-            <BettingContent>이름 : 10,000,000만원 입찰</BettingContent>
-            <BettingContent>이름 : 15,000,000만원 입찰</BettingContent>
-            {/* 이것도 추후에 입찰되는 대로 다 갱신해서 올려야됨 */}
+            {bettingContentArray.map((item, index) => (
+              <BettingContent key={index}>
+                {item.bidder} : {item.bid}만원 입찰
+              </BettingContent>
+            ))}
           </StatusBox>
           <StatusBox>
             <KeyBoardBox>
@@ -198,7 +203,6 @@ const RoomPage = () => {
               </BettingCurrent>
               <BettingButton
                 onClick={() => {
-                  console.log(betPrice);
                   testSocket.emit('bid', {
                     bid: betPrice,
                   });
@@ -279,6 +283,7 @@ const CommunicationBox = styled.div`
 `;
 
 const StatusBox = styled.div`
+  overflow-y: scroll;
   display: flex;
   flex-direction: column-reverse;
   width: 460px;
