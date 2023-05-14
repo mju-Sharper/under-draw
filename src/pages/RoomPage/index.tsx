@@ -19,6 +19,7 @@ const CONTROL_ARRAY = ['START', 'NEXT', 'STOP', 'RESET'];
 type ChatMsg = {
   username: string;
   message: string;
+  admin?: boolean;
 };
 
 type User = {
@@ -62,10 +63,11 @@ const RoomPage = () => {
           roomSocket.on('userList', (list: socketUserList) =>
             setUsers(list.connectedUsers),
           );
-          roomSocket.on('message', (data: socketChatMsg) => {
+          roomSocket.on('chat', (data: socketChatMsg) => {
             const newChat: ChatMsg = {
               username: data.userInfo.userId,
               message: data.message.message,
+              admin: data.userInfo.isAdmin,
             };
             setChat((prevChat) => [...prevChat, newChat]);
           });
@@ -94,7 +96,7 @@ const RoomPage = () => {
   };
 
   const handleSendMsg = () => {
-    roomSocket.emit('message', {
+    roomSocket.emit('chat', {
       message: sendMsg,
     });
     setSendMsg('');
@@ -138,7 +140,17 @@ const RoomPage = () => {
             <ChatContainer>
               {chat.map((msg, idx) => (
                 <ChatContent key={idx}>
-                  {msg.username}: {msg.message}
+                  <>
+                    {msg.admin ? (
+                      <div style={{ display: 'flex' }}>
+                        <AdminChat>{msg.username}</AdminChat>: {msg.message}
+                      </div>
+                    ) : (
+                      <>
+                        {msg.username}: {msg.message}
+                      </>
+                    )}
+                  </>
                 </ChatContent>
               ))}
             </ChatContainer>
@@ -390,4 +402,9 @@ const BettingText = styled.p`
   ${({ theme }) => theme.fonts.B_POINT_20}
   color: ${({ theme }) => theme.colors.WHITE};
 `;
+
+const AdminChat = styled.p`
+  color: #62b9b9;
+`;
+
 export default RoomPage;
