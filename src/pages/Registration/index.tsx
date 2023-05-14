@@ -285,10 +285,10 @@ const PlusButton = styled.button`
 `;
 
 const ImgPreView = styled.img`
-  /* width: 100%;
-  height: 100%; 일단 지워놓고 */
+  width: 100%;
+  height: 100%;
   border-radius: 15px;
-  object-fit: cover;
+  object-fit: scale-down;
 `;
 
 const ImgUpload = styled.label`
