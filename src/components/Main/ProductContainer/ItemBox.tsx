@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import Delete from '../../../assets/Delete.svg';
 import Setting from '../../../assets/Setting.svg';
-import { getCookie, instanceAPI } from '../../../utils/constant';
+import { getCookie } from '../../../utils/constant';
 import PhotoBox from '../../common/PhotoBox';
 import { showToastMessage } from '../../common/Toast';
 
@@ -20,30 +20,17 @@ const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
     navigate('/Registration', { state: items?.id });
   };
 
-  const handleMoveRoom = (bid: number) => {
+  const handleMoveRoom = () => {
     accessToken
-      ? navigate('/room', { state: { ...items, bid } })
+      ? navigate('/room', { state: items })
       : showToastMessage('로그인 후 이용해주세요!');
-  };
-
-  const getItemBidData = (id: string) => {
-    instanceAPI
-      .get(`auctions/bid/${id}`)
-      .then((res) => {
-        console.log(res);
-        handleMoveRoom(res.data.data.bid);
-      })
-      .catch((err) => console.log(err));
   };
 
   return (
     <>
       <ItemBoxWrap>
         <PhotoBox src={items?.imageUrl} />
-        <div
-          style={{ marginLeft: '22px' }}
-          onClick={() => getItemBidData(items!.id!)}
-        >
+        <div style={{ marginLeft: '22px' }} onClick={() => handleMoveRoom()}>
           <ProductInfoListWrap>
             <li>
               품목 : <p>{items?.category}</p>

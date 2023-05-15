@@ -38,17 +38,16 @@ let testSocket: any = null;
 
 const RoomPage = () => {
   const selectedItemInfo = useLocation()?.state;
-  const { createdAt, name, startingBid, category, imageUrl, id, bid } =
+  const { createdAt, name, startingBid, category, imageUrl, id } =
     selectedItemInfo;
   const [sendMsg, setSendMsg] = useState(''); // 입력한 채팅
   const [chat, setChat] = useState<ChatMsg[]>([]); // 받아올 채팅
   const [users, setUsers] = useState<User[]>([]); // 유저 목록
   const [isAdmin, setIsAdmin] = useState(false);
-  const [betPrice, setBetPrice] = useState(bid); //사용자가 시작하는 금액도 처음엔 bid로 변경되어야됨
+  const [betPrice, setBetPrice] = useState(0); //사용자가 시작하는 금액도 처음엔 bid로 변경되어야됨
   const [bettingContentArray, setBettingContentArray] = useState<
     updatedAuction[]
   >([]);
-  //근데 이렇게하면 새로고침하면 터지는데
   const navigate = useNavigate();
   const buttonArray = isAdmin ? CONTROL_ARRAY : PERCENT_ARRAY;
 
@@ -66,12 +65,25 @@ const RoomPage = () => {
     }
   };
 
+  const getItemBidData = (id: string) => {
+    instanceAPI
+      .get(`auctions/bid/${id}`)
+      .then((res) => {
+        console.log(res);
+        setBetPrice(res.data.data.bid);
+      })
+      .catch((err) => showToastMessage('입찰 금액을 가져오는데 실패했습니다.'));
+  };
+
   useEffect(() => {
     if (!selectedItemInfo) {
       showToastMessage('선택된 아이템이 없습니다.');
       navigate('/');
     } else {
       if (!testSocket) testSocket = socket(`${id}`);
+      //아마 소켓이 2개라서 지금 한번에 접속이 2개로 되는 것 같다.
+      getItemBidData(id);
+      //근데 이걸 여기서 하면 굳이 location받아올 필요가 없음.
       instanceAPI
         .get(`auth/admin/${id}`)
         .then((res) => {
