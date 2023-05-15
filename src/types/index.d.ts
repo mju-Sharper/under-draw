@@ -25,3 +25,14 @@ interface socketChatMsg {
     isAdmin: boolean;
   };
 }
+
+interface ChatMsg {
+  username: string;
+  message: string;
+  admin?: boolean;
+}
+
+interface User {
+  userId: string;
+  isAdmin: boolean;
+}
