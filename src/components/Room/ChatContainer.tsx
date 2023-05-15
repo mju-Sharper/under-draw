@@ -15,33 +15,52 @@ const ChatContainer = ({
   sendMsg,
   onChange,
   onClick,
-}: ChatContentProps) => (
-  <>
-    <ChatInputBox>
-      <ChatInput type="text" value={sendMsg} onChange={onChange} />
-      <button onClick={onClick}>
-        <KeyBoardImg src={Keyboard} />
-      </button>
-    </ChatInputBox>
-    <ChatDetailBox>
-      {chat?.map((msg, idx) => (
-        <ChatContent key={idx}>
-          <>
-            {msg.admin ? (
-              <div style={{ display: 'flex' }}>
-                <AdminChat>{msg.username}</AdminChat>: {msg.message}
-              </div>
-            ) : (
-              <>
-                {msg.username}: {msg.message}
-              </>
-            )}
-          </>
-        </ChatContent>
-      ))}
-    </ChatDetailBox>
-  </>
-);
+}: ChatContentProps) => {
+  const activeEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && onClick) {
+      e.preventDefault();
+
+      // 빈 채팅 넘어가는 것 방지하기 위해 추가
+      const updatedSendMsg = sendMsg?.trim();
+      if (updatedSendMsg) {
+        onClick();
+      }
+    }
+  };
+
+  return (
+    <>
+      <ChatInputBox>
+        <ChatInput
+          type="text"
+          value={sendMsg}
+          onChange={onChange}
+          onKeyUp={activeEnter}
+        />
+        <button onClick={onClick}>
+          <KeyBoardImg src={Keyboard} />
+        </button>
+      </ChatInputBox>
+      <ChatDetailBox>
+        {chat?.map((msg, idx) => (
+          <ChatContent key={idx}>
+            <>
+              {msg.admin ? (
+                <div style={{ display: 'flex' }}>
+                  <AdminChat>{msg.username}</AdminChat>: {msg.message}
+                </div>
+              ) : (
+                <>
+                  {msg.username}: {msg.message}
+                </>
+              )}
+            </>
+          </ChatContent>
+        ))}
+      </ChatDetailBox>
+    </>
+  );
+};
 
 const ChatInputBox = styled.div`
   display: flex;
