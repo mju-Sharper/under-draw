@@ -3,29 +3,15 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import Arrow from '../../assets/Arrow.svg';
-import Keyboard from '../../assets/Keyboard.svg';
 import { BasicButton } from '../../components/common/BasicButton';
 import NavigationBar from '../../components/common/NavigationBar';
 import { showToastMessage } from '../../components/common/Toast';
+import ItemBox from '../../components/Main/ProductContainer/ItemBox';
+import ChatContainer from '../../components/Room/ChatContainer';
+import UserContainer from '../../components/Room/UserContainer';
 import { instanceAPI } from '../../utils/constant';
+import { CONTROL_ARRAY, PERCENT_ARRAY } from '../../utils/mock';
 import { socket } from '../../utils/socket';
-
-import UserBox from './UserBox';
-
-const PERCENT_ARRAY = ['1%', '3%', '5%', '10%'];
-const CONTROL_ARRAY = ['START', 'NEXT', 'STOP', 'RESET'];
-
-type ChatMsg = {
-  username: string;
-  message: string;
-  admin?: boolean;
-};
-
-type User = {
-  userId: string;
-  isAdmin: boolean;
-};
 
 let roomSocket: any = null;
 
@@ -35,8 +21,7 @@ const RoomPage = () => {
   const [users, setUsers] = useState<User[]>([]); // 유저 목록
 
   const selectedItemInfo = useLocation()?.state;
-  const { createdAt, name, startingBid, category, imageUrl, id } =
-    selectedItemInfo;
+  const id = selectedItemInfo.id;
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const buttonArray = isAdmin ? CONTROL_ARRAY : PERCENT_ARRAY;
@@ -106,20 +91,7 @@ const RoomPage = () => {
     <Container>
       <NavigationBar roomSocket={roomSocket} />
       <TradeContainer>
-        <ItemInfoBox>
-          <ImgBox>
-            <Image src={imageUrl} />
-          </ImgBox>
-          <InfoBox>
-            <TitleAndTimeBox>
-              <Content>제목: 중고차 3대 경매</Content>
-              <TimeContent>시간: {createdAt}</TimeContent>
-            </TitleAndTimeBox>
-            <Content>품목 : {category}</Content>
-            <Content>품명 : {name}</Content>
-            <Content>시작가 : {startingBid}</Content>
-          </InfoBox>
-        </ItemInfoBox>
+        <ItemBox items={selectedItemInfo} />
         <CommunicationBox>
           <StatusBox>
             <BettingContent>이름 : 10,000,000만원 입찰</BettingContent>
@@ -127,33 +99,12 @@ const RoomPage = () => {
             {/* 이건 채팅인데 어떻게 받아오려나...배열인가 */}
           </StatusBox>
           <StatusBox>
-            <KeyBoardBox>
-              <KeyBoard
-                type="text"
-                value={sendMsg}
-                onChange={(e) => handleChangeMsg(e.target.value)}
-              />
-              <button onClick={handleSendMsg}>
-                <KeyBoardImg src={Keyboard} />
-              </button>
-            </KeyBoardBox>
-            <ChatContainer>
-              {chat.map((msg, idx) => (
-                <ChatContent key={idx}>
-                  <>
-                    {msg.admin ? (
-                      <div style={{ display: 'flex' }}>
-                        <AdminChat>{msg.username}</AdminChat>: {msg.message}
-                      </div>
-                    ) : (
-                      <>
-                        {msg.username}: {msg.message}
-                      </>
-                    )}
-                  </>
-                </ChatContent>
-              ))}
-            </ChatContainer>
+            <ChatContainer
+              chat={chat}
+              sendMsg={sendMsg}
+              onChange={(e) => handleChangeMsg(e.target.value)}
+              onClick={handleSendMsg}
+            />
           </StatusBox>
         </CommunicationBox>
         <BettingBox>
@@ -180,31 +131,10 @@ const RoomPage = () => {
           )}
         </BettingBox>
       </TradeContainer>
-      <UserContainer>
-        <>
-          <CurrentUserCount>현재 접속자수 : {users.length}명</CurrentUserCount>
-          <CurrentUserBox>
-            <button onClick={() => console.log('ㅎㅇ')}>
-              <ArrowImg src={Arrow} />
-            </button>
-            {users.map((item, index) => (
-              <UserBox key={index} name={item.userId} />
-            ))}
-          </CurrentUserBox>
-        </>
-      </UserContainer>
+      <UserContainer userLength={users.length} users={users} />
     </Container>
   );
 };
-
-const ArrowImg = styled.img`
-  position: relative;
-  /* CurrentUserBox 기준으로 계산 */
-  bottom: -375px;
-  left: -135px;
-  width: 30px;
-  height: 30px;
-`;
 
 const Container = styled.div`
   display: flex;
@@ -222,21 +152,6 @@ const TradeContainer = styled.div`
   width: 945px;
   height: 778px;
   margin: auto 20px;
-`;
-
-const Image = styled.img`
-  width: 100%;
-  height: 100%;
-  border-radius: 15px;
-`;
-
-const ItemInfoBox = styled.div`
-  display: flex;
-  align-items: center;
-  width: 945px;
-  height: 224px;
-  border-radius: 15px;
-  background-color: ${({ theme }) => theme.colors.NAVY};
 `;
 
 const CommunicationBox = styled.div`
@@ -263,53 +178,6 @@ const BettingBox = styled.div`
   height: 230px;
 `;
 
-const UserContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 320px;
-  height: 854px;
-  margin: 38px auto;
-  border-radius: 15px;
-  background-color: ${({ theme }) => theme.colors.NAVY};
-`;
-
-const CurrentUserCount = styled.p`
-  text-align: right;
-  ${({ theme }) => theme.fonts.B_POINT_18}
-  color: ${({ theme }) => theme.colors.WHITE};
-  margin-right: 27px;
-`;
-
-const CurrentUserBox = styled.div`
-  width: 300px; //이것도 계산안됨
-  height: 750px;
-  margin: 0px auto;
-  overflow-y: scroll;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-`;
-
-const ImgBox = styled.div`
-  width: 275px;
-  height: 183px;
-  margin: auto;
-  border-radius: 15px;
-  background-color: ${({ theme }) => theme.colors.WHITE};
-`;
-
-const InfoBox = styled.div`
-  width: 550px;
-  height: 183px;
-  margin: auto;
-`;
-
-const TitleAndTimeBox = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-
 const Content = styled.p`
   text-align: left;
   ${({ theme }) => theme.fonts.B_POINT_20}
@@ -317,50 +185,8 @@ const Content = styled.p`
   margin: 10px 0px; //임의판단
 `;
 
-const TimeContent = styled(Content)`
-  margin-left: 100px;
-`;
-
 const BettingContent = styled(Content)`
   margin-left: 35px;
-`;
-
-const ChatContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  flex-direction: column;
-  height: 150px;
-  overflow: auto;
-  padding: 10px 35px;
-`;
-
-const ChatContent = styled(Content)`
-  ${({ theme }) => theme.fonts.B_POINT_17}
-  margin: 3px 0;
-`;
-
-const KeyBoardBox = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  width: 400px;
-  height: 35px;
-  border-radius: 10px;
-  background-color: ${({ theme }) => theme.colors.WHITE};
-  margin: 10px auto 15px;
-  padding: 10px;
-  box-sizing: border-box;
-`;
-
-const KeyBoard = styled.input`
-  flex: 1;
-  border: none;
-`;
-
-const KeyBoardImg = styled.img`
-  &:hover {
-    cursor: pointer;
-  }
 `;
 
 const BettingCurrent = styled.div`
@@ -401,10 +227,6 @@ const BettingButton = styled(BasicButton)`
 const BettingText = styled.p`
   ${({ theme }) => theme.fonts.B_POINT_20}
   color: ${({ theme }) => theme.colors.WHITE};
-`;
-
-const AdminChat = styled.p`
-  color: #62b9b9;
 `;
 
 export default RoomPage;
