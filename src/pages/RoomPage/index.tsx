@@ -14,13 +14,14 @@ import { CONTROL_ARRAY, PERCENT_ARRAY } from '../../utils/mock';
 import { socket } from '../../utils/socket';
 
 let roomSocket: any = null;
-let testSocket: any = null;
+//이거 나중에 소켓 타입 변경하고
 
 const RoomPage = () => {
   const selectedItemInfo = useLocation()?.state;
   const navigate = useNavigate();
 
   const { id } = selectedItemInfo;
+  //지금 정신이 없어서 일단은 왜 id만 쓰는지 나중에 한번 보기
   const [sendMsg, setSendMsg] = useState(''); // 입력한 채팅
   const [chat, setChat] = useState<ChatMsg[]>([]); // 받아올 채팅
   const [users, setUsers] = useState<User[]>([]); // 유저 목록
@@ -61,8 +62,6 @@ const RoomPage = () => {
       showToastMessage('선택된 아이템이 없습니다.');
       navigate('/');
     } else {
-      if (!testSocket) testSocket = socket(`${id}`);
-      //아마 소켓이 2개라서 지금 한번에 접속이 2개로 되는 것 같다.
       getItemBidData(id);
       //근데 이걸 여기서 하면 굳이 location받아올 필요가 없음.
       instanceAPI
@@ -71,7 +70,7 @@ const RoomPage = () => {
           setIsAdmin(res.data.data.isAdmin);
 
           // 입장시 소켓 연결, 유저에 따라 입장 확인
-          roomSocket = socket(`${id}`);
+          if (!roomSocket) roomSocket = socket(`${id}`);
 
           roomSocket.on('alert', (message: string) => {
             const welcomeChat: ChatMsg = {
@@ -91,14 +90,14 @@ const RoomPage = () => {
             };
             setChat((prevChat) => [...prevChat, newChat]);
           });
-          testSocket.on('message', (data: string) => {
+          roomSocket.on('message', (data: string) => {
             //이게 에러문 반환은 bidErrMsg 타입이여야되는데 왠지 몰라도 string으로 작용함
             console.log(JSON.parse(data));
             const errMsg = JSON.parse(data).data.error;
             showToastMessage(errMsg);
           });
 
-          testSocket.on('bid', (data: bidDataType) => {
+          roomSocket.on('bid', (data: bidDataType) => {
             setBetPrice(data.updatedAuction.bid);
             setBettingContentArray((prev) => [...prev, data.updatedAuction]);
             //가끔 state랑 prev랑 차이로 에러가 발생할 수 있다.... 그래서 해당 로직에서는 prev사용
@@ -110,11 +109,10 @@ const RoomPage = () => {
             roomSocket.off('alert');
             roomSocket.off('userList');
             roomSocket.off('message');
-            testSocket.off('bid');
+            roomSocket.off('chat');
 
             window.removeEventListener('popstate', handlePopstate);
             roomSocket.disconnect();
-            testSocket.disconnect();
           };
         })
         .catch(() => showToastMessage('유효하지 않은 상품id입니다.'));
@@ -180,7 +178,7 @@ const RoomPage = () => {
               </BettingCurrent>
               <BettingButton
                 onClick={() => {
-                  testSocket.emit('bid', {
+                  roomSocket.emit('bid', {
                     bid: betPrice,
                   });
                 }}
