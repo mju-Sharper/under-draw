@@ -19,6 +19,7 @@ const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
   const handleMoveEditPage = () => {
     navigate('/Registration', { state: items?.id });
   };
+
   const handleMoveRoom = () => {
     accessToken
       ? navigate('/room', { state: items })
@@ -29,7 +30,7 @@ const ItemBox = ({ items, isClicked }: ItemBoxProps) => {
     <>
       <ItemBoxWrap>
         <PhotoBox src={items?.imageUrl} />
-        <div style={{ marginLeft: '22px' }} onClick={handleMoveRoom}>
+        <div style={{ marginLeft: '22px' }} onClick={() => handleMoveRoom()}>
           <ProductInfoListWrap>
             <li>
               품목 : <p>{items?.category}</p>

@@ -14,30 +14,64 @@ import { CONTROL_ARRAY, PERCENT_ARRAY } from '../../utils/mock';
 import { socket } from '../../utils/socket';
 
 let roomSocket: any = null;
+//이거 나중에 소켓 타입 변경하고
 
 const RoomPage = () => {
+  const selectedItemInfo = useLocation()?.state;
+  const navigate = useNavigate();
+
+  const { id } = selectedItemInfo;
+  //지금 정신이 없어서 일단은 왜 id만 쓰는지 나중에 한번 보기
   const [sendMsg, setSendMsg] = useState(''); // 입력한 채팅
   const [chat, setChat] = useState<ChatMsg[]>([]); // 받아올 채팅
   const [users, setUsers] = useState<User[]>([]); // 유저 목록
-
-  const selectedItemInfo = useLocation()?.state;
-  const id = selectedItemInfo.id;
-  const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [betPrice, setBetPrice] = useState(0); //사용자가 시작하는 금액도 처음엔 bid로 변경되어야됨
+  const [bettingContentArray, setBettingContentArray] = useState<
+    updatedAuction[]
+  >([]);
+
   const buttonArray = isAdmin ? CONTROL_ARRAY : PERCENT_ARRAY;
+
+  const onBetButtonClick = (isAdmin: boolean, buttonArrayItem: string) => {
+    if (isAdmin) {
+      console.log('저는 관리자에요');
+      console.log(buttonArrayItem);
+      //여기에선 관리자에 관련된 이벤트가 할당되어야하고
+    } else {
+      const percentage =
+        1 +
+        parseInt(buttonArrayItem.substring(0, buttonArrayItem.length - 1)) /
+          100;
+      setBetPrice(Math.ceil(betPrice * percentage));
+    }
+  };
+
+  const getItemBidData = (id: string) => {
+    instanceAPI
+      .get(`auctions/bid/${id}`)
+      .then((res) => {
+        console.log(res);
+        setBetPrice(res.data.data.bid);
+      })
+      .catch(() => showToastMessage('입찰 금액을 가져오는데 실패했습니다.'));
+  };
 
   useEffect(() => {
     if (!selectedItemInfo) {
       showToastMessage('선택된 아이템이 없습니다.');
       navigate('/');
     } else {
+      getItemBidData(id);
+      //근데 이걸 여기서 하면 굳이 location받아올 필요가 없음.
       instanceAPI
         .get(`auth/admin/${id}`)
         .then((res) => {
           setIsAdmin(res.data.data.isAdmin);
 
           // 입장시 소켓 연결, 유저에 따라 입장 확인
-          roomSocket = socket(`${id}`);
+          if (!roomSocket) roomSocket = socket(`${id}`);
+
           roomSocket.on('alert', (message: string) => {
             const welcomeChat: ChatMsg = {
               username: '알림',
@@ -56,6 +90,18 @@ const RoomPage = () => {
             };
             setChat((prevChat) => [...prevChat, newChat]);
           });
+          roomSocket.on('message', (data: string) => {
+            //이게 에러문 반환은 bidErrMsg 타입이여야되는데 왠지 몰라도 string으로 작용함
+            console.log(JSON.parse(data));
+            const errMsg = JSON.parse(data).data.error;
+            showToastMessage(errMsg);
+          });
+
+          roomSocket.on('bid', (data: bidDataType) => {
+            setBetPrice(data.updatedAuction.bid);
+            setBettingContentArray((prev) => [...prev, data.updatedAuction]);
+            //가끔 state랑 prev랑 차이로 에러가 발생할 수 있다.... 그래서 해당 로직에서는 prev사용
+          });
 
           window.addEventListener('popstate', handlePopstate);
 
@@ -63,6 +109,7 @@ const RoomPage = () => {
             roomSocket.off('alert');
             roomSocket.off('userList');
             roomSocket.off('message');
+            roomSocket.off('chat');
 
             window.removeEventListener('popstate', handlePopstate);
             roomSocket.disconnect();
@@ -94,9 +141,11 @@ const RoomPage = () => {
         <ItemBox items={selectedItemInfo} />
         <CommunicationBox>
           <StatusBox>
-            <BettingContent>이름 : 10,000,000만원 입찰</BettingContent>
-            <BettingContent>이름 : 15,000,000만원 입찰</BettingContent>
-            {/* 이건 채팅인데 어떻게 받아오려나...배열인가 */}
+            {bettingContentArray.map((item, index) => (
+              <BettingContent key={index}>
+                {item.bidder} : {item.bid}만원 입찰
+              </BettingContent>
+            ))}
           </StatusBox>
           <StatusBox>
             <ChatContainer
@@ -114,7 +163,10 @@ const RoomPage = () => {
           {/* 이거 나중에 리팩터링 분해하기 */}
           <PercentButtonBox>
             {buttonArray.map((item, index) => (
-              <PercentButton key={index}>
+              <PercentButton
+                key={index}
+                onClick={() => onBetButtonClick(isAdmin, item)}
+              >
                 <BettingText>{item}</BettingText>
               </PercentButton>
             ))}
@@ -122,9 +174,15 @@ const RoomPage = () => {
           {!isAdmin && (
             <>
               <BettingCurrent>
-                <BettingText>Point : 11,000,000 원</BettingText>
+                <BettingText>Point : {betPrice} 원</BettingText>
               </BettingCurrent>
-              <BettingButton>
+              <BettingButton
+                onClick={() => {
+                  roomSocket.emit('bid', {
+                    bid: betPrice,
+                  });
+                }}
+              >
                 <BettingText>입찰하기</BettingText>
               </BettingButton>
             </>
@@ -162,6 +220,7 @@ const CommunicationBox = styled.div`
 `;
 
 const StatusBox = styled.div`
+  overflow-y: scroll;
   display: flex;
   flex-direction: column-reverse;
   width: 460px;

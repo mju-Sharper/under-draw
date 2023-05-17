@@ -131,9 +131,11 @@ const Registration = () => {
                 imageUrl: res.data.data.imageUrl,
               })
               .then(() => navigate('/'))
-              .catch(() =>
-                showToastMessage('제품 정보를 수정하는데 실패했습니다.'),
-              );
+              .catch((err) => {
+                console.log(err);
+                //디버깅용
+                showToastMessage('제품 정보를 수정하는데 실패했습니다.');
+              });
           })
           .catch(() => showToastMessage('이미지 등록에 실패했습니다.'))
       : instanceAPI
@@ -141,9 +143,10 @@ const Registration = () => {
             ...registItemInfo,
           })
           .then(() => navigate('/'))
-          .catch(() =>
-            showToastMessage('제품 정보를 수정하는데 실패했습니다.'),
-          );
+          .catch((err) => {
+            console.log(err);
+            showToastMessage('제품 정보를 수정하는데 실패했습니다.');
+          });
   };
 
   return (

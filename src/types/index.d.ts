@@ -26,6 +26,27 @@ interface socketChatMsg {
   };
 }
 
+interface bidErrMsg {
+  event: string;
+  data: {
+    id: string;
+    error: string;
+  };
+}
+
+interface bidDataType {
+  updatedAuction: {
+    bid: number;
+    bidder: string;
+  };
+  userInfo: {
+    userId: string;
+    isAdmin: boolean;
+    enterTime: string;
+  };
+  sendTime: string; //귀찮아서 우선 이렇게했습니다..
+}
+
 interface ChatMsg {
   username: string;
   message: string;
@@ -35,4 +56,9 @@ interface ChatMsg {
 interface User {
   userId: string;
   isAdmin: boolean;
+}
+
+interface updatedAuction {
+  bid: number;
+  bidder: string;
 }
