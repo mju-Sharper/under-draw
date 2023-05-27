@@ -81,7 +81,7 @@ const RoomPage = () => {
             setChat((prevChat) => [...prevChat, welcomeChat]);
           });
           roomSocket.on('userList', (list: socketUserList) =>
-            setUsers(list.connectedUsers),
+            setUsers((prevUsers) => [...prevUsers, ...list.connectedUsers]),
           );
           roomSocket.on('chat', (data: socketChatMsg) => {
             const newChat: ChatMsg = {
