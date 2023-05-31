@@ -26,6 +26,7 @@ const RoomPage = () => {
   const [chat, setChat] = useState<ChatMsg[]>([]); // 받아올 채팅
   const [users, setUsers] = useState<User[]>([]); // 유저 목록
   const [isAdmin, setIsAdmin] = useState(false);
+  const [realTime, setRealTime] = useState(0);
   const [betPrice, setBetPrice] = useState(0); //사용자가 시작하는 금액도 처음엔 bid로 변경되어야됨
   const [bettingContentArray, setBettingContentArray] = useState<
     updatedAuction[]
@@ -35,9 +36,7 @@ const RoomPage = () => {
 
   const onBetButtonClick = (isAdmin: boolean, buttonArrayItem: string) => {
     if (isAdmin) {
-      console.log('저는 관리자에요');
-      console.log(buttonArrayItem);
-      //여기에선 관리자에 관련된 이벤트가 할당되어야하고
+      roomSocket.emit('time', buttonArrayItem); // admin만 time이벤트 조작가능하도록
     } else {
       const percentage =
         1 +
@@ -69,7 +68,6 @@ const RoomPage = () => {
         .then((res) => {
           setIsAdmin(res.data.data.isAdmin);
 
-          // 입장시 소켓 연결, 유저에 따라 입장 확인
           if (!roomSocket) roomSocket = socket(`${id}`);
 
           roomSocket.on('alert', (message: string) => {
@@ -77,10 +75,13 @@ const RoomPage = () => {
               username: '알림',
               message: message,
             };
+            if (message === '경매 시간이 초기화됐습니다.') {
+              setRealTime(60);
+            }
             setChat((prevChat) => [...prevChat, welcomeChat]);
           });
           roomSocket.on('userList', (list: socketUserList) =>
-            setUsers(list.connectedUsers),
+            setUsers((prevUsers) => [...prevUsers, ...list.connectedUsers]),
           );
           roomSocket.on('chat', (data: socketChatMsg) => {
             const newChat: ChatMsg = {
@@ -96,11 +97,13 @@ const RoomPage = () => {
             const errMsg = JSON.parse(data).data.error;
             showToastMessage(errMsg);
           });
-
           roomSocket.on('bid', (data: bidDataType) => {
             setBetPrice(data.updatedAuction.bid);
             setBettingContentArray((prev) => [...prev, data.updatedAuction]);
             //가끔 state랑 prev랑 차이로 에러가 발생할 수 있다.... 그래서 해당 로직에서는 prev사용
+          });
+          roomSocket.on('time', (res: bidTime) => {
+            setRealTime(res.leftTime);
           });
 
           window.addEventListener('popstate', handlePopstate);
@@ -110,6 +113,7 @@ const RoomPage = () => {
             roomSocket.off('userList');
             roomSocket.off('message');
             roomSocket.off('chat');
+            roomSocket.off('time');
 
             window.removeEventListener('popstate', handlePopstate);
             roomSocket.disconnect();
@@ -158,7 +162,10 @@ const RoomPage = () => {
         </CommunicationBox>
         <BettingBox>
           <BettingCurrent>
-            <BettingText>TIME COUNT : 10:00</BettingText>
+            <BettingText>
+              TIME COUNT : &nbsp;
+              {realTime === 60 || !realTime ? `1:00` : `0:${realTime}`}
+            </BettingText>
           </BettingCurrent>
           {/* 이거 나중에 리팩터링 분해하기 */}
           <PercentButtonBox>

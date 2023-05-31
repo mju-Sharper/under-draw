@@ -47,6 +47,10 @@ interface bidDataType {
   sendTime: string; //귀찮아서 우선 이렇게했습니다..
 }
 
+interface bidTime {
+  leftTime: number;
+}
+
 interface ChatMsg {
   username: string;
   message: string;
