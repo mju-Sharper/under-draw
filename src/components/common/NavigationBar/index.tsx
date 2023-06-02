@@ -29,7 +29,10 @@ const NavigationBar = ({ roomSocket }: roomSocketProps) => {
   const returnCategory = useResetRecoilState(categoryAtom);
 
   const handleReturn = () => {
-    roomSocket.disconnect();
+    if (roomSocket) {
+      roomSocket.disconnect();
+    }
+    //이거 소켓없으면 에러 터집니다
     handleClickMainBtn();
     returnCategory();
   };

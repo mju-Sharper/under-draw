@@ -26,11 +26,13 @@ const RoomPage = () => {
   const [chat, setChat] = useState<ChatMsg[]>([]); // 받아올 채팅
   const [users, setUsers] = useState<User[]>([]); // 유저 목록
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isEnd, setIsEnd] = useState(false);
   const [realTime, setRealTime] = useState(0);
   const [betPrice, setBetPrice] = useState(0); //사용자가 시작하는 금액도 처음엔 bid로 변경되어야됨
   const [bettingContentArray, setBettingContentArray] = useState<
     updatedAuction[]
   >([]);
+  const [result, setResult] = useState('');
 
   const buttonArray = isAdmin ? CONTROL_ARRAY : PERCENT_ARRAY;
 
@@ -50,7 +52,6 @@ const RoomPage = () => {
     instanceAPI
       .get(`auctions/bid/${id}`)
       .then((res) => {
-        console.log(res);
         setBetPrice(res.data.data.bid);
       })
       .catch(() => showToastMessage('입찰 금액을 가져오는데 실패했습니다.'));
@@ -75,9 +76,17 @@ const RoomPage = () => {
               username: '알림',
               message: message,
             };
+            if (message === '경매가 종료되었습니다.') {
+              setIsEnd(true);
+            }
+            if (message === '경매가 시작되었습니다.') {
+              setIsEnd(false);
+            }
             if (message === '경매 시간이 초기화됐습니다.') {
               setRealTime(60);
             }
+
+            //이거 로직 에반데
             setChat((prevChat) => [...prevChat, welcomeChat]);
           });
           roomSocket.on('userList', (list: socketUserList) =>
@@ -93,7 +102,6 @@ const RoomPage = () => {
           });
           roomSocket.on('message', (data: string) => {
             //이게 에러문 반환은 bidErrMsg 타입이여야되는데 왠지 몰라도 string으로 작용함
-            console.log(JSON.parse(data));
             const errMsg = JSON.parse(data).data.error;
             showToastMessage(errMsg);
           });
@@ -106,6 +114,9 @@ const RoomPage = () => {
             setRealTime(res.leftTime);
           });
 
+          roomSocket.on('result', (res: string) => {
+            setResult(res);
+          });
           window.addEventListener('popstate', handlePopstate);
 
           return () => {
@@ -114,6 +125,7 @@ const RoomPage = () => {
             roomSocket.off('message');
             roomSocket.off('chat');
             roomSocket.off('time');
+            roomSocket.off('result');
 
             window.removeEventListener('popstate', handlePopstate);
             roomSocket.disconnect();
@@ -144,21 +156,29 @@ const RoomPage = () => {
       <TradeContainer>
         <ItemBox items={selectedItemInfo} />
         <CommunicationBox>
-          <StatusBox>
-            {bettingContentArray.map((item, index) => (
-              <BettingContent key={index}>
-                {item.bidder} : {item.bid}만원 입찰
-              </BettingContent>
-            ))}
-          </StatusBox>
-          <StatusBox>
-            <ChatContainer
-              chat={chat}
-              sendMsg={sendMsg}
-              onChange={(e) => handleChangeMsg(e.target.value)}
-              onClick={handleSendMsg}
-            />
-          </StatusBox>
+          {isEnd ? (
+            <ResultBox>
+              <ResultText>{result}</ResultText>
+            </ResultBox>
+          ) : (
+            <>
+              <StatusBox>
+                {bettingContentArray.map((item, index) => (
+                  <BettingContent key={index}>
+                    {item.bidder} : {item.bid}만원 입찰
+                  </BettingContent>
+                ))}
+              </StatusBox>
+              <StatusBox>
+                <ChatContainer
+                  chat={chat}
+                  sendMsg={sendMsg}
+                  onChange={(e) => handleChangeMsg(e.target.value)}
+                  onClick={handleSendMsg}
+                />
+              </StatusBox>
+            </>
+          )}
         </CommunicationBox>
         <BettingBox>
           <BettingCurrent>
@@ -234,6 +254,21 @@ const StatusBox = styled.div`
   height: 224px;
   border-radius: 15px;
   background-color: ${({ theme }) => theme.colors.NAVY};
+`;
+
+const ResultBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 920px;
+  height: 224px;
+  border-radius: 15px;
+  background-color: ${({ theme }) => theme.colors.NAVY};
+`;
+
+const ResultText = styled.p`
+  ${({ theme }) => theme.fonts.B_POINT_50}
+  color: ${({ theme }) => theme.colors.WHITE};
 `;
 
 const BettingBox = styled.div`
