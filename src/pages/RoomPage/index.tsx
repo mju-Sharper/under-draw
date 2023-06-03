@@ -111,6 +111,7 @@ const RoomPage = () => {
             //가끔 state랑 prev랑 차이로 에러가 발생할 수 있다.... 그래서 해당 로직에서는 prev사용
           });
           roomSocket.on('time', (res: bidTime) => {
+            if (res.leftTime === 0) setIsEnd(true);
             setRealTime(res.leftTime);
           });
 
