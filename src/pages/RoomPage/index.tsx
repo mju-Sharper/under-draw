@@ -13,8 +13,9 @@ import { instanceAPI } from '../../utils/constant';
 import { CONTROL_ARRAY, PERCENT_ARRAY } from '../../utils/mock';
 import { socket } from '../../utils/socket';
 
-let roomSocket: any = null;
-//이거 나중에 소켓 타입 변경하고
+import type { Socket } from 'socket.io-client';
+
+const socketInstances: Record<string, Socket> = {};
 
 const RoomPage = () => {
   const selectedItemInfo = useLocation()?.state;
@@ -38,7 +39,7 @@ const RoomPage = () => {
 
   const onBetButtonClick = (isAdmin: boolean, buttonArrayItem: string) => {
     if (isAdmin) {
-      roomSocket.emit('time', buttonArrayItem); // admin만 time이벤트 조작가능하도록
+      socketInstances[id].emit('time', buttonArrayItem); // admin만 time이벤트 조작가능하도록
     } else {
       const percentage =
         1 +
@@ -62,73 +63,75 @@ const RoomPage = () => {
       showToastMessage('선택된 아이템이 없습니다.');
       navigate('/');
     } else {
-      getItemBidData(id);
-      //근데 이걸 여기서 하면 굳이 location받아올 필요가 없음.
       instanceAPI
         .get(`auth/admin/${id}`)
         .then((res) => {
           setIsAdmin(res.data.data.isAdmin);
 
-          if (!roomSocket) roomSocket = socket(`${id}`);
+          if (!socketInstances[id]) {
+            socketInstances[id] = socket(`${id}`);
+            console.log(socketInstances[id]);
 
-          roomSocket.on('alert', (message: string) => {
-            const welcomeChat: ChatMsg = {
-              username: '알림',
-              message: message,
-            };
-            if (message === '경매가 종료되었습니다.') {
-              setIsEnd(true);
-            }
-            if (message === '경매가 시작되었습니다.') {
-              setIsEnd(false);
-            }
-            if (message === '경매 시간이 초기화됐습니다.') {
-              setRealTime(60);
-            }
+            socketInstances[id].on('alert', (message: string) => {
+              const welcomeChat: ChatMsg = {
+                username: '알림',
+                message: message,
+              };
+              if (message === '경매가 종료되었습니다.') {
+                setIsEnd(true);
+              }
+              if (message === '경매가 시작되었습니다.') {
+                setIsEnd(false);
+              }
+              if (message === '경매 시간이 초기화됐습니다.') {
+                setRealTime(60);
+              }
+              setChat((prevChat) => [...prevChat, welcomeChat]);
+            });
+            socketInstances[id].on('userList', (list: socketUserList) => {
+              setUsers(list.connectedUsers);
+            });
+            socketInstances[id].on('chat', (data: socketChatMsg) => {
+              const newChat: ChatMsg = {
+                username: data.userInfo.userId,
+                message: data.message.message,
+                admin: data.userInfo.isAdmin,
+              };
+              setChat((prevChat) => [...prevChat, newChat]);
+            });
+            socketInstances[id].on('message', (data: string) => {
+              //이게 에러문 반환은 bidErrMsg 타입이여야되는데 왠지 몰라도 string으로 작용함
+              const errMsg = JSON.parse(data).data.error;
+              showToastMessage(errMsg);
+            });
+            socketInstances[id].on('bid', (data: bidDataType) => {
+              setBetPrice(data.updatedAuction.bid);
+              setBettingContentArray((prev) => [...prev, data.updatedAuction]);
+              //가끔 state랑 prev랑 차이로 에러가 발생할 수 있다.... 그래서 해당 로직에서는 prev사용
+            });
+            socketInstances[id].on('time', (res: bidTime) => {
+              setRealTime(res.leftTime);
+            });
+          }
 
-            //이거 로직 에반데
-            setChat((prevChat) => [...prevChat, welcomeChat]);
-          });
-          roomSocket.on('userList', (list: socketUserList) =>
-            setUsers((prevUsers) => [...prevUsers, ...list.connectedUsers]),
-          );
-          roomSocket.on('chat', (data: socketChatMsg) => {
-            const newChat: ChatMsg = {
-              username: data.userInfo.userId,
-              message: data.message.message,
-              admin: data.userInfo.isAdmin,
-            };
-            setChat((prevChat) => [...prevChat, newChat]);
-          });
-          roomSocket.on('message', (data: string) => {
-            //이게 에러문 반환은 bidErrMsg 타입이여야되는데 왠지 몰라도 string으로 작용함
-            const errMsg = JSON.parse(data).data.error;
-            showToastMessage(errMsg);
-          });
-          roomSocket.on('bid', (data: bidDataType) => {
-            setBetPrice(data.updatedAuction.bid);
-            setBettingContentArray((prev) => [...prev, data.updatedAuction]);
-            //가끔 state랑 prev랑 차이로 에러가 발생할 수 있다.... 그래서 해당 로직에서는 prev사용
-          });
-          roomSocket.on('time', (res: bidTime) => {
-            setRealTime(res.leftTime);
-          });
-
-          roomSocket.on('result', (res: string) => {
+          socketInstances[id].on('result', (res: string) => {
             setResult(res);
           });
           window.addEventListener('popstate', handlePopstate);
 
+          getItemBidData(id);
+          //근데 이걸 여기서 하면 굳이 location받아올 필요가 없음.
+
           return () => {
-            roomSocket.off('alert');
-            roomSocket.off('userList');
-            roomSocket.off('message');
-            roomSocket.off('chat');
-            roomSocket.off('time');
-            roomSocket.off('result');
+            socketInstances[id].off('alert');
+            socketInstances[id].off('userList');
+            socketInstances[id].off('message');
+            socketInstances[id].off('chat');
+            socketInstances[id].off('time');
+            socketInstances[id].off('result');
 
             window.removeEventListener('popstate', handlePopstate);
-            roomSocket.disconnect();
+            socketInstances[id].disconnect();
           };
         })
         .catch(() => showToastMessage('유효하지 않은 상품id입니다.'));
@@ -136,7 +139,7 @@ const RoomPage = () => {
   }, []);
 
   const handlePopstate = () => {
-    roomSocket.disconnect();
+    socketInstances[id].disconnect();
   };
 
   const handleChangeMsg = (message: string) => {
@@ -144,7 +147,7 @@ const RoomPage = () => {
   };
 
   const handleSendMsg = () => {
-    roomSocket.emit('chat', {
+    socketInstances[id].emit('chat', {
       message: sendMsg,
     });
     setSendMsg('');
@@ -152,7 +155,7 @@ const RoomPage = () => {
 
   return (
     <Container>
-      <NavigationBar roomSocket={roomSocket} />
+      <NavigationBar roomSocket={socketInstances[id]} />
       <TradeContainer>
         <ItemBox items={selectedItemInfo} />
         <CommunicationBox>
@@ -205,7 +208,7 @@ const RoomPage = () => {
               </BettingCurrent>
               <BettingButton
                 onClick={() => {
-                  roomSocket.emit('bid', {
+                  socketInstances[id].emit('bid', {
                     bid: betPrice,
                   });
                 }}
