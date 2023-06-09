@@ -70,7 +70,6 @@ const RoomPage = () => {
 
           if (!socketInstances[id]) {
             socketInstances[id] = socket(`${id}`);
-            console.log(socketInstances[id]);
 
             socketInstances[id].on('alert', (message: string) => {
               const welcomeChat: ChatMsg = {
@@ -168,7 +167,7 @@ const RoomPage = () => {
               <StatusBox>
                 {bettingContentArray.map((item, index) => (
                   <BettingContent key={index}>
-                    {item.bidder} : {item.bid}만원 입찰
+                    {item.bidder} : {item.bid} 입찰
                   </BettingContent>
                 ))}
               </StatusBox>
