@@ -108,7 +108,10 @@ const Registration = () => {
     instanceAPI
       .delete(`products/${productId}`)
       .then(() => navigate('/'))
-      .catch(() => showToastMessage('제품을 삭제하는데 실패했습니다.'));
+      .catch((err) => {
+        console.log(err);
+        showToastMessage('제품을 삭제하는데 실패했습니다.');
+      });
   };
   const updateTest = () => {
     imgFile

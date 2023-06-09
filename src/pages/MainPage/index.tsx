@@ -64,7 +64,7 @@ const MainPage = () => {
 
   useEffect(() => {
     getProduct(currentCategory, currentPageNum, currentSearchItem);
-  }, [currentCategory, currentPageNum, currentSearchItem]);
+  }, [currentCategory, currentPageNum, currentSearchItem, isClickManageBtn]);
 
   return (
     <MainPageWrap>
