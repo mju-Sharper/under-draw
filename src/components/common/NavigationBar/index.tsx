@@ -1,6 +1,6 @@
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState, useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import LionMarket from '../../../assets/LionMarket.svg';
@@ -19,7 +19,8 @@ interface roomSocketProps {
 }
 
 const NavigationBar = ({ roomSocket }: roomSocketProps) => {
-  const handleClickManageBtn = useSetRecoilState(manageBtnAtom);
+  const [handleClickManageBtn, setHandleClickManageBtn] =
+    useRecoilState(manageBtnAtom); //관리 버튼 활성화말고 비활성화까지
   const handleSetUserProducts = useSetRecoilState(manageListAtom);
   //관리자에 관련된 데이터들을 전역으로 관리하려고 하셨던 스페셜한 이유가 혹시 있으실까요?
   //페이지 네이션 적용하시기 전이라서 그런가요?
@@ -38,7 +39,7 @@ const NavigationBar = ({ roomSocket }: roomSocketProps) => {
   };
 
   const handleClickManage = () => {
-    handleClickManageBtn(true);
+    setHandleClickManageBtn(!handleClickManageBtn);
 
     return instanceAPI.get(`products/user-products`).then((res) => {
       if (res.status === 200) {
