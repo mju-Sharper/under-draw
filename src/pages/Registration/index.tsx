@@ -83,7 +83,11 @@ const Registration = () => {
             ...registItemInfo,
             imageUrl: res.data.data.imageUrl,
           });
-          registInfoUpload(registItemInfo);
+          registInfoUpload({
+            ...registItemInfo,
+            imageUrl: res.data.data.imageUrl,
+          });
+          //싱크 문제가 이상해서
         })
         .catch(() => showToastMessage('이미지 등록에 실패했습니다.'));
     } else {
@@ -98,7 +102,9 @@ const Registration = () => {
         .then(() => {
           navigate('/');
         })
-        .catch(() => showToastMessage('제품 등록에 실패했습니다.'));
+        .catch(() => {
+          showToastMessage('제품 등록에 실패했습니다.');
+        });
     } else {
       showToastMessage('제품 정보를 모두 알맞게 입력해주세요');
     }
@@ -108,8 +114,7 @@ const Registration = () => {
     instanceAPI
       .delete(`products/${productId}`)
       .then(() => navigate('/'))
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         showToastMessage('제품을 삭제하는데 실패했습니다.');
       });
   };
@@ -134,9 +139,7 @@ const Registration = () => {
                 imageUrl: res.data.data.imageUrl,
               })
               .then(() => navigate('/'))
-              .catch((err) => {
-                console.log(err);
-                //디버깅용
+              .catch(() => {
                 showToastMessage('제품 정보를 수정하는데 실패했습니다.');
               });
           })
@@ -146,8 +149,7 @@ const Registration = () => {
             ...registItemInfo,
           })
           .then(() => navigate('/'))
-          .catch((err) => {
-            console.log(err);
+          .catch(() => {
             showToastMessage('제품 정보를 수정하는데 실패했습니다.');
           });
   };
