@@ -15,25 +15,21 @@ import SearchInput from '../Search';
 import { showToastMessage } from '../Toast';
 
 interface roomSocketProps {
-  roomSocket?: any | null;
+  socketDisconnect?: () => void;
 }
 
-const NavigationBar = ({ roomSocket }: roomSocketProps) => {
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const NavigationBar = ({ socketDisconnect = () => {} }: roomSocketProps) => {
   const [handleClickManageBtn, setHandleClickManageBtn] =
     useRecoilState(manageBtnAtom); //관리 버튼 활성화말고 비활성화까지
   const handleSetUserProducts = useSetRecoilState(manageListAtom);
-  //관리자에 관련된 데이터들을 전역으로 관리하려고 하셨던 스페셜한 이유가 혹시 있으실까요?
-  //페이지 네이션 적용하시기 전이라서 그런가요?
   const handleSetUserProductsLength = useSetRecoilState(manageListLength);
 
   const handleClickMainBtn = useResetRecoilState(manageBtnAtom);
   const returnCategory = useResetRecoilState(categoryAtom);
 
   const handleReturn = () => {
-    if (roomSocket) {
-      roomSocket.disconnect();
-    }
-    //이거 소켓없으면 에러 터집니다
+    socketDisconnect();
     handleClickMainBtn();
     returnCategory();
   };
@@ -45,7 +41,6 @@ const NavigationBar = ({ roomSocket }: roomSocketProps) => {
       if (res.status === 200) {
         handleSetUserProductsLength(res.data.meta.itemCount);
         handleSetUserProducts(res.data.data);
-        //주석 21라인이 클리어되면 해당 atom은 필요없을수도 있을 것 같습니다.
       }
     });
   };

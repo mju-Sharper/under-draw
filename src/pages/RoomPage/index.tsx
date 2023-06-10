@@ -161,7 +161,7 @@ const RoomPage = () => {
 
   return (
     <Container>
-      <NavigationBar roomSocket={socketInstances[id]} />
+      <NavigationBar socketDisconnect={handlePopstate} />
       <TradeContainer>
         <ItemBox items={selectedItemInfo} />
         <CommunicationBox>
