@@ -130,7 +130,11 @@ const RoomPage = () => {
             socketInstances[id].off('result');
 
             window.removeEventListener('popstate', handlePopstate);
-            socketInstances[id].disconnect();
+
+            if (socketInstances[id]) {
+              socketInstances[id].disconnect();
+              delete socketInstances[id];
+            }
           };
         })
         .catch(() => showToastMessage('유효하지 않은 상품id입니다.'));
@@ -138,7 +142,10 @@ const RoomPage = () => {
   }, []);
 
   const handlePopstate = () => {
-    socketInstances[id].disconnect();
+    if (socketInstances[id]) {
+      socketInstances[id].disconnect();
+      delete socketInstances[id];
+    }
   };
 
   const handleChangeMsg = (message: string) => {
