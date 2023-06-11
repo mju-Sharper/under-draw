@@ -11,6 +11,7 @@ interface Props {
 }
 
 const PageNation = ({ productsLength }: Props) => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const totalPages = Math.ceil(productsLength! / 3);
   const numbersArray = new Array(totalPages).fill(0);
   const [currentPageArray, setCurrentPageArray] = useState([0]);
