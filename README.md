@@ -61,3 +61,18 @@
 | fix      | 버그 수정, 예외 케이스 대응, 기능 개선 |
 | docs     | README.md 작성, 주석 작성              |
 | chore    | 기타 작업                              |
+
+
+## ✨ 프로젝트의 핵심 기능
+**[실시간 1:N 통신]**
+|경매방입장, 인원변동|경매 타이머 시작|
+|:--:|:--:|
+|![경매방입장](https://github.com/mju-Sharper/under-draw/assets/81777778/875cd03e-4584-4123-8772-1fa6fa989fe6)|![경매타이머시작](https://github.com/mju-Sharper/under-draw/assets/81777778/13be4535-df46-45f6-97c7-1910b3f8af4f)|
+
+|경매중 채팅|시간 종료를 통한 경매품 자동 낙찰|
+|:--:|:--:|
+|![경매중채팅](https://github.com/mju-Sharper/under-draw/assets/81777778/0c16a80f-7285-419d-9522-6ef6ad07f8b9)|![시간종료낙찰](https://github.com/mju-Sharper/under-draw/assets/81777778/2262029e-89ef-4a70-bb2d-40ba55b67880)|
+
+|경매 재시작|admin의 stop버튼을 통한 경매품 낙찰|
+|:--:|:--:|
+|![경매재시작](https://github.com/mju-Sharper/under-draw/assets/81777778/efadfde2-e99d-41bf-ab0f-a70f16bd7c34)|![stop낙찰](https://github.com/mju-Sharper/under-draw/assets/81777778/bd47068f-f1d0-47e5-8f93-c003338b7681)|
